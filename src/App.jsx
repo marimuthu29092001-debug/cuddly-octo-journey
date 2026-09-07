@@ -60,6 +60,8 @@ export default function App() {
 
   // Handle Login
   const handleLoginSuccess = (user) => {
+    document.documentElement.classList.remove('modal-open');
+    document.body.classList.remove('modal-open');
     setCurrentUser(user);
   };
 

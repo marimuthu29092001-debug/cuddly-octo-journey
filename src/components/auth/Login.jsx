@@ -126,6 +126,9 @@ export default function Login({ onLoginSuccess }) {
     setTimeout(() => {
       const activeUser = DEMO_USERS.find((u) => u.role === selectedRole) || DEMO_USERS[0];
       setIsLoading(false);
+      setAuthModalOpen(false);
+      document.documentElement.classList.remove('modal-open');
+      document.body.classList.remove('modal-open');
       onLoginSuccess({
         ...activeUser,
         email: email
