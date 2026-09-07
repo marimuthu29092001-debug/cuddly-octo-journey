@@ -268,8 +268,6 @@ export default function VisualShowcase() {
       {modalImage && (
         <div 
           onClick={() => setModalImage(null)}
-          onTouchMove={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
-          onWheel={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
           style={{
             position: 'fixed',
             inset: 0,
@@ -280,8 +278,7 @@ export default function VisualShowcase() {
             justifyContent: 'center',
             zIndex: 100,
             padding: '1.5rem',
-            overscrollBehavior: 'contain',
-            touchAction: 'none'
+            overscrollBehavior: 'contain'
           }}
         >
           <div 

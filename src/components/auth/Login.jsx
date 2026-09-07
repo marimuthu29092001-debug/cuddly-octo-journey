@@ -605,8 +605,6 @@ export default function Login({ onLoginSuccess }) {
         <div 
           className="auth-modal-backdrop" 
           onClick={() => setAuthModalOpen(false)}
-          onTouchMove={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
-          onWheel={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
         >
           <div 
             className="auth-modal-card" 
