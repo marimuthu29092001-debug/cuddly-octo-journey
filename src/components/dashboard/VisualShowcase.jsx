@@ -20,13 +20,17 @@ export default function VisualShowcase() {
   // Lock body scroll when modal image zoom is active
   useEffect(() => {
     if (modalImage) {
-      document.documentElement.classList.add('modal-open');
-      document.body.classList.add('modal-open');
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
     } else {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
       document.documentElement.classList.remove('modal-open');
       document.body.classList.remove('modal-open');
     }
     return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
       document.documentElement.classList.remove('modal-open');
       document.body.classList.remove('modal-open');
     };

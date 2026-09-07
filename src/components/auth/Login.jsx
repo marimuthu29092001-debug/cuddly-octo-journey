@@ -92,13 +92,17 @@ export default function Login({ onLoginSuccess }) {
   // Lock body scroll when auth modal is open to prevent background scrolling (backscrole)
   useEffect(() => {
     if (authModalOpen) {
-      document.documentElement.classList.add('modal-open');
-      document.body.classList.add('modal-open');
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
     } else {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
       document.documentElement.classList.remove('modal-open');
       document.body.classList.remove('modal-open');
     }
     return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
       document.documentElement.classList.remove('modal-open');
       document.body.classList.remove('modal-open');
     };
@@ -127,6 +131,8 @@ export default function Login({ onLoginSuccess }) {
       const activeUser = DEMO_USERS.find((u) => u.role === selectedRole) || DEMO_USERS[0];
       setIsLoading(false);
       setAuthModalOpen(false);
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
       document.documentElement.classList.remove('modal-open');
       document.body.classList.remove('modal-open');
       onLoginSuccess({

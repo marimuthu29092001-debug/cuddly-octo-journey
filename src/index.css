@@ -236,17 +236,14 @@
   padding: 0;
 }
 
-html, body {
-  width: 100%;
-  max-width: 100vw;
-  overflow-x: hidden;
-  position: relative;
-  -webkit-text-size-adjust: 100%;
-}
-
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto !important;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -256,9 +253,13 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  width: 100%;
   min-height: 100vh;
+  margin: 0;
+  padding: 0;
   overflow-x: hidden;
-  overflow-y: auto !important;
+  overflow-y: visible !important;
+  position: relative;
 }
 
 /* Base Headings & Typography - Playfair Display editorial serif */
@@ -301,8 +302,10 @@ input, select, textarea {
 .app-container {
   display: flex;
   min-height: 100vh;
+  width: 100%;
   background-color: var(--bg-primary);
   position: relative;
+  overflow-y: visible;
 }
 
 .main-content {
@@ -310,6 +313,8 @@ input, select, textarea {
   display: flex;
   flex-direction: column;
   min-width: 0; /* Prevent flex blowout */
+  min-height: 100vh;
+  overflow-y: visible;
   transition: margin-left var(--transition-normal);
 }
 
@@ -319,6 +324,7 @@ input, select, textarea {
   max-width: 1600px;
   width: 100%;
   margin: 0 auto;
+  overflow-y: visible;
 }
 
 /* Standard Futuristic Dashboard Card */

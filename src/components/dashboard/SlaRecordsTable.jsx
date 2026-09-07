@@ -56,13 +56,17 @@ export default function SlaRecordsTable({
   // Lock body scroll when record details modal is open
   useEffect(() => {
     if (selectedRecord) {
-      document.documentElement.classList.add('modal-open');
-      document.body.classList.add('modal-open');
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
     } else {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
       document.documentElement.classList.remove('modal-open');
       document.body.classList.remove('modal-open');
     }
     return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
       document.documentElement.classList.remove('modal-open');
       document.body.classList.remove('modal-open');
     };
@@ -855,12 +859,9 @@ export default function SlaRecordsTable({
             justifyContent: 'center',
             zIndex: 100,
             padding: '1.5rem',
-            overscrollBehavior: 'contain',
-            touchAction: 'none'
+            overscrollBehavior: 'contain'
           }}
           onClick={() => setSelectedRecord(null)}
-          onTouchMove={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
-          onWheel={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
         >
           <div 
             style={{
