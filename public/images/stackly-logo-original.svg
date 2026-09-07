@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 64" fill="none" class="stackly-logo-original">
+  <!-- Stackly Dual-Swoosh "S" Icon (Exact Match to Official Brand Asset) -->
+  <g transform="translate(6, 4)">
+    <!-- Top Mint/Teal Leaf Swoosh -->
+    <path d="M26 4C36 9 40 20 31 28C24 33 13 29 8 23C4 17 8 9 17 6C21 4 24 4 26 4Z" fill="#6ecbb7"/>
+    <path d="M16 2C27 1 37 6 35 17C33 24 24 28 18 26C12 24 11 18 16 13C18 10 21 8 22 5C20 4 18 3 16 2Z" fill="#84dfcc"/>
+    
+    <!-- Bottom Marine Navy Wave Swoosh -->
+    <path d="M17 25C26 27 34 33 32 43C30 52 18 58 10 54C3 49 7 38 15 31C18 28 19 26 17 25Z" fill="#1b365d"/>
+    <path d="M20 30C29 33 33 41 28 49C23 55 13 56 8 52C4 47 11 39 17 33C19 31 20 30 20 30Z" fill="#254a7c"/>
+  </g>
+
+  <!-- STACKLY Wordmark (Navy matching original upload) -->
+  <text x="56" y="41" font-family="'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="30" font-weight="900" letter-spacing="3.5" fill="#1b365d">STACKLY</text>
+</svg>

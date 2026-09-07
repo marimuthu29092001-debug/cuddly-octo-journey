@@ -1,0 +1,2806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Stackly — Enterprise SLA Performance & Uptime Dashboard</title>
+  
+  <!-- Modern Google Fonts: Playfair Display + Plus Jakarta Sans + JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,600;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ==========================================================================
+       STACKLY SLA DASHBOARD - DESIGN SYSTEM (3 THEMES: LIGHT PRO, DARK, ORANGE)
+       ========================================================================== */
+    :root, [data-theme="dark"] {
+      --bg-primary: #090a0f;
+      --bg-secondary: #0f1118;
+      --bg-surface: #12141f;
+      --bg-surface-elevated: #1a1d2d;
+      --bg-subtle: #191c2b;
+      --bg-muted: #24293e;
+      --text-primary: #ffffff;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --brand-primary: #ff6b00;
+      --brand-primary-hover: #ff8533;
+      --brand-light: rgba(255, 107, 0, 0.15);
+      --brand-border: rgba(255, 107, 0, 0.4);
+      --brand-gradient: linear-gradient(135deg, #ff6b00 0%, #ff8800 45%, #f59e0b 100%);
+      --status-healthy: #10b981;
+      --status-healthy-bg: rgba(16, 185, 129, 0.15);
+      --status-healthy-border: rgba(16, 185, 129, 0.4);
+      --status-warning: #ff9800;
+      --status-warning-bg: rgba(255, 152, 0, 0.15);
+      --status-warning-border: rgba(255, 152, 0, 0.4);
+      --status-critical: #ef4444;
+      --status-critical-bg: rgba(239, 68, 68, 0.15);
+      --status-critical-border: rgba(239, 68, 68, 0.4);
+      --border-light: #24283c;
+      --border-subtle: #191c2b;
+      --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+      --shadow-md: 0 6px 16px -2px rgba(0, 0, 0, 0.6);
+      --shadow-lg: 0 12px 28px -4px rgba(0, 0, 0, 0.7);
+      --shadow-xl: 0 20px 40px -6px rgba(0, 0, 0, 0.8);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --radius-full: 9999px;
+      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-heading: 'Playfair Display', Georgia, 'Times New Roman', serif;
+      --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #090a0f;
+      --bg-secondary: #0f1118;
+      --bg-surface: #12141f;
+      --bg-surface-elevated: #1a1d2d;
+      --bg-subtle: #191c2b;
+      --bg-muted: #24293e;
+      --text-primary: #ffffff;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --brand-primary: #ff6b00;
+      --brand-primary-hover: #ff8533;
+      --brand-light: rgba(255, 107, 0, 0.15);
+      --brand-border: rgba(255, 107, 0, 0.4);
+      --brand-gradient: linear-gradient(135deg, #ff6b00 0%, #ff8800 45%, #f59e0b 100%);
+      --status-healthy: #10b981;
+      --status-healthy-bg: rgba(16, 185, 129, 0.15);
+      --status-healthy-border: rgba(16, 185, 129, 0.4);
+      --status-warning: #ff9800;
+      --status-warning-bg: rgba(255, 152, 0, 0.15);
+      --status-warning-border: rgba(255, 152, 0, 0.4);
+      --status-critical: #ef4444;
+      --status-critical-bg: rgba(239, 68, 68, 0.15);
+      --status-critical-border: rgba(239, 68, 68, 0.4);
+      --border-light: #24283c;
+      --border-subtle: #191c2b;
+      --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+      --shadow-md: 0 6px 16px -2px rgba(0, 0, 0, 0.6);
+      --shadow-lg: 0 12px 28px -4px rgba(0, 0, 0, 0.7);
+      --shadow-xl: 0 20px 40px -6px rgba(0, 0, 0, 0.8);
+    }
+
+    [data-theme="orange"] {
+      --bg-primary: #0b0c13;
+      --bg-secondary: #141520;
+      --bg-surface: #191b29;
+      --bg-surface-elevated: #222538;
+      --bg-subtle: rgba(255, 107, 0, 0.08);
+      --bg-muted: rgba(255, 107, 0, 0.16);
+      --text-primary: #ffffff;
+      --text-secondary: #fed7aa;
+      --text-muted: #fdba74;
+      --brand-primary: #ff6b00;
+      --brand-primary-hover: #ff8533;
+      --brand-light: rgba(255, 107, 0, 0.18);
+      --brand-border: rgba(255, 107, 0, 0.45);
+      --brand-gradient: linear-gradient(135deg, #ff6b00 0%, #ff8800 45%, #f59e0b 100%);
+      --status-healthy: #10b981;
+      --status-healthy-bg: rgba(16, 185, 129, 0.18);
+      --status-healthy-border: rgba(16, 185, 129, 0.45);
+      --status-warning: #ff9800;
+      --status-warning-bg: rgba(255, 152, 0, 0.18);
+      --status-warning-border: rgba(255, 152, 0, 0.45);
+      --status-critical: #ef4444;
+      --status-critical-bg: rgba(239, 68, 68, 0.18);
+      --status-critical-border: rgba(239, 68, 68, 0.45);
+      --border-light: rgba(255, 107, 0, 0.25);
+      --border-subtle: rgba(255, 107, 0, 0.12);
+      --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.6);
+      --shadow-md: 0 6px 16px -2px rgba(0, 0, 0, 0.7);
+      --shadow-lg: 0 12px 28px -4px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 107, 0, 0.15);
+      --shadow-xl: 0 20px 40px -6px rgba(0, 0, 0, 0.9), 0 0 30px rgba(255, 107, 0, 0.25);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.015em;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background: var(--brand-gradient);
+      color: white;
+      font-weight: 600;
+      font-size: 0.875rem;
+      padding: 0.625rem 1.25rem;
+      border-radius: var(--radius-md);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%);
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-light);
+      font-weight: 600;
+      font-size: 0.875rem;
+      padding: 0.625rem 1.125rem;
+      border-radius: var(--radius-md);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+    .btn-secondary:hover {
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      border-color: #cbd5e1;
+    }
+
+    /* Cards */
+    .sla-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .sla-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: #cbd5e1;
+    }
+    .sla-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .sla-card-title {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+    }
+    .sla-card-subtitle {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Status Pills */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.25rem 0.625rem;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .status-pill.healthy {
+      background-color: var(--status-healthy-bg);
+      color: #065f46;
+      border: 1px solid var(--status-healthy-border);
+    }
+    .status-pill.warning {
+      background-color: var(--status-warning-bg);
+      color: #92400e;
+      border: 1px solid var(--status-warning-border);
+    }
+    .status-pill.neutral {
+      background-color: var(--bg-subtle);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-light);
+    }
+    .status-indicator-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: currentColor;
+    }
+    .status-indicator-dot.pulse {
+      animation: pulseDot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.2); }
+    }
+
+    /* Grids */
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+    }
+    @media (max-width: 1200px) {
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .grid-4 { grid-template-columns: 1fr; }
+    }
+
+    /* 5-Image Slideshow Landing & Login Styles */
+    .landing-login-wrapper {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-x: hidden;
+      overflow-y: auto;
+      background-color: #070d18;
+      color: #ffffff;
+      font-family: var(--font-sans);
+    }
+    .bg-slideshow-container {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .bg-slide-item {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      opacity: 0;
+      transform: scale(1.01);
+      transition: opacity 1.3s cubic-bezier(0.4, 0, 0.2, 1), transform 7s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .bg-slide-item.active {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+    .bg-overlay-gradient {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 40%, rgba(10, 18, 36, 0.55) 0%, rgba(7, 13, 26, 0.82) 65%, rgba(4, 8, 16, 0.96) 100%),
+                  linear-gradient(to bottom, rgba(7, 13, 26, 0.65) 0%, rgba(7, 13, 26, 0.85) 60%, rgba(4, 8, 16, 0.98) 100%);
+      pointer-events: none;
+    }
+    .bg-overlay-grid {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+      background-size: 32px 32px;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    .landing-navbar {
+      position: relative;
+      z-index: 15;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 2.5rem;
+      max-width: 1700px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .landing-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .landing-brand-name {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      color: #ffffff;
+    }
+    .landing-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      background: rgba(10, 15, 26, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 0.35rem 0.65rem;
+      border-radius: 9999px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);
+    }
+    .nav-link {
+      background: none;
+      border: 1px solid transparent;
+      font-family: var(--font-sans);
+      font-size: 0.84rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.75);
+      cursor: pointer;
+      padding: 0.4rem 0.8rem;
+      border-radius: 9999px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      text-decoration: none;
+      outline: none;
+    }
+    .nav-link:hover {
+      color: #ff9800;
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .nav-link.active {
+      color: #ff7800 !important;
+      font-weight: 700;
+      background: rgba(255, 107, 0, 0.14);
+      border-color: rgba(255, 107, 0, 0.35);
+      box-shadow: 0 0 14px rgba(255, 107, 0, 0.3);
+    }
+    .landing-nav-actions { display: flex; align-items: center; gap: 0.875rem; }
+    .btn-nav-login {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: #ffffff;
+      font-size: 0.875rem;
+      font-weight: 600;
+      padding: 0.6rem 1.35rem;
+      border-radius: 9999px;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.25s;
+    }
+    .btn-nav-login:hover { background: rgba(255, 255, 255, 0.16); }
+    .btn-nav-signup {
+      background: linear-gradient(135deg, #ff6b00 0%, #ff8800 45%, #f59e0b 100%);
+      color: #090a0f;
+      font-size: 0.875rem;
+      font-weight: 700;
+      padding: 0.6rem 1.5rem;
+      border-radius: 9999px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(255, 107, 0, 0.45);
+      transition: all 0.25s;
+    }
+    .btn-nav-signup:hover { transform: translateY(-1px); box-shadow: 0 6px 25px rgba(255, 107, 0, 0.6); }
+
+    .landing-hero-center {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 1.5rem 1.5rem 2rem 1.5rem;
+      max-width: 1180px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* Interactive Landing Telemetry Showcase */
+    .landing-interactive-showcase {
+      width: 100%;
+      max-width: 1140px;
+      margin: 1.75rem auto 1.5rem auto;
+      text-align: left;
+      animation: fadeInShowcase 0.25s ease-out;
+    }
+    @keyframes fadeInShowcase {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .telemetry-showcase-panel {
+      background: rgba(13, 20, 36, 0.94);
+      border: 1px solid rgba(255, 107, 0, 0.32);
+      border-radius: 20px;
+      padding: 1.6rem 1.85rem;
+      backdrop-filter: blur(28px);
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.75), 0 0 40px rgba(255, 107, 0, 0.14);
+    }
+    .telemetry-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 1.35rem;
+    }
+    .telemetry-live-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+      display: inline-block;
+      animation: pulseGreen 1.8s infinite;
+    }
+    @keyframes pulseGreen {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.85); }
+    }
+    .btn-open-cockpit {
+      background: linear-gradient(135deg, #ff6b00, #ff8800);
+      color: #000000;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      padding: 0.45rem 1.15rem;
+      border-radius: 9999px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 2px 12px rgba(255, 107, 0, 0.4);
+      transition: all 0.2s;
+    }
+    .btn-open-cockpit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 18px rgba(255, 107, 0, 0.6);
+    }
+    .btn-action-sim {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 0.45rem 1rem;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-action-sim:hover {
+      border-color: #ff6b00;
+      background: rgba(255, 107, 0, 0.15);
+    }
+    .telemetry-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+    .telemetry-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    .telemetry-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+    @media (max-width: 960px) {
+      .telemetry-grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .telemetry-grid-3 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .telemetry-grid-4 { grid-template-columns: 1fr; }
+      .telemetry-grid-2 { grid-template-columns: 1fr; }
+    }
+    .telemetry-mini-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 14px;
+      padding: 1.15rem 1.25rem;
+      transition: all 0.2s ease;
+    }
+    .telemetry-mini-card:hover {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(255, 107, 0, 0.45);
+      transform: translateY(-2px);
+    }
+    .mini-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .mini-card-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 0.35rem;
+    }
+    .mini-card-stat {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #ffffff;
+      font-family: var(--font-mono);
+      margin-bottom: 0.5rem;
+    }
+    .mini-card-bar {
+      width: 100%;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 9999px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+    }
+    .mini-card-footer {
+      font-size: 0.71875rem;
+      color: rgba(255, 255, 255, 0.55);
+    }
+    .badge-healthy {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #10b981;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      padding: 0.15rem 0.55rem;
+      border-radius: 9999px;
+    }
+    .badge-warning {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: #f59e0b;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      padding: 0.15rem 0.55rem;
+      border-radius: 9999px;
+    }
+    .badge-danger {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #ef4444;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      padding: 0.15rem 0.55rem;
+      border-radius: 9999px;
+    }
+
+    .hero-announcement-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 107, 0, 0.09);
+      border: 1px solid rgba(255, 107, 0, 0.38);
+      padding: 0.4rem 1.1rem;
+      border-radius: 9999px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #ff7800;
+      margin-bottom: 2rem;
+      backdrop-filter: blur(8px);
+    }
+    .hero-main-headline {
+      font-family: var(--font-sans);
+      font-size: 4.25rem;
+      font-weight: 800;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
+    }
+    .hero-main-headline .highlight-enterprise {
+      color: #ff6b00;
+      text-shadow: 0 0 35px rgba(255, 107, 0, 0.5);
+    }
+    .hero-main-headline .highlight-os {
+      color: #ff9800;
+      text-shadow: 0 0 35px rgba(255, 152, 0, 0.5);
+    }
+    .hero-subtext {
+      font-size: 1.15rem;
+      line-height: 1.65;
+      color: rgba(255, 255, 255, 0.78);
+      max-width: 780px;
+      margin-bottom: 2.5rem;
+    }
+    .hero-cta-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .btn-hero-teal {
+      background: linear-gradient(135deg, #ff6b00 0%, #ff8800 45%, #f59e0b 100%);
+      color: #090a0f;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 0.85rem 2.25rem;
+      border-radius: 9999px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 6px 28px rgba(255, 107, 0, 0.45);
+      transition: all 0.25s;
+    }
+    .btn-hero-teal:hover { transform: translateY(-2px); box-shadow: 0 8px 35px rgba(255, 107, 0, 0.65); }
+    .btn-hero-glass {
+      background: rgba(26, 36, 56, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0.85rem 2rem;
+      border-radius: 9999px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.25s;
+    }
+    .btn-hero-glass:hover { background: rgba(40, 54, 84, 0.85); transform: translateY(-2px); }
+
+    .landing-bottom-bar {
+      position: relative;
+      z-index: 15;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 3rem;
+      max-width: 1700px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .slide-dot-pill {
+      width: 38px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 9999px;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .slide-dot-pill.active {
+      width: 58px;
+      background: linear-gradient(90deg, #ff6b00, #f59e0b);
+    }
+    .slide-arrow-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .slide-arrow-btn:hover { background: rgba(255, 107, 0, 0.2); border-color: #ff6b00; color: #ff6b00; }
+
+    /* Frosted Glass Login Modal */
+    .auth-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(4, 8, 16, 0.75);
+      backdrop-filter: blur(14px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .auth-modal-card {
+      position: relative;
+      max-width: 460px;
+      width: 100%;
+      background: rgba(13, 20, 36, 0.94);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 20px;
+      padding: 2.25rem 2rem;
+      box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 107, 0, 0.15);
+      backdrop-filter: blur(24px);
+    }
+    .login-input {
+      width: 100%;
+      padding: 0.75rem 0.875rem 0.75rem 2.5rem;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 10px;
+      font-size: 0.9375rem;
+      color: #ffffff;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    .login-input:focus {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: #ff6b00;
+      box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.25);
+    }
+    .role-chip {
+      padding: 0.5rem 0.25rem;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #ffffff;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .role-chip:hover { border-color: #ff6b00; background: rgba(255, 107, 0, 0.12); }
+    .role-chip.active { background: rgba(255, 107, 0, 0.2); color: #ffffff; border-color: #ff6b00; box-shadow: 0 0 10px rgba(255, 107, 0, 0.3); }
+
+    /* Dashboard Layout */
+    .app-layout {
+      display: flex;
+      min-height: 100vh;
+      background-color: var(--bg-primary);
+    }
+    .app-sidebar {
+      width: 260px;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-light);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+      z-index: 30;
+      transition: transform 0.25s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+    .app-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background-color: var(--bg-primary);
+      transition: background-color 0.2s ease;
+    }
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: var(--bg-surface);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-light);
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.75rem;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    .app-content {
+      flex: 1;
+      padding: 1.75rem 2rem 3rem 2rem;
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 1024px) {
+      .app-sidebar {
+        position: fixed;
+        top: 70px;
+        bottom: 0;
+        left: 0;
+        transform: translateX(-100%);
+        box-shadow: var(--shadow-xl);
+      }
+      .app-sidebar.mobile-open { transform: translateX(0); }
+      .app-content { padding: 1.25rem 1rem 2rem 1rem; }
+      .hide-mobile { display: none !important; }
+      .show-mobile-btn { display: flex !important; }
+    }
+
+    @media (min-width: 1025px) {
+      .show-mobile-btn { display: none !important; }
+    }
+
+    /* Modal Styles */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .modal-box {
+      max-width: 800px;
+      width: 100%;
+      background: var(--bg-surface);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow-xl);
+      border: 1px solid var(--border-light);
+      color: var(--text-primary);
+      animation: cardFadeIn 0.25s ease-out;
+    }
+
+    /* User Profile Dropdown Styles (Exact match to requested UI) */
+    @keyframes dropdownFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.97);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    .user-profile-menu-item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.75rem 0.95rem;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      color: var(--text-primary);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+    .user-profile-menu-item:hover {
+      background: var(--bg-subtle);
+    }
+    .user-profile-menu-item.logout-item {
+      color: #ef4444;
+      font-weight: 700;
+    }
+    .user-profile-menu-item.logout-item:hover {
+      background: rgba(239, 68, 68, 0.08);
+    }
+  </style>
+</head>
+<body>
+  <!-- Container where App renders immediately -->
+  <div id="app"></div>
+
+  <script>
+    // ==========================================
+    // STACKLY SLA APPLICATION STATE & DATA
+    // ==========================================
+    const DEMO_USERS = [
+      { role: "Super Admin", name: "Super Admin", title: "VP Cloud Infra", email: "admin@stackly.com", avatar: "SA" },
+      { role: "SLA Manager", name: "Sarah Chen", title: "Principal SRE", email: "sarah.chen@stackly.io", avatar: "SC" },
+      { role: "Enterprise Client", name: "Marcus Sterling", title: "CTO, Finovate", email: "marcus@finovate.com", avatar: "MS" }
+    ];
+
+    const KPI_METRICS = [
+      { id: "sla", label: "Global SLA Compliance", value: "99.982%", sub: "Target: 99.900%", change: "+0.04% vs target", color: "#10b981", bg: "#ecfdf5", border: "#a7f3d0", icon: "🛡️" },
+      { id: "srv", label: "Monitored Services", value: "48 / 48", sub: "47 Operational, 1 Warning", change: "100% active telemetry", color: "#2563eb", bg: "#eff6ff", border: "#bfdbfe", icon: "🖥️" },
+      { id: "mttr", label: "Mean Time to Resolve (MTTR)", value: "14m 20s", sub: "SLA Cap: 45m 00s", change: "-3m 15s faster MTTR", color: "#8b5cf6", bg: "#f5f3ff", border: "#ddd6fe", icon: "⏱️" },
+      { id: "pen", label: "SLA Penalties Avoided", value: "$148,500", sub: "Zero Breaches Recorded", change: "100% rebate margin", color: "#f59e0b", bg: "#fffbeb", border: "#fde68a", icon: "💰" }
+    ];
+
+    const SLA_SHOWCASE_IMAGES = [
+      { 
+        id: "1", 
+        title: "Mission-Critical Cloud Datacenter Infrastructure", 
+        cat: "Tier 4 Uptime Guarantee", 
+        img: "public/images/datacenter-servers.jpg", 
+        metric: "99.999% Hardware Uptime", 
+        desc: "Multi-region redundant power, N+2 cooling, and distributed physical server racks ensuring zero hardware-level single points of failure.", 
+        tag: "Physical SLA" 
+      },
+      { 
+        id: "2", 
+        title: "24/7 Global SLA Operations Command Center", 
+        cat: "NOC Reliability Telemetry", 
+        img: "public/images/ops-command-center.jpg", 
+        metric: "< 2 Min Response MTTA", 
+        desc: "Dedicated site reliability engineers monitor live heartbeat signals across all 48 distributed cloud microservices around the clock.", 
+        tag: "24/7 NOC" 
+      },
+      { 
+        id: "3", 
+        title: "Stackly 99.99% Enterprise SLA Guarantee Shield", 
+        cat: "Contractual Compliance", 
+        img: "public/images/uptime-shield.jpg", 
+        metric: "$148,500 Penalties Avoided", 
+        desc: "Bank-grade enterprise contracts with real-time automated SLA compliance verification and instant service credit compensation.", 
+        tag: "SLA Shield" 
+      },
+      { 
+        id: "4", 
+        title: "Global Anycast Edge Network & Low-Latency Routing", 
+        cat: "Edge Performance", 
+        img: "public/images/global-edge-network.jpg", 
+        metric: "18ms Global Avg Latency", 
+        desc: "Over 340 edge points of presence intelligently route inbound traffic away from degraded regional backbones in sub-millisecond intervals.", 
+        tag: "Network Edge" 
+      },
+      { 
+        id: "5", 
+        title: "Rapid SRE Incident Response & Escalation Squad", 
+        cat: "Incident Management", 
+        img: "public/images/sre-team.jpg", 
+        metric: "14m 20s MTTR Average", 
+        desc: "Certified reliability engineers and DevOps architects triage P1/P2 incidents with automated runbooks and live war rooms.", 
+        tag: "Human Ops" 
+      }
+    ];
+
+    const SERVICES = [
+      { id: "1", name: "Stackly Core API Gateway", type: "Ingress Router", tier: "Platinum (99.99%)", uptime: "99.995%", latency: "18ms", req: "42,800 req/s", err: "0.002%", status: "Operational" },
+      { id: "2", name: "Identity & SSO Auth Engine", type: "Security Core", tier: "Platinum (99.99%)", uptime: "99.991%", latency: "38ms", req: "14,200 req/s", err: "0.008%", status: "Operational" },
+      { id: "3", name: "Transaction & Billing Ledger", type: "Financial Engine", tier: "Platinum (99.99%)", uptime: "99.999%", latency: "112ms", req: "3,400 req/s", err: "0.0001%", status: "Operational" },
+      { id: "4", name: "PostgreSQL HA Cluster", type: "Distributed DB", tier: "Platinum (99.99%)", uptime: "99.988%", latency: "5ms", req: "98,000 qps", err: "0.012%", status: "Operational" },
+      { id: "5", name: "Edge CDN Asset Pipeline", type: "Edge Delivery", tier: "Gold (99.90%)", uptime: "99.998%", latency: "7ms", req: "125,000 req/s", err: "0.001%", status: "Operational" },
+      { id: "6", name: "Real-time Notification & WebSockets", type: "Event Streaming", tier: "Gold (99.90%)", uptime: "99.940%", latency: "84ms", req: "26,000 msg/s", err: "0.058%", status: "Degraded" },
+      { id: "7", name: "Search & Semantic Vector Index", type: "Search Cluster", tier: "Gold (99.90%)", uptime: "99.972%", latency: "62ms", req: "8,900 qps", err: "0.024%", status: "Operational" },
+      { id: "8", name: "Enterprise Webhook Dispatcher", type: "Async Queue", tier: "Silver (99.50%)", uptime: "99.990%", latency: "88ms", req: "18,400 ev/s", err: "0.010%", status: "Operational" }
+    ];
+
+    const SLA_TIERS = [
+      { tier: "Platinum Enterprise", target: "99.990%", current: "99.994%", clients: 142, downtime: "2m 14s used / 4m 23s allowed", refund: "30% credit clause", badgeBg: "#eef2ff", badgeColor: "#4338ca" },
+      { tier: "Gold Business", target: "99.900%", current: "99.982%", clients: 486, downtime: "7m 52s used / 43m 49s allowed", refund: "20% credit clause", badgeBg: "#fffbeb", badgeColor: "#b45309" },
+      { tier: "Silver Growth", target: "99.500%", current: "99.890%", clients: 1250, downtime: "48m 10s used / 3h 39m allowed", refund: "10% credit clause", badgeBg: "#f8fafc", badgeColor: "#475569" },
+      { tier: "Standard Developer", target: "99.000%", current: "99.950%", clients: 3890, downtime: "22m 05s used / 7h 18m allowed", refund: "Best effort SLA", badgeBg: "#ecfdf5", badgeColor: "#059669" }
+    ];
+
+    const LOGIN_BACKGROUND_SLIDES = [
+      {
+        id: 0,
+        url: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=2000&q=85",
+        fallback: "public/images/ops-command-center.jpg",
+        title: "Autonomous SLA & SRE Command Center",
+        tag: "Slide 01 • Mission-Critical SLA Telemetry & SRE Cockpit"
+      },
+      {
+        id: 1,
+        url: "public/images/datacenter-servers.jpg",
+        fallback: "public/images/datacenter-servers.jpg",
+        title: "Tier-4 Cloud Datacenter Infrastructure",
+        tag: "Slide 02 • 99.999% Multi-Cloud Availability Architecture"
+      },
+      {
+        id: 2,
+        url: "public/images/ops-command-center.jpg",
+        fallback: "public/images/ops-command-center.jpg",
+        title: "24/7 Global NOC Command Telemetry",
+        tag: "Slide 03 • Real-Time Error Budget & Burn Rate Tracking"
+      },
+      {
+        id: 3,
+        url: "public/images/uptime-shield.jpg",
+        fallback: "public/images/uptime-shield.jpg",
+        title: "Contractual SLA Breach Protection Shield",
+        tag: "Slide 04 • Financial Penalty Liability & Refund Simulator"
+      },
+      {
+        id: 4,
+        url: "public/images/global-edge-network.jpg",
+        fallback: "public/images/global-edge-network.jpg",
+        title: "Global Anycast Low-Latency Edge Mesh",
+        tag: "Slide 05 • Sub-Millisecond Global Ingress Telemetry"
+      }
+    ];
+
+    // Dedicated Dark Theme Enforcement
+    localStorage.setItem('stackly_theme', 'dark');
+    const savedTheme = 'dark';
+    let savedUser = null;
+    try {
+      savedUser = JSON.parse(localStorage.getItem('stackly_user'));
+    } catch (e) {}
+
+    // Auto-login to dashboard if hash is #solutions or #dashboard or if user was previously logged in
+    if (!savedUser && (window.location.hash.includes('solutions') || window.location.hash.includes('dashboard'))) {
+      savedUser = DEMO_USERS[0];
+    }
+
+    // Global State
+    let appState = {
+      theme: 'dark',
+      currentUser: savedUser,
+      selectedRole: DEMO_USERS[0].role,
+      activeSlideIdx: 0,
+      loginModalOpen: false,
+      activeTab: 'overview',
+      selectedImageIdx: 0,
+      zoomImage: null,
+      reportModalOpen: false,
+      sidebarOpen: false,
+      searchTerm: '',
+      activeFilter: 'all',
+      chartMetric: 'uptime',
+      toastMessage: '',
+      profileDropdownOpen: false,
+      profileModalOpen: false,
+      settingsModalOpen: false,
+      landingSection: ['slo', 'error-budget', 'penalties', 'heatmap', 'incidents', 'edge', 'contracts'].includes(window.location.hash.replace('#', '')) ? window.location.hash.replace('#', '') : 'slo',
+      simulatedDowntimeMins: 4.5,
+      selectedHeatmapDay: null,
+      errorSpikeActive: false,
+      selectedEdgeRegion: 'us-east',
+      selectedContractTier: 'gold'
+    };
+
+    // Listen for hash changes to switch landing sections
+    window.addEventListener('hashchange', () => {
+      const h = window.location.hash.replace('#', '');
+      if (['slo', 'error-budget', 'penalties', 'heatmap', 'incidents', 'edge', 'contracts'].includes(h)) {
+        setState({ landingSection: h });
+      }
+    });
+
+    // Apply active theme immediately to document element
+    document.documentElement.setAttribute('data-theme', appState.theme);
+
+    function changeTheme(newTheme) {
+      appState.theme = newTheme;
+      localStorage.setItem('stackly_theme', newTheme);
+      document.documentElement.setAttribute('data-theme', newTheme);
+      renderApp();
+    }
+
+    function setState(updates) {
+      if ('currentUser' in updates) {
+        if (updates.currentUser) {
+          localStorage.setItem('stackly_user', JSON.stringify(updates.currentUser));
+        } else {
+          localStorage.removeItem('stackly_user');
+          if (window.location.hash.includes('solutions') || window.location.hash.includes('dashboard')) {
+            window.location.hash = '';
+          }
+        }
+      }
+      appState = { ...appState, ...updates };
+      renderApp();
+    }
+
+    function showToast(msg) {
+      setState({ toastMessage: msg });
+      setTimeout(() => setState({ toastMessage: '' }), 4000);
+    }
+
+    // Auto-advance 5 background images every 5 seconds on landing/login page
+    setInterval(() => {
+      if (!appState.currentUser && !appState.loginModalOpen) {
+        appState.activeSlideIdx = (appState.activeSlideIdx + 1) % LOGIN_BACKGROUND_SLIDES.length;
+        renderApp();
+      }
+    }, 5000);
+
+    // ==========================================
+    // OFFICIAL STACKLY BRAND LOGO COMPONENT
+    // ==========================================
+    function renderStacklyLogo({ height = 32, variant = 'white' } = {}) {
+      const textColor = variant === 'white' ? '#ffffff' : '#1b365d';
+      const iconWidth = Math.round(height * 0.95);
+      const fontSize = Math.round(height * 0.58);
+      return `
+        <span class="stackly-logo-wrapper" style="display: inline-flex; align-items: center; gap: 8px; vertical-align: middle;">
+          <svg width="${iconWidth}" height="${height}" viewBox="0 0 38 42" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+            <!-- Stackly Dual-Swoosh 'S' Icon (Exact Match to Official Brand Asset) -->
+            <!-- Upper Mint/Teal Leaf Swoosh -->
+            <path d="M22 3.5C28.5 6 33.5 12.5 31.5 20C30 25 24 27.5 18 25C13.5 23 12 18 15 11.5C17 7.5 19.5 4.5 22 3.5Z" fill="#6ecbb7"/>
+            <path d="M19 4.5C13.5 9 11 16 14.5 22C16 24 20 25 22.5 23.5C18 20 17 14 20 8C20.5 7 20 5.5 19 4.5Z" fill="#88e4d1"/>
+            <!-- Lower Marine Navy Leaf Swoosh -->
+            <path d="M18.5 38.5C12 36 7 29.5 9 22C10.5 17 16.5 14.5 22.5 17C27 19 28.5 24 25.5 30.5C23.5 34.5 21 37.5 18.5 38.5Z" fill="#1b365d"/>
+            <path d="M21.5 37.5C27 33 29.5 26 26 20C24.5 18 20.5 17 18 18.5C22.5 22 23.5 28 20.5 34C20 35 20.5 36.5 21.5 37.5Z" fill="#2d5284"/>
+          </svg>
+          <span style="font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: ${fontSize}px; font-weight: 900; letter-spacing: 0.12em; color: ${textColor}; line-height: 1;">STACKLY</span>
+        </span>
+      `;
+    }
+
+    function calcPenalty(mins) {
+      if (mins <= 4.38) {
+        return {
+          amount: '$0.00 (Zero Penalty)',
+          percentage: '0% Credit Due',
+          color: '#10b981',
+          statusText: '🛡️ Within Contract SLA Bounds (99.99%)',
+          statusColor: '#10b981',
+          liabilityLabel: 'Zero contractual liability incurred'
+        };
+      } else if (mins <= 15) {
+        return {
+          amount: '$12,500.00 (5% Rebate)',
+          percentage: '5% Service Credit',
+          color: '#ffaa00',
+          statusText: '⚠️ Tier 1 SLA Threshold Breached',
+          statusColor: '#ffaa00',
+          liabilityLabel: '5% credit applied to next billing cycle'
+        };
+      } else if (mins <= 30) {
+        return {
+          amount: '$37,500.00 (15% Rebate)',
+          percentage: '15% Service Credit',
+          color: '#ff6b00',
+          statusText: '🚨 Tier 2 SLA Threshold Breached',
+          statusColor: '#ff6b00',
+          liabilityLabel: '15% credit applied to next billing cycle'
+        };
+      } else {
+        return {
+          amount: '$75,000.00 (30% Max Cap)',
+          percentage: '30% Maximum Credit',
+          color: '#ef4444',
+          statusText: '🔴 Tier 3 Maximum SLA Breach',
+          statusColor: '#ef4444',
+          liabilityLabel: 'Executive escalation & SLA remediation triggered'
+        };
+      }
+    }
+
+    function getDayData(idx) {
+      if (idx === 72) return { day: idx + 1, uptime: '99.94%', downtime: '2.4 mins', status: 'minor', incidents: 1, desc: 'EU-Central gateway latency mitigation (auto-scaled)' };
+      if (idx === 41) return { day: idx + 1, uptime: '99.97%', downtime: '1.2 mins', status: 'minor', incidents: 1, desc: 'Database read replica failover (zero data loss)' };
+      return { day: idx + 1, uptime: '100.00%', downtime: '0 seconds', status: 'perfect', incidents: 0, desc: 'Pristine availability &bull; All 18 SLO targets green' };
+    }
+
+    // ==========================================
+    // 7 INTERACTIVE LANDING TELEMETRY SECTIONS
+    // ==========================================
+    function renderLandingSectionContent(section) {
+      const activeSection = section || 'slo';
+
+      // 1. SLO HEALTH
+      if (activeSection === 'slo') {
+        return `
+          <div class="telemetry-showcase-panel">
+            <div class="telemetry-header">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <span class="telemetry-live-dot"></span>
+                <div>
+                  <div style="font-size: 0.75rem; font-weight: 700; color: #ff7800; text-transform: uppercase; letter-spacing: 0.08em;">
+                    Active Telemetry View &bull; SLO Health
+                  </div>
+                  <h3 style="font-size: 1.35rem; font-weight: 800; color: #ffffff; margin-top: 2px;">
+                    Production SLO Availability: <span style="color: #10b981;">99.994%</span>
+                  </h3>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.625rem;">
+                <span class="badge-healthy">18 of 18 SLOs In Bounds</span>
+                <button type="button" class="btn-open-cockpit" onclick="setState({ loginModalOpen: true })">
+                  Launch Full Cockpit &rarr;
+                </button>
+              </div>
+            </div>
+
+            <div class="telemetry-grid-4">
+              <!-- Service 1 -->
+              <div class="telemetry-mini-card">
+                <div class="mini-card-top">
+                  <span style="font-size: 1.25rem;">⚡</span>
+                  <span class="badge-healthy">99.998%</span>
+                </div>
+                <div class="mini-card-title">Core API Ingress Gateway</div>
+                <div class="mini-card-stat">12ms <span style="font-size: 0.75rem; color: rgba(255,255,255,0.5);">p99</span></div>
+                <div class="mini-card-bar"><div style="width: 99.98%; background: #10b981; height: 100%; border-radius: 9999px;"></div></div>
+                <div class="mini-card-footer">42,800 req/s &bull; 0 breached minutes</div>
+              </div>
+
+              <!-- Service 2 -->
+              <div class="telemetry-mini-card">
+                <div class="mini-card-top">
+                  <span style="font-size: 1.25rem;">💳</span>
+                  <span class="badge-healthy">99.992%</span>
+                </div>
+                <div class="mini-card-title">Transaction Ledger</div>
+                <div class="mini-card-stat">28ms <span style="font-size: 0.75rem; color: rgba(255,255,255,0.5);">p99</span></div>
+                <div class="mini-card-bar"><div style="width: 99.92%; background: #10b981; height: 100%; border-radius: 9999px;"></div></div>
+                <div class="mini-card-footer">18,400 tps &bull; Strict ACID Guarantee</div>
+              </div>
+
+              <!-- Service 3 -->
+              <div class="telemetry-mini-card">
+                <div class="mini-card-top">
+                  <span style="font-size: 1.25rem;">🌊</span>
+                  <span class="badge-warning">99.985% Watch</span>
+                </div>
+                <div class="mini-card-title">Kafka Event Ingestion</div>
+                <div class="mini-card-stat">110ms <span style="font-size: 0.75rem; color: rgba(255,255,255,0.5);">p99</span></div>
+                <div class="mini-card-bar"><div style="width: 98.5%; background: #f59e0b; height: 100%; border-radius: 9999px;"></div></div>
+                <div class="mini-card-footer">Consumer lag: 1.2s &bull; Auto-scaled pods</div>
+              </div>
+
+              <!-- Service 4 -->
+              <div class="telemetry-mini-card">
+                <div class="mini-card-top">
+                  <span style="font-size: 1.25rem;">🛡️</span>
+                  <span class="badge-healthy">100.00%</span>
+                </div>
+                <div class="mini-card-title">Anycast Global Edge Cache</div>
+                <div class="mini-card-stat">4ms <span style="font-size: 0.75rem; color: rgba(255,255,255,0.5);">p99</span></div>
+                <div class="mini-card-bar"><div style="width: 100%; background: #10b981; height: 100%; border-radius: 9999px;"></div></div>
+                <div class="mini-card-footer">24 Global PoPs &bull; 0 downtime recorded</div>
+              </div>
+            </div>
+
+            <div style="margin-top: 1.15rem; padding: 0.85rem 1.15rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <span style="font-size: 1.1rem;">📈</span>
+                <div style="font-size: 0.8125rem; color: rgba(255,255,255,0.85);">
+                  Continuous Uptime Window: <strong style="color: #10b981;">720 Hours Incident-Free</strong> &bull; Master SLA Target: <strong>99.990%</strong>
+                </div>
+              </div>
+              <div style="font-size: 0.75rem; color: #ff7800; font-weight: 600;">
+                All Microservices Health Verified &bull; SOC-2 Type II
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 2. ERROR BUDGETS
+      if (activeSection === 'error-budget') {
+        return `
+          <div class="telemetry-showcase-panel">
+            <div class="telemetry-header">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <span class="telemetry-live-dot"></span>
+                <div>
+                  <div style="font-size: 0.75rem; font-weight: 700; color: #ff7800; text-transform: uppercase; letter-spacing: 0.08em;">
+                    Active Telemetry View &bull; Error Budgets
+                  </div>
+                  <h3 style="font-size: 1.35rem; font-weight: 800; color: #ffffff; margin-top: 2px;">
+                    Monthly Budget Remaining: <span style="color: ${appState.errorSpikeActive ? '#ef4444' : '#10b981'};">${appState.errorSpikeActive ? '58.4%' : '84.2%'}</span>
+                  </h3>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <button type="button" class="btn-action-sim" onclick="setState({ errorSpikeActive: !appState.errorSpikeActive })">
+                  ${appState.errorSpikeActive ? '⚡ Reset Simulation' : '🚨 Simulate 12x Traffic Spike'}
+                </button>
+                <button type="button" class="btn-open-cockpit" onclick="setState({ loginModalOpen: true })">
+                  Launch Cockpit &rarr;
+                </button>
+              </div>
+            </div>
+
+            <div class="telemetry-grid-3">
+              <div class="telemetry-mini-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                  <span style="font-size: 0.8125rem; font-weight: 700; color: rgba(255,255,255,0.7);">1-Hour Window Burn</span>
+                  <span class="${appState.errorSpikeActive ? 'badge-danger' : 'badge-healthy'}">${appState.errorSpikeActive ? '12.4x SPIKE' : '0.8x Normal'}</span>
+                </div>
+                <div style="font-size: 2rem; font-weight: 800; color: #ffffff; font-family: var(--font-mono);">${appState.errorSpikeActive ? '12.4x' : '0.8x'}</div>
+                <div style="font-size: 0.75rem; color: rgba(255,255,255,0.55); margin-top: 0.25rem;">
+                  ${appState.errorSpikeActive ? 'Automated freeze active &bull; Canary rollback armed' : 'Safe &bull; Consuming 0.8% budget per hour'}
+                </div>
+              </div>
+
+              <div class="telemetry-mini-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                  <span style="font-size: 0.8125rem; font-weight: 700; color: rgba(255,255,255,0.7);">6-Hour Window Burn</span>
+                  <span class="${appState.errorSpikeActive ? 'badge-warning' : 'badge-healthy'}">${appState.errorSpikeActive ? '3.8x Elevated' : '1.1x Nominal'}</span>
+                </div>
+                <div style="font-size: 2rem; font-weight: 800; color: #ffffff; font-family: var(--font-mono);">${appState.errorSpikeActive ? '3.8x' : '1.1x'}</div>
+                <div style="font-size: 0.75rem; color: rgba(255,255,255,0.55); margin-top: 0.25rem;">
+                  Paging threshold: 6.0x &bull; Multi-region fallback armed
+                </div>
+              </div>
+
+              <div class="telemetry-mini-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                  <span style="font-size: 0.8125rem; font-weight: 700; color: rgba(255,255,255,0.7);">24-Hour Window Burn</span>
+                  <span class="badge-healthy">0.9x Safe</span>
+                </div>
+                <div style="font-size: 2rem; font-weight: 800; color: #ffffff; font-family: var(--font-mono);">0.9x</div>
+                <div style="font-size: 0.75rem; color: rgba(255,255,255,0.55); margin-top: 0.25rem;">
+                  26.4 Days until depletion &bull; Month-end surplus: +14.2%
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top: 1.15rem; padding: 0.85rem 1.15rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <span style="font-size: 1.1rem;">⏱️</span>
+                <div>
+                  <div style="font-size: 0.8125rem; font-weight: 700; color: #ffffff;">Allowed Monthly Outage Budget: 168.0 Mins (99.95% Target)</div>
+                  <div style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">Consumed this cycle: ${appState.errorSpikeActive ? '70.0 mins (41.6%)' : '26.5 mins (15.8%)'}</div>
+                </div>
+              </div>
+              <div style="width: 240px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 9999px; overflow: hidden;">
+                <div style="width: ${appState.errorSpikeActive ? '58.4%' : '84.2%'}; height: 100%; background: ${appState.errorSpikeActive ? '#ef4444' : '#10b981'}; border-radius: 9999px;"></div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 3. PENALTY SIMULATOR
+      if (activeSection === 'penalties') {
+        const mins = appState.simulatedDowntimeMins !== undefined ? appState.simulatedDowntimeMins : 4.5;
+        const pen = calcPenalty(mins);
+        const uptime = ((43200 - mins) / 43200 * 100).toFixed(4);
+
+        return `
+          <div class="telemetry-showcase-panel">
+            <div class="telemetry-header">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <span class="telemetry-live-dot"></span>
+                <div>
+                  <div style="font-size: 0.75rem; font-weight: 700; color: #ff7800; text-transform: uppercase; letter-spacing: 0.08em;">
+                    Active Telemetry View &bull; Penalty Simulator
+                  </div>
+                  <h3 style="font-size: 1.35rem; font-weight: 800; color: #ffffff; margin-top: 2px;">
+                    Simulated SLA Service Credit: <span style="color: ${pen.color};">${pen.amount}</span>
+                  </h3>
+                </div>
+              </div>
+              <button type="button" class="btn-open-cockpit" onclick="setState({ loginModalOpen: true })">
+                Generate Audit Schedule &rarr;
+              </button>
+            </div>
+
+            <!-- Interactive Slider -->
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.25rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <span style="font-size: 0.875rem; font-weight: 700; color: #ffffff;">
+                  Slide to adjust Simulated Monthly Outage / Degraded Duration:
+                </span>
+                <span style="font-size: 1.15rem; font-weight: 800; color: #ff7800; font-family: var(--font-mono); background: rgba(255,107,0,0.15); padding: 0.2rem 0.65rem; border-radius: 6px; border: 1px solid rgba(255,107,0,0.3);">
+                  ${mins.toFixed(1)} Minutes
+                </span>
+              </div>
+              <input 
+                type="range" 
+                min="0" 
+                max="60" 
+                step="0.5" 
+                value="${mins}" 
+                oninput="setState({ simulatedDowntimeMins: parseFloat(this.value) })"
+                style="width: 100%; accent-color: #ff6b00; cursor: pointer; height: 6px; background: rgba(255,255,255,0.15); border-radius: 4px;"
+              />
+              <div style="display: flex; justify-content: space-between; font-size: 0.71875rem; color: rgba(255,255,255,0.45); margin-top: 0.5rem;">
+                <span>0m (100% Uptime - $0 Penalty)</span>
+                <span>4.38m (99.99% Platinum Limit)</span>
+                <span>21.6m (Tier 2 Threshold)</span>
+                <span>60m (Tier 3 Max Cap)</span>
+              </div>
+            </div>
+
+            <div class="telemetry-grid-3">
+              <div class="telemetry-mini-card">
+                <div style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">Monthly Contract Value</div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: #ffffff; font-family: var(--font-mono);">$250,000 / mo</div>
+                <div style="font-size: 0.75rem; color: #10b981; margin-top: 0.25rem;">Enterprise Platinum Tier</div>
+              </div>
+              <div class="telemetry-mini-card">
+                <div style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">Simulated Availability</div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: #ffffff; font-family: var(--font-mono);">${uptime}%</div>
+                <div style="font-size: 0.75rem; color: ${pen.statusColor}; margin-top: 0.25rem;">
+                  ${pen.statusText}
+                </div>
+              </div>
+              <div class="telemetry-mini-card">
+                <div style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">Contractual Credit Due</div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: ${pen.color}; font-family: var(--font-mono);">${pen.percentage}</div>
+                <div style="font-size: 0.75rem; color: rgba(255,255,255,0.6); margin-top: 0.25rem;">
+                  ${pen.liabilityLabel}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 4. 90D HEATMAP
+      if (activeSection === 'heatmap') {
+        const selectedDayIdx = appState.selectedHeatmapDay !== null && appState.selectedHeatmapDay !== undefined ? appState.selectedHeatmapDay : 89;
+        const selDayData = getDayData(selectedDayIdx);
+
+        return `
+          <div class="telemetry-showcase-panel">
+            <div class="telemetry-header">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <span class="telemetry-live-dot"></span>
+                <div>
+                  <div style="font-size: 0.75rem; font-weight: 700; color: #ff7800; text-transform: uppercase; letter-spacing: 0.08em;">
+                    Active Telemetry View &bull; 90-Day Continuous Availability Heatmap
+                  </div>
+                  <h3 style="font-size: 1.35rem; font-weight: 800; color: #ffffff; margin-top: 2px;">
+                    90-Day Rolling Availability: <span style="color: #10b981;">99.992%</span>
+                  </h3>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.625rem;">
+                <span class="badge-healthy">88 of 90 Days 100% Clean</span>
+                <button type="button" class="btn-open-cockpit" onclick="setState({ loginModalOpen: true })">
+                  Export Audit PDF &rarr;
+                </button>
+              </div>
+            </div>
+
+            <!-- 90 Days Interactive Pill Grid -->
+            <div style="margin-bottom: 1.25rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: rgba(255,255,255,0.55); margin-bottom: 0.5rem;">
+                <span>90 Days Ago</span>
+                <span>Click any day pill below to inspect incident records</span>
+                <span>Today (Day 90)</span>
+              </div>
+
+              <div style="display: grid; grid-template-columns: repeat(30, 1fr); gap: 4px; padding: 0.875rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;">
+                ${Array.from({ length: 90 }).map((_, idx) => {
+                  const d = getDayData(idx);
+                  const isSelected = selectedDayIdx === idx;
+                  const bg = d.status === 'perfect' ? '#10b981' : d.status === 'minor' ? '#f59e0b' : '#ef4444';
+                  return `
+                    <button 
+                      type="button" 
+                      onclick="setState({ selectedHeatmapDay: ${idx} })"
+                      title="Day ${idx + 1}: ${d.uptime} uptime"
+                      style="height: 18px; border-radius: 3px; background: ${bg}; border: ${isSelected ? '2px solid #ffffff' : '1px solid rgba(0,0,0,0.3)'}; cursor: pointer; padding: 0; transform: ${isSelected ? 'scale(1.2)' : 'scale(1)'}; transition: all 0.15s; box-shadow: ${isSelected ? '0 0 8px #ffffff' : 'none'};"
+                    ></button>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+
+            <!-- Selected Day Inspector -->
+            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,107,0,0.3); border-radius: 12px; padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+              <div style="display: flex; align-items: center; gap: 0.875rem;">
+                <span style="font-size: 1.35rem;">🗓️</span>
+                <div>
+                  <div style="font-size: 0.875rem; font-weight: 800; color: #ffffff;">
+                    Inspecting Day ${selDayData.day} Telemetry &bull; Availability: <span style="color: #10b981;">${selDayData.uptime}</span>
+                  </div>
+                  <div style="font-size: 0.75rem; color: rgba(255,255,255,0.65); margin-top: 2px;">
+                    ${selDayData.desc} &bull; Downtime: <strong>${selDayData.downtime}</strong>
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span class="${selDayData.incidents === 0 ? 'badge-healthy' : 'badge-warning'}">
+                  ${selDayData.incidents === 0 ? '0 Incidents' : `${selDayData.incidents} Mitigated Event`}
+                </span>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 5. INCIDENTS
+      if (activeSection === 'incidents') {
+        return `
+          <div class="telemetry-showcase-panel">
+            <div class="telemetry-header">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <span class="telemetry-live-dot"></span>
+                <div>
+                  <div style="font-size: 0.75rem; font-weight: 700; color: #ff7800; text-transform: uppercase; letter-spacing: 0.08em;">
+                    Active Telemetry View &bull; Incidents & Triage Log
+                  </div>
+                  <h3 style="font-size: 1.35rem; font-weight: 800; color: #ffffff; margin-top: 2px;">
+                    Incident Triage: <span style="color: #10b981;">0 Active Critical P1 Breaches</span>
+                  </h3>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.625rem;">
+                <span class="badge-healthy">Mean MTTR: 4m 18s (SLA: 15m)</span>
+                <button type="button" class="btn-open-cockpit" onclick="setState({ loginModalOpen: true })">
+                  Full RCA Log &rarr;
+                </button>
+              </div>
+            </div>
+
+            <!-- Incident Log Items -->
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <div class="telemetry-mini-card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+                <div style="display: flex; align-items: center; gap: 0.875rem;">
+                  <span style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-weight: 800; font-size: 0.75rem; padding: 0.25rem 0.55rem; border-radius: 6px; border: 1px solid rgba(16,185,129,0.3);">RESOLVED</span>
+                  <div>
+                    <div style="font-size: 0.875rem; font-weight: 700; color: #ffffff;">
+                      INC-8921: EU-Central Ingress Rate Limiting Anomaly
+                    </div>
+                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.55); margin-top: 2px;">
+                      Trigger: Synthetic load spike &bull; Root cause: Token bucket exhaustion &bull; Auto-scaled ingress pods
+                    </div>
+                  </div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-size: 0.8125rem; font-weight: 700; color: #10b981;">Mitigated in 4m 12s</div>
+                  <div style="font-size: 0.71875rem; color: rgba(255,255,255,0.45);">Zero SLA Penalty Impact</div>
+                </div>
+              </div>
+
+              <div class="telemetry-mini-card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+                <div style="display: flex; align-items: center; gap: 0.875rem;">
+                  <span style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-weight: 800; font-size: 0.75rem; padding: 0.25rem 0.55rem; border-radius: 6px; border: 1px solid rgba(16,185,129,0.3);">RESOLVED</span>
+                  <div>
+                    <div style="font-size: 0.875rem; font-weight: 700; color: #ffffff;">
+                      INC-8894: PostgreSQL Read Replica Replication Lag
+                    </div>
+                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.55); margin-top: 2px;">
+                      Trigger: High WAL queue &bull; Autonomous failover to secondary replica triggered &bull; Zero data loss
+                    </div>
+                  </div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-size: 0.8125rem; font-weight: 700; color: #10b981;">Mitigated in 2m 45s</div>
+                  <div style="font-size: 0.71875rem; color: rgba(255,255,255,0.45);">Zero SLA Penalty Impact</div>
+                </div>
+              </div>
+
+              <div class="telemetry-mini-card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+                <div style="display: flex; align-items: center; gap: 0.875rem;">
+                  <span style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; font-weight: 800; font-size: 0.75rem; padding: 0.25rem 0.55rem; border-radius: 6px; border: 1px solid rgba(245,158,11,0.3);">MONITORED</span>
+                  <div>
+                    <div style="font-size: 0.875rem; font-weight: 700; color: #ffffff;">
+                      INC-8840: Redis Edge Cache Eviction Cycle
+                    </div>
+                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.55); margin-top: 2px;">
+                      Trigger: Key space memory threshold reached &bull; Cache warming policy applied &bull; Tail latency normalized
+                    </div>
+                  </div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-size: 0.8125rem; font-weight: 700; color: #f59e0b;">Stabilized in 6m 10s</div>
+                  <div style="font-size: 0.71875rem; color: rgba(255,255,255,0.45);">Within 15m Target SLA</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 6. GLOBAL EDGE
+      if (activeSection === 'edge') {
+        const regions = [
+          { id: 'us-east', name: 'US-East (N. Virginia)', ping: '12ms', uptime: '99.999%', load: '34%', status: 'Optimal' },
+          { id: 'us-west', name: 'US-West (Oregon)', ping: '18ms', uptime: '99.999%', load: '22%', status: 'Optimal' },
+          { id: 'eu-central', name: 'EU-Central (Frankfurt)', ping: '14ms', uptime: '99.998%', load: '26%', status: 'Optimal' },
+          { id: 'eu-west', name: 'EU-West (London)', ping: '16ms', uptime: '99.998%', load: '18%', status: 'Optimal' },
+          { id: 'ap-south', name: 'AP-South (Mumbai)', ping: '32ms', uptime: '99.994%', load: '15%', status: 'Optimal' },
+          { id: 'ap-east', name: 'AP-East (Tokyo)', ping: '28ms', uptime: '99.996%', load: '19%', status: 'Optimal' }
+        ];
+
+        return `
+          <div class="telemetry-showcase-panel">
+            <div class="telemetry-header">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <span class="telemetry-live-dot"></span>
+                <div>
+                  <div style="font-size: 0.75rem; font-weight: 700; color: #ff7800; text-transform: uppercase; letter-spacing: 0.08em;">
+                    Active Telemetry View &bull; Global Anycast Edge Mesh
+                  </div>
+                  <h3 style="font-size: 1.35rem; font-weight: 800; color: #ffffff; margin-top: 2px;">
+                    24 Edge PoPs: <span style="color: #10b981;">Sub-50ms Planetary Latency</span>
+                  </h3>
+                </div>
+              </div>
+              <button type="button" class="btn-open-cockpit" onclick="setState({ loginModalOpen: true })">
+                Global Topology Map &rarr;
+              </button>
+            </div>
+
+            <div class="telemetry-grid-3">
+              ${regions.map(r => `
+                <div class="telemetry-mini-card">
+                  <div class="mini-card-top">
+                    <span style="font-size: 1.25rem;">🌐</span>
+                    <span class="badge-healthy">${r.status}</span>
+                  </div>
+                  <div class="mini-card-title">${r.name}</div>
+                  <div class="mini-card-stat">${r.ping} <span style="font-size: 0.75rem; color: rgba(255,255,255,0.5);">RTT</span></div>
+                  <div class="mini-card-bar"><div style="width: 100%; background: #10b981; height: 100%; border-radius: 9999px;"></div></div>
+                  <div class="mini-card-footer">Uptime: <strong>${r.uptime}</strong> &bull; Share: ${r.load} traffic</div>
+                </div>
+              `).join('')}
+            </div>
+
+            <div style="margin-top: 1.15rem; padding: 0.85rem 1.15rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: gap: 0.75rem;">
+              <div style="font-size: 0.8125rem; color: rgba(255,255,255,0.85);">
+                Autonomous BGP Routing &bull; Automatic Anycast failover takes &lt; 850ms during submarine cable severance
+              </div>
+              <div style="font-size: 0.75rem; color: #10b981; font-weight: 700;">
+                100% Core Mesh Packet Delivery Guaranteed
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 7. CONTRACTS
+      if (activeSection === 'contracts') {
+        const tiers = [
+          { name: 'Platinum Sovereign', uptime: '99.999%', downtime: '26s / month', mttr: '5 min P1 Response', credit: '100% Service Credit Guarantee', badge: 'Tier 1 Sovereign', color: '#ff6b00', highlight: true },
+          { name: 'Gold Mission Critical', uptime: '99.99%', downtime: '4.3m / month', mttr: '15 min P1 Response', credit: '50% Service Credit Guarantee', badge: 'Tier 2 Enterprise', color: '#10b981' },
+          { name: 'Silver Business', uptime: '99.95%', downtime: '21.6m / month', mttr: '1 hr P1 Response', credit: '25% Service Credit Guarantee', badge: 'Tier 3 Business', color: '#3b82f6' },
+          { name: 'Bronze Standard', uptime: '99.90%', downtime: '43.2m / month', mttr: '4 hr P1 Response', credit: '10% Service Credit Guarantee', badge: 'Tier 4 Standard', color: '#a855f7' }
+        ];
+
+        return `
+          <div class="telemetry-showcase-panel">
+            <div class="telemetry-header">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <span class="telemetry-live-dot"></span>
+                <div>
+                  <div style="font-size: 0.75rem; font-weight: 700; color: #ff7800; text-transform: uppercase; letter-spacing: 0.08em;">
+                    Active Telemetry View &bull; Enterprise SLA Contracts & Legal Guarantees
+                  </div>
+                  <h3 style="font-size: 1.35rem; font-weight: 800; color: #ffffff; margin-top: 2px;">
+                    Contractual SLA Commitments & Master Service Agreements
+                  </h3>
+                </div>
+              </div>
+              <button type="button" class="btn-open-cockpit" onclick="setState({ loginModalOpen: true })">
+                Download MSA Agreement &rarr;
+              </button>
+            </div>
+
+            <div class="telemetry-grid-4">
+              ${tiers.map(t => `
+                <div class="telemetry-mini-card" style="${t.highlight ? 'border-color: rgba(255, 107, 0, 0.6); box-shadow: 0 0 20px rgba(255, 107, 0, 0.2);' : ''}">
+                  <div class="mini-card-top">
+                    <span style="font-size: 0.6875rem; font-weight: 800; text-transform: uppercase; color: ${t.color};">${t.badge}</span>
+                    <span style="font-size: 0.8125rem; font-weight: 800; color: ${t.color};">${t.uptime}</span>
+                  </div>
+                  <div class="mini-card-title">${t.name}</div>
+                  <div style="font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-bottom: 0.5rem;">
+                    Allowed Outage: <strong>${t.downtime}</strong>
+                  </div>
+                  <div style="font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-bottom: 0.5rem;">
+                    SRE Response: <strong>${t.mttr}</strong>
+                  </div>
+                  <div class="mini-card-footer" style="color: ${t.color}; font-weight: 600;">
+                    ${t.credit}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+
+            <div style="margin-top: 1.15rem; padding: 0.85rem 1.15rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+              <div style="font-size: 0.8125rem; color: rgba(255,255,255,0.85);">
+                📜 All SLA commitments are legally binding with automated smart contract reconciliation & immediate billing credits
+              </div>
+              <div style="font-size: 0.75rem; color: #ff7800; font-weight: 700;">
+                Standardized Enterprise MSA Clauses
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      return '';
+    }
+
+    // ==========================================
+    // RENDER FUNCTIONS
+    // ==========================================
+    function renderLogin() {
+      const activeUser = DEMO_USERS.find(u => u.role === appState.selectedRole) || DEMO_USERS[0];
+      const curSlide = LOGIN_BACKGROUND_SLIDES[appState.activeSlideIdx];
+
+      return `
+        <div class="landing-login-wrapper">
+          <!-- 5-Image Crossfading Background Carousel -->
+          <div class="bg-slideshow-container">
+            ${LOGIN_BACKGROUND_SLIDES.map((slide, idx) => `
+              <div 
+                class="bg-slide-item ${idx === appState.activeSlideIdx ? 'active' : ''}"
+                style="background-image: url('${slide.url}'), url('${slide.fallback}');"
+              ></div>
+            `).join('')}
+            <div class="bg-overlay-gradient"></div>
+            <div class="bg-overlay-grid"></div>
+          </div>
+
+          <!-- Top Navigation Bar with Official Stackly Logo & 7 Interactive Tabs -->
+          <header class="landing-navbar">
+            <div class="landing-brand" onclick="setState({ landingSection: 'slo' })" title="Stackly SLA Command OS">
+              ${renderStacklyLogo({ height: 32, variant: 'white' })}
+              <span style="background: rgba(255, 107, 0, 0.18); border: 1px solid rgba(255, 107, 0, 0.4); color: #ff7800; font-size: 0.65rem; font-weight: 800; padding: 0.18rem 0.5rem; border-radius: 6px; letter-spacing: 0.06em; text-transform: uppercase;">SLA</span>
+            </div>
+
+            <nav class="landing-nav-links">
+              <button 
+                type="button" 
+                class="nav-link ${(appState.landingSection || 'slo') === 'slo' ? 'active' : ''}" 
+                onclick="setState({ landingSection: 'slo' }); document.getElementById('landingTelemetrySection')?.scrollIntoView({ behavior: 'smooth', block: 'center' });"
+              >
+                SLO Health
+              </button>
+              <button 
+                type="button" 
+                class="nav-link ${appState.landingSection === 'error-budget' ? 'active' : ''}" 
+                onclick="setState({ landingSection: 'error-budget' }); document.getElementById('landingTelemetrySection')?.scrollIntoView({ behavior: 'smooth', block: 'center' });"
+              >
+                Error Budgets
+              </button>
+              <button 
+                type="button" 
+                class="nav-link ${appState.landingSection === 'penalties' ? 'active' : ''}" 
+                onclick="setState({ landingSection: 'penalties' }); document.getElementById('landingTelemetrySection')?.scrollIntoView({ behavior: 'smooth', block: 'center' });"
+              >
+                Penalty Simulator
+              </button>
+              <button 
+                type="button" 
+                class="nav-link ${appState.landingSection === 'heatmap' ? 'active' : ''}" 
+                onclick="setState({ landingSection: 'heatmap' }); document.getElementById('landingTelemetrySection')?.scrollIntoView({ behavior: 'smooth', block: 'center' });"
+              >
+                90D Heatmap
+              </button>
+              <button 
+                type="button" 
+                class="nav-link ${appState.landingSection === 'incidents' ? 'active' : ''}" 
+                onclick="setState({ landingSection: 'incidents' }); document.getElementById('landingTelemetrySection')?.scrollIntoView({ behavior: 'smooth', block: 'center' });"
+              >
+                Incidents
+              </button>
+              <button 
+                type="button" 
+                class="nav-link ${appState.landingSection === 'edge' ? 'active' : ''}" 
+                onclick="setState({ landingSection: 'edge' }); document.getElementById('landingTelemetrySection')?.scrollIntoView({ behavior: 'smooth', block: 'center' });"
+              >
+                Global Edge
+              </button>
+              <button 
+                type="button" 
+                class="nav-link ${appState.landingSection === 'contracts' ? 'active' : ''}" 
+                onclick="setState({ landingSection: 'contracts' }); document.getElementById('landingTelemetrySection')?.scrollIntoView({ behavior: 'smooth', block: 'center' });"
+              >
+                Contracts
+              </button>
+            </nav>
+
+            <div class="landing-nav-actions">
+              <button 
+                type="button" 
+                class="btn-nav-login"
+                onclick="setState({ loginModalOpen: true })"
+              >
+                Log In
+              </button>
+              <button 
+                type="button" 
+                class="btn-nav-signup"
+                onclick="setState({ loginModalOpen: true })"
+              >
+                Launch Cockpit
+              </button>
+            </div>
+          </header>
+
+          <!-- Center Hero Content with Dynamic Interactive Showcase -->
+          <main class="landing-hero-center">
+            <div class="hero-announcement-pill">
+              <span style="width: 7px; height: 7px; border-radius: 50%; background: #ff6b00; box-shadow: 0 0 8px #ff6b00; display: inline-block;"></span>
+              <span>New: Autonomous SLA Breach Copilot & SRE Telemetry v2.0 Released</span>
+            </div>
+
+            <h1 class="hero-main-headline">
+              The Global <span class="highlight-enterprise">SLA Intelligence</span><br />
+              <span class="highlight-os">Command OS</span> for 2026
+            </h1>
+
+            <p class="hero-subtext">
+              Monitor 99.999% high-availability, track real-time error budget burn rates, eliminate contractual breach penalties, and orchestrate SRE microservices across global edge clusters.
+            </p>
+
+            <div class="hero-cta-group">
+              <button 
+                type="button" 
+                class="btn-hero-teal"
+                onclick="setState({ loginModalOpen: true })"
+              >
+                Launch SLA Cockpit
+              </button>
+              <button 
+                type="button" 
+                class="btn-hero-glass"
+                onclick="setState({ landingSection: 'penalties' }); document.getElementById('landingTelemetrySection')?.scrollIntoView({ behavior: 'smooth', block: 'center' });"
+              >
+                Simulate SLA Penalties
+              </button>
+            </div>
+
+            <!-- Dynamic Telemetry Showcase (Live Related Content for the 7 Navbar Links) -->
+            <div class="landing-interactive-showcase" id="landingTelemetrySection">
+              ${renderLandingSectionContent(appState.landingSection || 'slo')}
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 0.625rem; font-size: 0.78125rem; color: rgba(255, 255, 255, 0.55); margin-top: 1rem;">
+              <span>Explore SLA Demo as:</span>
+              <button 
+                type="button" 
+                style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.15); color: #ff7800; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.65rem; border-radius: 6px; cursor: pointer;"
+                onclick="setState({ selectedRole: 'Admin', loginModalOpen: true })"
+              >
+                Super Admin (VP Ops)
+              </button>
+              <button 
+                type="button" 
+                style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.15); color: #ff7800; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.65rem; border-radius: 6px; cursor: pointer;"
+                onclick="setState({ selectedRole: 'SLA Manager', loginModalOpen: true })"
+              >
+                SLA Manager (Lead SRE)
+              </button>
+              <button 
+                type="button" 
+                style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.15); color: #ff7800; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.65rem; border-radius: 6px; cursor: pointer;"
+                onclick="setState({ selectedRole: 'Enterprise Client', loginModalOpen: true })"
+              >
+                Enterprise Auditor
+              </button>
+            </div>
+          </main>
+
+          <!-- Bottom 5-Image Slideshow Controls -->
+          <footer class="landing-bottom-bar">
+            <div style="display: flex; align-items: center; gap: 0.875rem;">
+              <span style="font-size: 0.9rem; font-weight: 700; color: #ffffff;">
+                0${appState.activeSlideIdx + 1} <span style="opacity: 0.5;">/ 05</span>
+              </span>
+              <span style="font-size: 0.75rem; font-weight: 500; color: rgba(255, 255, 255, 0.6); background: rgba(255, 255, 255, 0.05); padding: 0.25rem 0.65rem; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.08);">
+                ${curSlide.tag}
+              </span>
+            </div>
+
+            <!-- 5 Dots -->
+            <div style="display: flex; align-items: center; gap: 0.625rem;">
+              ${LOGIN_BACKGROUND_SLIDES.map((s, idx) => `
+                <button 
+                  type="button" 
+                  class="slide-dot-pill ${idx === appState.activeSlideIdx ? 'active' : ''}"
+                  onclick="setState({ activeSlideIdx: ${idx} })"
+                ></button>
+              `).join('')}
+            </div>
+
+            <!-- Next/Prev Buttons -->
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <button 
+                type="button" 
+                class="slide-arrow-btn"
+                onclick="setState({ activeSlideIdx: (appState.activeSlideIdx - 1 + 5) % 5 })"
+              >
+                ◀
+              </button>
+              <button 
+                type="button" 
+                class="slide-arrow-btn"
+                onclick="setState({ activeSlideIdx: (appState.activeSlideIdx + 1) % 5 })"
+              >
+                ▶
+              </button>
+            </div>
+          </footer>
+
+          <!-- Frosted Glass Login Modal -->
+          ${appState.loginModalOpen ? `
+            <div class="auth-modal-backdrop" onclick="setState({ loginModalOpen: false })">
+              <div class="auth-modal-card" onclick="event.stopPropagation()">
+                <button 
+                  type="button" 
+                  style="position: absolute; top: 1.25rem; right: 1.25rem; width: 32px; height: 32px; border-radius: 50%; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12); color: rgba(255, 255, 255, 0.6); display: flex; align-items: center; justify-content: center; cursor: pointer;"
+                  onclick="setState({ loginModalOpen: false })"
+                >
+                  ✕
+                </button>
+
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                  <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.875rem;">
+                    ${renderStacklyLogo({ height: 38, variant: 'white' })}
+                    <span style="background: rgba(255, 107, 0, 0.18); border: 1px solid rgba(255, 107, 0, 0.4); color: #ff7800; font-size: 0.65rem; font-weight: 800; padding: 0.18rem 0.5rem; border-radius: 6px; letter-spacing: 0.06em; text-transform: uppercase;">SLA</span>
+                  </div>
+                  <h2 style="font-family: var(--font-heading); font-size: 1.75rem; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 0.35rem;">
+                    Sign In to SLA Command Center
+                  </h2>
+                  <p style="font-size: 0.8125rem; color: rgba(255, 255, 255, 0.65);">
+                    Enterprise 99.999% Cloud Performance & SRE Telemetry Portal
+                  </p>
+                </div>
+
+                <!-- 1-Click Role Switcher -->
+                <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 0.875rem; margin-bottom: 1.5rem;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255, 255, 255, 0.6); margin-bottom: 0.625rem;">
+                    <span>1-Click Demo Personas</span>
+                    <span style="color: #ff7800;">SSO Ready</span>
+                  </div>
+                  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;">
+                    ${DEMO_USERS.map(u => `
+                      <button 
+                        type="button" 
+                        class="role-chip ${appState.selectedRole === u.role ? 'active' : ''}" 
+                        onclick="setState({ selectedRole: '${u.role}' })"
+                      >
+                        <div style="font-size: 0.78125rem; font-weight: 700; color: #ffffff;">${u.role}</div>
+                        <div style="font-size: 0.65rem; color: rgba(255, 255, 255, 0.5); margin-top: 2px;">${u.name}</div>
+                      </button>
+                    `).join('')}
+                  </div>
+                </div>
+
+                <form onsubmit="handleLoginSubmit(event)" style="display: flex; flex-direction: column; gap: 1rem;">
+                  <div>
+                    <label style="display: block; font-size: 0.8125rem; font-weight: 600; color: rgba(255, 255, 255, 0.85); margin-bottom: 0.4rem;">
+                      Enterprise SSO Email
+                    </label>
+                    <div style="position: relative;">
+                      <span style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.4);">✉️</span>
+                      <input type="email" class="login-input" value="${activeUser.email}" id="login-email" required />
+                    </div>
+                  </div>
+
+                  <div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+                      <label style="font-size: 0.8125rem; font-weight: 600; color: rgba(255, 255, 255, 0.85);">Password</label>
+                      <span style="font-size: 0.72rem; color: #ff7800;">Demo Pre-filled</span>
+                    </div>
+                    <div style="position: relative;">
+                      <span style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.4);">🔒</span>
+                      <input type="password" class="login-input" value="••••••••••••" id="login-pass" required />
+                    </div>
+                  </div>
+
+                  <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: rgba(255, 255, 255, 0.7);">
+                    <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer;">
+                      <input type="checkbox" checked style="accent-color: #ff6b00;" />
+                      <span>Remember this workstation</span>
+                    </label>
+                    <span style="color: #ff7800; cursor: pointer;">Need help?</span>
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    style="display: flex; align-items: center; justify-content: center; gap: 0.625rem; width: 100%; padding: 0.85rem; background: linear-gradient(135deg, #ff6b00 0%, #ff8800 45%, #f59e0b 100%); color: #090a0f; font-size: 0.9375rem; font-weight: 700; border-radius: 10px; border: none; cursor: pointer; box-shadow: 0 6px 20px rgba(255, 107, 0, 0.4); margin-top: 0.5rem;"
+                  >
+                    <span>Enter SLA Command Center</span>
+                    <span>&rarr;</span>
+                  </button>
+                </form>
+
+                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.08); text-align: center; font-size: 0.7rem; color: rgba(255, 255, 255, 0.5);">
+                  🔒 SOC 2 Type II Certified &bull; TLS 1.3 256-Bit Encrypted
+                </div>
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    function renderDashboard() {
+      const u = appState.currentUser;
+      const hero = SLA_SHOWCASE_IMAGES[appState.selectedImageIdx];
+
+      const filteredServices = SERVICES.filter(s => {
+        const matchesSearch = s.name.toLowerCase().includes(appState.searchTerm.toLowerCase()) || s.type.toLowerCase().includes(appState.searchTerm.toLowerCase());
+        const matchesFilter = appState.activeFilter === 'all' ? true :
+                              appState.activeFilter === 'operational' ? s.status === 'Operational' :
+                              appState.activeFilter === 'degraded' ? s.status === 'Degraded' : true;
+        return matchesSearch && matchesFilter;
+      });
+
+      return `
+        <div class="app-layout">
+          <!-- Mobile Sidebar Backdrop -->
+          ${appState.sidebarOpen ? `<div style="position: fixed; inset: 0; background: rgba(15,23,42,0.4); z-index: 25;" onclick="setState({ sidebarOpen: false })"></div>` : ''}
+
+          <!-- Sidebar -->
+          <aside class="app-sidebar ${appState.sidebarOpen ? 'mobile-open' : ''}">
+            <div style="padding: 1.5rem 1rem;">
+              <div style="display: flex; align-items: center; gap: 0.65rem; padding: 0 0.5rem; margin-bottom: 1.5rem;">
+                ${renderStacklyLogo({ height: 28, variant: 'white' })}
+                <span style="background: rgba(255, 107, 0, 0.15); border: 1px solid rgba(255, 107, 0, 0.4); color: #ff7800; font-size: 0.625rem; font-weight: 800; padding: 0.15rem 0.45rem; border-radius: 6px; letter-spacing: 0.05em;">SLA</span>
+              </div>
+
+              <div style="font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); padding: 0 0.75rem; margin-bottom: 0.5rem;">
+                Navigation
+              </div>
+
+              <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.25rem;">
+                ${[
+                  { id: 'overview', label: 'SLA Command Center', icon: '📊' },
+                  { id: 'visuals', label: '5 SLA Visuals Showcase', icon: '🖼️', badge: '5 Visuals' },
+                  { id: 'services', label: 'Microservices & Health', icon: '🖥️', badge: '48' },
+                  { id: 'tiers', label: 'SLA Contracts & Tiers', icon: '📜' },
+                  { id: 'incidents', label: 'Incidents & Breach Log', icon: '⚠️', badge: '1 Warning', badgeBg: 'var(--status-warning-bg)', badgeColor: 'var(--status-warning)' },
+                  { id: 'latency', label: 'Global Edge Latency', icon: '🌐' }
+                ].map(item => `
+                  <li>
+                    <button 
+                      type="button" 
+                      onclick="setState({ activeTab: '${item.id}', sidebarOpen: false })"
+                      style="width: 100%; display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.875rem; border-radius: 10px; font-size: 0.875rem; font-weight: 600; border: 1px solid ${appState.activeTab === item.id ? 'var(--brand-border)' : 'transparent'}; background: ${appState.activeTab === item.id ? 'var(--brand-light)' : 'transparent'}; color: ${appState.activeTab === item.id ? 'var(--brand-primary)' : 'var(--text-secondary)'}; cursor: pointer; transition: all 0.15s ease;"
+                    >
+                      <span>${item.icon}</span>
+                      <span>${item.label}</span>
+                      ${item.badge ? `
+                        <span style="margin-left: auto; font-size: 0.6875rem; font-weight: 700; padding: 0.15rem 0.45rem; border-radius: 9999px; background: ${item.badgeBg || 'var(--bg-subtle)'}; color: ${item.badgeColor || 'var(--text-secondary)'};">
+                          ${item.badge}
+                        </span>
+                      ` : ''}
+                    </button>
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+
+            <div style="margin: 1rem; padding: 1rem; background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary);">Quarterly SLA</span>
+                <span style="font-size: 1.15rem; font-weight: 800; color: var(--status-healthy); font-family: var(--font-mono);">99.982%</span>
+              </div>
+              <div style="width: 100%; height: 6px; background: var(--border-light); border-radius: 9999px; overflow: hidden; margin-bottom: 0.5rem;">
+                <div style="width: 99.9%; height: 100%; background: var(--status-healthy); border-radius: 9999px;"></div>
+              </div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);">
+                🛡️ Target: 99.90% &bull; <span style="color: var(--status-healthy); font-weight: 700;">Compliant</span>
+              </div>
+            </div>
+          </aside>
+
+          <!-- Main Content -->
+          <div class="app-main">
+            <!-- Header -->
+            <header class="app-header">
+              <div style="display: flex; align-items: center; gap: 1rem;">
+                <button 
+                  type="button"
+                  style="background: var(--bg-subtle); border: 1px solid var(--border-light); width: 38px; height: 38px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--text-primary);"
+                  onclick="setState({ sidebarOpen: !appState.sidebarOpen })"
+                  title="Toggle Navigation"
+                >
+                  ☰
+                </button>
+
+                <h1 style="font-family: var(--font-heading); font-size: 1.65rem; font-weight: 700; color: var(--text-primary); margin: 0; line-height: 1;">Dashboard</h1>
+
+                <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--status-healthy-bg); border: 1px solid var(--status-healthy-border); padding: 0.3rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; color: var(--status-healthy);" class="hide-mobile">
+                  <span class="status-indicator-dot pulse" style="color: var(--status-healthy);"></span>
+                  <span>99.98% Compliant (All SLA Targets Met)</span>
+                </div>
+              </div>
+
+              <!-- Theme Indicator & Actions -->
+              <div style="display: flex; align-items: center; gap: 0.875rem;">
+                <!-- Dedicated Dark Theme Indicator Pill (Only Dark Mode as requested) -->
+                <div style="display: inline-flex; align-items: center; gap: 0.45rem; background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 9999px; padding: 0.38rem 0.95rem; font-size: 0.8125rem; font-weight: 700; color: #ffffff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);">
+                  <span style="font-size: 0.95rem;">🌙</span>
+                  <span style="letter-spacing: 0.02em;">Dark</span>
+                </div>
+
+                <button 
+                  class="btn-primary" 
+                  onclick="setState({ reportModalOpen: true })" 
+                  style="padding: 0.45rem 0.85rem; font-size: 0.8125rem;"
+                >
+                  📥 Export SLA Report
+                </button>
+
+                <!-- User Profile & Dropdown Menu matching user request screenshot -->
+                <div style="position: relative;">
+                  <button 
+                    type="button" 
+                    id="profile-menu-trigger"
+                    onclick="setState({ profileDropdownOpen: !appState.profileDropdownOpen })"
+                    style="display: flex; align-items: center; gap: 0.65rem; background: var(--bg-surface); border: 1px solid var(--border-light); padding: 0.35rem 0.75rem; border-radius: 10px; cursor: pointer; transition: all 0.15s ease; box-shadow: var(--shadow-sm);"
+                    title="User Profile & Account Menu"
+                  >
+                    <div style="width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #ff6b00, #ff8800); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.78rem; box-shadow: 0 2px 6px rgba(255, 107, 0, 0.35);">
+                      ${u.avatar || 'SA'}
+                    </div>
+                    <div style="display: flex; flex-direction: column; text-align: left;" class="hide-mobile">
+                      <span style="font-size: 0.8125rem; font-weight: 700; color: var(--text-primary); line-height: 1.1;">${u.name}</span>
+                      <span style="font-size: 0.6875rem; color: var(--text-muted);">${u.role}</span>
+                    </div>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted); transform: ${appState.profileDropdownOpen ? 'rotate(180deg)' : 'rotate(0)'}; transition: transform 0.2s ease;">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
+
+                  <!-- Dropdown Menu exactly matching screenshot -->
+                  ${appState.profileDropdownOpen ? `
+                    <div style="position: fixed; inset: 0; z-index: 89;" onclick="setState({ profileDropdownOpen: false })"></div>
+                    
+                    <div style="position: absolute; right: 0; top: calc(100% + 8px); z-index: 90; width: 250px; background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 16px; box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.16), 0 4px 12px rgba(0, 0, 0, 0.08); overflow: hidden; animation: dropdownFadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);">
+                      <!-- User Header (Super Admin / admin@stackly.com) -->
+                      <div style="padding: 1.15rem 1.25rem 0.95rem 1.25rem; border-bottom: 1px solid var(--border-light);">
+                        <div style="font-family: var(--font-sans); font-size: 1.08rem; font-weight: 800; color: var(--text-primary); line-height: 1.2; letter-spacing: -0.01em;">
+                          ${u.name || 'Super Admin'}
+                        </div>
+                        <div style="font-family: var(--font-sans); font-size: 0.84rem; color: var(--text-muted); margin-top: 0.35rem; word-break: break-all;">
+                          ${u.email || 'admin@stackly.com'}
+                        </div>
+                      </div>
+
+                      <!-- Menu Options -->
+                      <div style="padding: 0.45rem 0.45rem 0.35rem 0.45rem;">
+                        <!-- My Profile -->
+                        <button 
+                          type="button" 
+                          class="user-profile-menu-item"
+                          onclick="setState({ profileDropdownOpen: false, profileModalOpen: true })"
+                        >
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                          </svg>
+                          <span>My Profile</span>
+                        </button>
+
+                        <!-- Settings -->
+                        <button 
+                          type="button" 
+                          class="user-profile-menu-item"
+                          onclick="setState({ profileDropdownOpen: false, settingsModalOpen: true })"
+                        >
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                          </svg>
+                          <span>Settings</span>
+                        </button>
+                      </div>
+
+                      <!-- Separator -->
+                      <div style="border-top: 1px solid var(--border-light); margin: 0.2rem 0.5rem;"></div>
+
+                      <!-- Logout Button (Red icon [-> and Red text) -->
+                      <div style="padding: 0.25rem 0.45rem 0.45rem 0.45rem;">
+                        <button 
+                          type="button" 
+                          class="user-profile-menu-item logout-item"
+                          onclick="setState({ profileDropdownOpen: false, currentUser: null })"
+                        >
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                          </svg>
+                          <span>Logout</span>
+                        </button>
+                      </div>
+                    </div>
+                  ` : ''}
+                </div>
+              </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <main class="app-content">
+              <!-- Toast Notification -->
+              ${appState.toastMessage ? `
+                <div style="background: var(--status-healthy-bg); border: 1px solid var(--status-healthy-border); color: var(--status-healthy); padding: 0.75rem 1rem; border-radius: 10px; margin-bottom: 1.25rem; font-size: 0.84rem; display: flex; align-items: center; gap: 0.5rem;">
+                  <span>✅</span>
+                  <span>${appState.toastMessage}</span>
+                </div>
+              ` : ''}
+
+              <!-- Welcome Hero Bar -->
+              <div style="background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 16px; padding: 1.25rem 1.75rem; margin-bottom: 1.75rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; box-shadow: var(--shadow-sm);">
+                <div>
+                  <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary);">
+                    Welcome back, ${u.name}
+                  </h2>
+                  <p style="font-size: 0.84rem; color: var(--text-muted); margin-top: 0.2rem;">
+                    Stackly SLA Telemetry Engine &bull; Environment: <strong style="color: var(--text-secondary);">Production Cluster (Global)</strong> &bull; System Status: <strong style="color: var(--status-healthy);">Optimal</strong>
+                  </p>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                  <div style="background: var(--bg-subtle); border: 1px solid var(--border-light); padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.75rem; color: var(--text-secondary);">
+                    ⏱️ MTTR: <strong style="color: var(--text-primary);">14m 20s</strong>
+                  </div>
+                  <div style="background: var(--status-healthy-bg); border: 1px solid var(--status-healthy-border); padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.75rem; color: var(--status-healthy); font-weight: 700;">
+                    🛡️ Global SLA: 99.982%
+                  </div>
+                </div>
+              </div>
+
+              <!-- 4 KPIs Grid -->
+              <div class="grid-4" style="margin-bottom: 1.75rem;">
+                ${KPI_METRICS.map(kpi => `
+                  <div class="sla-card" style="border-left: 4px solid ${kpi.color}; background: var(--bg-surface); border-top: 1px solid var(--border-light); border-right: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                      <span style="font-size: 0.8125rem; font-weight: 600; color: var(--text-secondary);">${kpi.label}</span>
+                      <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--bg-subtle); border: 1px solid var(--border-light); display: flex; align-items: center; justify-content: center; font-size: 1rem;">
+                        ${kpi.icon}
+                      </div>
+                    </div>
+                    <div style="font-size: 1.875rem; font-weight: 800; color: var(--text-primary); font-family: var(--font-sans); letter-spacing: -0.02em; margin-bottom: 0.25rem;">
+                      ${kpi.value}
+                    </div>
+                    <div style="font-size: 0.78125rem; color: var(--text-muted);">${kpi.sub}</div>
+                    <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border-light); font-size: 0.75rem; color: var(--status-healthy); font-weight: 600;">
+                      ${kpi.change}
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+
+              <!-- 5 SLA Visuals Showcase Component -->
+              ${(appState.activeTab === 'overview' || appState.activeTab === 'visuals') ? `
+                <div class="sla-card" style="margin-bottom: 1.75rem; background: var(--bg-surface); border: 1px solid var(--border-light);">
+                  <div class="sla-card-header">
+                    <div>
+                      <div class="sla-card-title">
+                        <span style="color: var(--text-primary);">🏆 Stackly SLA Infrastructure & Reliability Pillars</span>
+                        <span class="status-pill healthy" style="margin-left: 0.5rem;">5 Facilities</span>
+                      </div>
+                      <div class="sla-card-subtitle" style="color: var(--text-muted);">
+                        Multi-region cloud redundancy, 24/7 NOC command center, low-latency edge routing, and automated compliance shields.
+                      </div>
+                    </div>
+                    <button class="btn-secondary" onclick="setState({ zoomImage: SLA_SHOWCASE_IMAGES[${appState.selectedImageIdx}] })" style="padding: 0.4rem 0.75rem; font-size: 0.75rem;">
+                      🔍 Full Zoom
+                    </button>
+                  </div>
+
+                  <!-- Featured Hero Box -->
+                  <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.5rem; background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: 16px; padding: 1.25rem; margin-bottom: 1.25rem;">
+                    <div 
+                      style="position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 16/9; background: var(--border-light); cursor: pointer;"
+                      onclick="setState({ zoomImage: SLA_SHOWCASE_IMAGES[${appState.selectedImageIdx}] })"
+                    >
+                      <img src="${hero.img}" alt="${hero.title}" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="this.src='https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&auto=format&fit=crop&q=80'" />
+                      <div style="position: absolute; top: 0.75rem; left: 0.75rem; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); padding: 0.3rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; color: #ffffff;">
+                        ${hero.tag}
+                      </div>
+                      <div style="position: absolute; bottom: 0.75rem; right: 0.75rem; background: rgba(0,0,0,0.85); color: white; padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.75rem; font-weight: 700; font-family: var(--font-mono);">
+                        ${hero.metric}
+                      </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 0.875rem;">
+                      <div>
+                        <span style="font-size: 0.75rem; font-weight: 700; color: var(--brand-primary); text-transform: uppercase; letter-spacing: 0.05em;">
+                          ${hero.cat}
+                        </span>
+                        <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); margin-top: 0.25rem;">
+                          ${hero.title}
+                        </h3>
+                      </div>
+                      <p style="font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6;">
+                        ${hero.desc}
+                      </p>
+                      <div style="background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 10px; padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                          <div style="font-size: 0.6875rem; color: var(--text-muted);">Verified SLA Uptime</div>
+                          <div style="font-size: 1.15rem; font-weight: 800; color: var(--status-healthy); font-family: var(--font-mono);">
+                            ${hero.metric}
+                          </div>
+                        </div>
+                        <span class="status-pill healthy">🛡️ Audited 2026</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 5 Thumbnails -->
+                  <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.875rem;">
+                    ${SLA_SHOWCASE_IMAGES.map((imgItem, idx) => `
+                      <div
+                        onclick="setState({ selectedImageIdx: ${idx} })"
+                        style="cursor: pointer; border: ${appState.selectedImageIdx === idx ? '2px solid var(--brand-primary)' : '1px solid var(--border-light)'}; border-radius: 12px; padding: 0.375rem; background: var(--bg-surface); box-shadow: ${appState.selectedImageIdx === idx ? '0 4px 12px rgba(255,107,0,0.25)' : 'none'}; transition: all 0.15s ease;"
+                      >
+                        <div style="border-radius: 8px; overflow: hidden; aspect-ratio: 16/10; margin-bottom: 0.5rem;">
+                          <img src="${imgItem.img}" alt="${imgItem.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&auto=format&fit=crop&q=80'" />
+                        </div>
+                        <div style="font-size: 0.75rem; font-weight: ${appState.selectedImageIdx === idx ? '700' : '600'}; color: ${appState.selectedImageIdx === idx ? 'var(--brand-primary)' : 'var(--text-secondary)'}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                          ${imgItem.tag}
+                        </div>
+                        <div style="font-size: 0.6875rem; color: var(--text-muted); font-family: var(--font-mono);">
+                          ${imgItem.metric}
+                        </div>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+              ` : ''}
+
+              <!-- Uptime Trend Chart -->
+              ${(appState.activeTab === 'overview' || appState.activeTab === 'latency') ? `
+                <div class="sla-card" style="margin-bottom: 1.75rem; background: var(--bg-surface); border: 1px solid var(--border-light);">
+                  <div class="sla-card-header">
+                    <div>
+                      <div class="sla-card-title">
+                        <span style="color: var(--text-primary);">📈 Real-time SLA Performance Trend (24h Window)</span>
+                        <span class="status-pill healthy" style="margin-left: 0.5rem;">Target: 99.950%</span>
+                      </div>
+                      <div class="sla-card-subtitle" style="color: var(--text-muted);">
+                        Continuous synthetic probes across all 24 ingress gateways. Current: 99.982%
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- SVG Chart -->
+                  <div style="width: 100%; overflow-x: auto;">
+                    <svg viewBox="0 0 700 180" style="width: 100%; height: auto; min-width: 500px; display: block;">
+                      <defs>
+                        <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stop-color="#ff6b00" stop-opacity="0.3" />
+                          <stop offset="100%" stop-color="#ff6b00" stop-opacity="0.0" />
+                        </linearGradient>
+                      </defs>
+                      <line x1="40" y1="30" x2="660" y2="30" stroke="var(--border-light)" stroke-dasharray="3 3" />
+                      <line x1="40" y1="80" x2="660" y2="80" stroke="var(--border-light)" stroke-dasharray="3 3" />
+                      <line x1="40" y1="130" x2="660" y2="130" stroke="var(--border-light)" />
+                      
+                      <!-- SLA Baseline Line (99.95%) -->
+                      <line x1="40" y1="110" x2="660" y2="110" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4 4" />
+                      <text x="650" y="105" text-anchor="end" fill="#dc2626" font-size="10" font-weight="700">Contractual SLA Minimum (99.950%)</text>
+
+                      <!-- Curve & Area -->
+                      <path d="M 40,40 L 95,45 L 150,55 L 205,50 L 260,65 L 315,95 L 370,75 L 425,60 L 480,50 L 535,45 L 590,48 L 645,52 L 645,130 L 40,130 Z" fill="url(#chartGrad)" />
+                      <path d="M 40,40 L 95,45 L 150,55 L 205,50 L 260,65 L 315,95 L 370,75 L 425,60 L 480,50 L 535,45 L 590,48 L 645,52" fill="none" stroke="#ff6b00" stroke-width="3" stroke-linecap="round" />
+
+                      <!-- Points -->
+                      ${[
+                        { x: 40, y: 40, t: '00:00' }, { x: 95, y: 45, t: '02:00' }, { x: 150, y: 55, t: '04:00' },
+                        { x: 205, y: 50, t: '06:00' }, { x: 260, y: 65, t: '08:00' }, { x: 315, y: 95, t: '10:00' },
+                        { x: 370, y: 75, t: '12:00' }, { x: 425, y: 60, t: '14:00' }, { x: 480, y: 50, t: '16:00' },
+                        { x: 535, y: 45, t: '18:00' }, { x: 590, y: 48, t: '20:00' }, { x: 645, y: 52, t: 'Now' }
+                      ].map(p => `
+                        <circle cx="${p.x}" cy="${p.y}" r="4" fill="var(--bg-surface)" stroke="#ff6b00" stroke-width="2"></circle>
+                        <text x="${p.x}" y="150" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-weight="600">${p.t}</text>
+                      `).join('')}
+                    </svg>
+                  </div>
+
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-light); font-size: 0.75rem; color: var(--text-muted);">
+                    <div style="display: flex; gap: 1rem;">
+                      <span>Measured Uptime: <strong style="color: var(--text-primary);">99.982%</strong></span>
+                      <span>SLA Cap: <strong style="color: #ef4444;">99.950%</strong></span>
+                      <span>⚡ Avg Latency: <strong style="color: var(--text-primary);">22ms</strong></span>
+                    </div>
+                    <span style="color: var(--status-healthy); font-weight: 600;">✅ Zero SLA Breach Periods</span>
+                  </div>
+                </div>
+              ` : ''}
+
+              <!-- Microservices Matrix -->
+              ${(appState.activeTab === 'overview' || appState.activeTab === 'services') ? `
+                <div class="sla-card" style="margin-bottom: 1.75rem; background: var(--bg-surface); border: 1px solid var(--border-light);">
+                  <div class="sla-card-header">
+                    <div>
+                      <div class="sla-card-title">
+                        <span style="color: var(--text-primary);">🖥️ Service-Level Performance & Uptime Matrix</span>
+                        <span class="status-pill neutral" style="margin-left: 0.5rem;">${filteredServices.length} Monitored</span>
+                      </div>
+                      <div class="sla-card-subtitle" style="color: var(--text-muted);">
+                        Per-service SLA commitments, response times, throughput, and error rates.
+                      </div>
+                    </div>
+                    <div>
+                      <input 
+                        type="text" 
+                        placeholder="Search services..." 
+                        value="${appState.searchTerm}" 
+                        oninput="setState({ searchTerm: this.value })"
+                        style="padding: 0.45rem 0.85rem; border: 1px solid var(--border-light); border-radius: 8px; font-size: 0.8125rem; background: var(--bg-subtle); color: var(--text-primary); outline: none;"
+                      />
+                    </div>
+                  </div>
+
+                  <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.8125rem;">
+                      <thead>
+                        <tr style="border-bottom: 2px solid var(--border-light); color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase;">
+                          <th style="padding: 0.75rem 1rem;">Microservice</th>
+                          <th style="padding: 0.75rem 0.75rem;">SLA Tier</th>
+                          <th style="padding: 0.75rem 0.75rem;">Uptime</th>
+                          <th style="padding: 0.75rem 0.75rem;">Latency</th>
+                          <th style="padding: 0.75rem 0.75rem;">Throughput</th>
+                          <th style="padding: 0.75rem 0.75rem;">Error Rate</th>
+                          <th style="padding: 0.75rem 1rem; text-align: right;">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        ${filteredServices.map(srv => {
+                          const isDegraded = srv.status === 'Degraded';
+                          return `
+                            <tr style="border-bottom: 1px solid var(--border-light);">
+                              <td style="padding: 0.875rem 1rem;">
+                                <div style="font-weight: 700; color: var(--text-primary);">${srv.name}</div>
+                                <div style="font-size: 0.72rem; color: var(--text-muted);">${srv.type}</div>
+                              </td>
+                              <td style="padding: 0.875rem 0.75rem;">
+                                <span style="font-size: 0.72rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 4px; background: ${srv.tier.includes('Platinum') ? 'rgba(255, 107, 0, 0.12)' : 'rgba(245, 158, 11, 0.12)'}; color: ${srv.tier.includes('Platinum') ? 'var(--brand-primary)' : 'var(--status-warning)'}; border: 1px solid var(--border-light);">
+                                  ${srv.tier}
+                                </span>
+                              </td>
+                              <td style="padding: 0.875rem 0.75rem; font-weight: 800; font-family: var(--font-mono); color: ${isDegraded ? 'var(--status-warning)' : 'var(--status-healthy)'};">
+                                ${srv.uptime}
+                              </td>
+                              <td style="padding: 0.875rem 0.75rem; font-family: var(--font-mono); color: var(--text-primary);">${srv.latency}</td>
+                              <td style="padding: 0.875rem 0.75rem; font-family: var(--font-mono); color: var(--text-secondary);">${srv.req}</td>
+                              <td style="padding: 0.875rem 0.75rem; font-family: var(--font-mono); color: ${isDegraded ? 'var(--status-critical)' : 'var(--status-healthy)'};">${srv.err}</td>
+                              <td style="padding: 0.875rem 1rem; text-align: right;">
+                                <span class="status-pill ${isDegraded ? 'warning' : 'healthy'}">
+                                  ${srv.status}
+                                </span>
+                              </td>
+                            </tr>
+                          `;
+                        }).join('')}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ` : ''}
+
+              <!-- SLA Tiers Cards -->
+              ${(appState.activeTab === 'overview' || appState.activeTab === 'tiers') ? `
+                <div class="sla-card" style="margin-bottom: 1.75rem; background: var(--bg-surface); border: 1px solid var(--border-light);">
+                  <div class="sla-card-header">
+                    <div>
+                      <div class="sla-card-title">
+                        <span style="color: var(--text-primary);">📜 SLA Contract Tiers & Downtime Budget</span>
+                        <span class="status-pill healthy" style="margin-left: 0.5rem;">100% SLA Adherence</span>
+                      </div>
+                      <div class="sla-card-subtitle" style="color: var(--text-muted);">
+                        Legally binding service credits and contractual downtime budgets across all client tiers.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="grid-4">
+                    ${SLA_TIERS.map(t => `
+                      <div style="background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 12px; padding: 1.125rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                          <span style="font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 9999px; background: var(--bg-subtle); color: var(--text-primary); border: 1px solid var(--border-light);">
+                            ${t.tier}
+                          </span>
+                          <span style="font-size: 0.7rem; color: var(--text-muted);">${t.clients} clients</span>
+                        </div>
+                        <div style="font-size: 1.4rem; font-weight: 800; color: var(--text-primary); font-family: var(--font-mono); margin-bottom: 0.25rem;">
+                          ${t.current} <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">/ ${t.target}</span>
+                        </div>
+                        <div style="background: var(--bg-subtle); border: 1px solid var(--border-light); padding: 0.5rem; border-radius: 6px; font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                          ${t.downtime}
+                        </div>
+                        <div style="font-size: 0.7rem; color: var(--status-healthy); font-weight: 600;">
+                          Clause: ${t.refund}
+                        </div>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+              ` : ''}
+
+              <!-- Incidents & Breaches -->
+              ${(appState.activeTab === 'overview' || appState.activeTab === 'incidents') ? `
+                <div class="sla-card" style="margin-bottom: 1.75rem; background: var(--bg-surface); border: 1px solid var(--border-light);">
+                  <div class="sla-card-header">
+                    <div>
+                      <div class="sla-card-title">
+                        <span style="color: var(--text-primary);">⚠️ Active Incidents & SLA Breach Countdown</span>
+                        <span class="status-pill warning" style="margin-left: 0.5rem;">1 Warning</span>
+                      </div>
+                      <div class="sla-card-subtitle" style="color: var(--text-muted);">
+                        Real-time incident response telemetry and MTTR breach countdown timers.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style="border: 1px solid var(--status-warning-border); border-radius: 12px; padding: 1.25rem; background: var(--status-warning-bg); margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
+                      <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 4px; background: var(--bg-surface); color: var(--status-warning); border: 1px solid var(--status-warning-border);">
+                          P2 - High
+                        </span>
+                        <strong style="color: var(--text-primary);">INC-4821: WebSocket Connection Pool Saturation in AP-South-1</strong>
+                      </div>
+                      <div style="font-size: 0.75rem; font-weight: 700; color: var(--status-warning); background: var(--bg-surface); padding: 0.25rem 0.625rem; border-radius: 6px; border: 1px solid var(--status-warning-border);">
+                        ⏱️ Time to SLA Breach: 26 mins
+                      </div>
+                    </div>
+                    <p style="font-size: 0.8125rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+                      Service: Real-time Notification & WebSockets &bull; Started: 34 mins ago &bull; Lead: Sarah Chen (Principal SRE)
+                    </p>
+                    <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+                      <button 
+                        class="btn-primary" 
+                        onclick="showToast('Automated SRE mitigation runbook executed! Auto-scaled 8 additional socket workers in Mumbai.')"
+                        style="padding: 0.4rem 0.75rem; font-size: 0.75rem;"
+                      >
+                        ⚡ Execute Mitigation Script
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ` : ''}
+
+              <!-- Regional Edge Latency -->
+              ${(appState.activeTab === 'overview' || appState.activeTab === 'latency') ? `
+                <div class="sla-card" style="margin-bottom: 1.75rem; background: var(--bg-surface); border: 1px solid var(--border-light);">
+                  <div class="sla-card-header">
+                    <div>
+                      <div class="sla-card-title">
+                        <span style="color: var(--text-primary);">🌐 Global Edge Nodes & Regional SLA Latency</span>
+                        <span class="status-pill healthy" style="margin-left: 0.5rem;">340+ Edge PoPs</span>
+                      </div>
+                      <div class="sla-card-subtitle" style="color: var(--text-muted);">
+                        Sub-millisecond packet latency monitoring across five continental edge hubs.
+                      </div>
+                    </div>
+                    <button class="btn-secondary" onclick="showToast('Global edge probe completed: 340 PoPs verified. 100% routes operational.')" style="padding: 0.4rem 0.75rem; font-size: 0.75rem;">
+                      📡 Probe Edge PoPs
+                    </button>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
+                    ${[
+                      { reg: "North America (Virginia/Oregon)", uptime: "99.994%", ping: "14ms", nodes: 96, status: "Optimal" },
+                      { reg: "Europe (Frankfurt/London)", uptime: "99.988%", ping: "18ms", nodes: 74, status: "Optimal" },
+                      { reg: "Asia-Pacific (Tokyo/Mumbai)", uptime: "99.952%", ping: "46ms", nodes: 68, status: "Investigating" },
+                      { reg: "South America (São Paulo)", uptime: "99.980%", ping: "64ms", nodes: 26, status: "Optimal" }
+                    ].map(r => `
+                      <div style="background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 12px; padding: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                          <strong style="font-size: 0.84rem; color: var(--text-primary);">${r.reg}</strong>
+                          <span class="status-pill ${r.status === 'Optimal' ? 'healthy' : 'warning'}" style="font-size: 0.6875rem;">${r.status}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
+                          <span>Uptime: <strong style="color: var(--status-healthy); font-family: var(--font-mono);">${r.uptime}</strong></span>
+                          <span>Ping: <strong style="color: var(--text-primary); font-family: var(--font-mono);">${r.ping}</strong></span>
+                        </div>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+              ` : ''}
+            </main>
+
+            <!-- Footer -->
+            <footer style="border-top: 1px solid var(--border-light); background: var(--bg-surface); padding: 1.25rem 2rem; font-size: 0.8125rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+              <div>
+                <strong style="color: var(--text-primary);">Stackly Cloud SLA Command Center</strong> &bull; Version: v3.8.4-LTS &bull; <span style="color: var(--status-healthy); font-weight: 600;">Zero Active Penalties</span>
+              </div>
+              <div>
+                &copy; 2026 Stackly Technologies Inc. All rights reserved.
+              </div>
+            </footer>
+          </div>
+
+          <!-- Zoom Image Modal -->
+          ${appState.zoomImage ? `
+            <div class="modal-backdrop" onclick="setState({ zoomImage: null })">
+              <div class="modal-box" onclick="event.stopPropagation()">
+                <img src="${appState.zoomImage.img}" alt="${appState.zoomImage.title}" style="width: 100%; aspect-ratio: 16/9; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&auto=format&fit=crop&q=80'" />
+                <div style="padding: 1.5rem;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary);">${appState.zoomImage.title}</h3>
+                    <span class="status-pill healthy">${appState.zoomImage.metric}</span>
+                  </div>
+                  <p style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.6;">${appState.zoomImage.desc}</p>
+                  <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                    <button class="btn-secondary" onclick="setState({ zoomImage: null })">Close Preview</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Report Modal -->
+          ${appState.reportModalOpen ? `
+            <div class="modal-backdrop" onclick="setState({ reportModalOpen: false })">
+              <div class="modal-box" onclick="event.stopPropagation()" style="padding: 2rem; max-width: 680px;">
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-light); padding-bottom: 1rem; margin-bottom: 1.25rem;">
+                  <div>
+                    <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary);">Executive SLA Compliance Audit Report</h2>
+                    <p style="font-size: 0.8125rem; color: var(--text-muted);">Stackly Cloud Technologies &bull; Q3 2026 Audit</p>
+                  </div>
+                  <button onclick="setState({ reportModalOpen: false })" style="border: none; background: var(--bg-subtle); color: var(--text-primary); width: 32px; height: 32px; border-radius: 50%; cursor: pointer;">✕</button>
+                </div>
+                <div style="background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem; font-size: 0.84rem;">
+                  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1rem;">
+                    <div>
+                      <div style="font-size: 0.7rem; color: var(--text-muted);">MEASURED UPTIME</div>
+                      <div style="font-size: 1.25rem; font-weight: 800; color: var(--status-healthy);">${KPI_METRICS[0].value}</div>
+                    </div>
+                    <div>
+                      <div style="font-size: 0.7rem; color: var(--text-muted);">MTTR AVERAGE</div>
+                      <div style="font-size: 1.25rem; font-weight: 800; color: var(--brand-primary);">${KPI_METRICS[2].value}</div>
+                    </div>
+                    <div>
+                      <div style="font-size: 0.7rem; color: var(--text-muted);">PENALTY LIABILITY</div>
+                      <div style="font-size: 1.25rem; font-weight: 800; color: var(--status-healthy);">$0.00</div>
+                    </div>
+                  </div>
+                  <p style="color: var(--text-secondary); line-height: 1.6;">
+                    This document certifies that Stackly Cloud has fully complied with all contractual SLA commitments across all customer enterprise tiers for the Q3 2026 audit interval.
+                  </p>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+                  <button class="btn-secondary" onclick="window.print()">🖨️ Print</button>
+                  <button class="btn-primary" onclick="showToast('Downloaded Stackly_SLA_Audit_Report.pdf'); setState({ reportModalOpen: false });">📥 Download Signed PDF</button>
+                </div>
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- My Profile Modal -->
+          ${appState.profileModalOpen ? `
+            <div class="modal-backdrop" onclick="setState({ profileModalOpen: false })">
+              <div class="modal-box" onclick="event.stopPropagation()" style="padding: 2rem; max-width: 600px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--border-light); padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
+                  <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="width: 54px; height: 54px; border-radius: 50%; background: linear-gradient(135deg, #ff6b00, #ff8800); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.35rem; box-shadow: 0 4px 14px rgba(255, 107, 0, 0.4);">
+                      ${u.avatar || 'SA'}
+                    </div>
+                    <div>
+                      <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary); margin: 0; line-height: 1.2;">${u.name || 'Super Admin'}</h2>
+                      <p style="font-size: 0.84rem; color: var(--text-muted); margin-top: 0.2rem;">${u.email || 'admin@stackly.com'}</p>
+                    </div>
+                  </div>
+                  <button onclick="setState({ profileModalOpen: false })" style="border: none; background: var(--bg-subtle); color: var(--text-primary); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem;">✕</button>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem;">
+                    <div style="background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: 12px; padding: 1rem;">
+                      <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.04em;">Assigned Role</div>
+                      <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-top: 0.25rem;">${u.role || 'Super Admin'}</div>
+                      <div style="font-size: 0.75rem; color: var(--brand-primary); margin-top: 0.15rem;">Full SLA Authority</div>
+                    </div>
+                    <div style="background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: 12px; padding: 1rem;">
+                      <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.04em;">Security Verification</div>
+                      <div style="font-size: 0.95rem; font-weight: 700; color: var(--status-healthy); margin-top: 0.25rem;">🛡️ SOC-2 &bull; 2FA Active</div>
+                      <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.15rem;">Hardware Token Enforced</div>
+                    </div>
+                  </div>
+
+                  <div style="background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: 12px; padding: 1rem;">
+                    <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 0.4rem;">Permissions & Scope</div>
+                    <p style="font-size: 0.8125rem; color: var(--text-secondary); line-height: 1.5; margin: 0;">
+                      Global infrastructure cluster telemetry, contractual SLA thresholds override, real-time war room coordination, and financial penalty disbursement authorization.
+                    </p>
+                  </div>
+
+                  <div style="background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: 12px; padding: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                      <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Live Telemetry API Key</span>
+                      <span style="font-size: 0.7rem; color: var(--status-healthy); font-weight: 600;">Active</span>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; background: var(--bg-surface); border: 1px solid var(--border-light); padding: 0.5rem 0.75rem; border-radius: 8px; font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-primary);">
+                      <span>sk_live_stackly_enterprise_99999_a8b7c6</span>
+                      <button onclick="showToast('API Key copied to clipboard!')" style="background: none; border: none; cursor: pointer; font-size: 0.85rem;" title="Copy">📋</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+                  <button class="btn-secondary" onclick="setState({ profileModalOpen: false })">Close</button>
+                  <button class="btn-primary" onclick="showToast('Profile updated successfully'); setState({ profileModalOpen: false });">Save Changes</button>
+                </div>
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Settings Modal -->
+          ${appState.settingsModalOpen ? `
+            <div class="modal-backdrop" onclick="setState({ settingsModalOpen: false })">
+              <div class="modal-box" onclick="event.stopPropagation()" style="padding: 2rem; max-width: 600px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light); padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
+                  <div>
+                    <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary); margin: 0;">SLA Console Settings</h2>
+                    <p style="font-size: 0.8125rem; color: var(--text-muted); margin-top: 0.2rem;">Configure theme, notifications & telemetry sync preferences</p>
+                  </div>
+                  <button onclick="setState({ settingsModalOpen: false })" style="border: none; background: var(--bg-subtle); color: var(--text-primary); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem;">✕</button>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                  <!-- Theme Selection -->
+                  <div>
+                    <label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 0.5rem;">
+                      Dashboard Visual Theme
+                    </label>
+                    <div style="background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 12px; padding: 0.85rem 1rem; display: flex; align-items: center; justify-content: space-between;">
+                      <div style="display: flex; align-items: center; gap: 0.65rem;">
+                        <span style="font-size: 1.25rem;">🌙</span>
+                        <div>
+                          <div style="font-weight: 800; font-size: 0.9rem; color: #ffffff;">Dark Theme</div>
+                          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">High-Contrast Obsidian &amp; Cyber Orange (Active)</div>
+                        </div>
+                      </div>
+                      <span style="font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.65rem; border-radius: 9999px; background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.4);">Active</span>
+                    </div>
+                  </div>
+
+                  <!-- Alert Notifications -->
+                  <div style="background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: 12px; padding: 1rem;">
+                    <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem;">
+                      Incident Notification Channels
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+                      <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-size: 0.84rem; color: var(--text-primary);">
+                        <span>🔔 Audio alert on SLA Breach Warning (&lt; 30m MTTR)</span>
+                        <input type="checkbox" checked style="accent-color: #ff6b00; width: 16px; height: 16px;" />
+                      </label>
+                      <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-size: 0.84rem; color: var(--text-primary);">
+                        <span>📱 Urgent P1 PagerDuty SMS Escalation</span>
+                        <input type="checkbox" checked style="accent-color: #ff6b00; width: 16px; height: 16px;" />
+                      </label>
+                      <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-size: 0.84rem; color: var(--text-primary);">
+                        <span>💬 Auto-generate Slack Incident War Room</span>
+                        <input type="checkbox" checked style="accent-color: #ff6b00; width: 16px; height: 16px;" />
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Refresh Rate -->
+                  <div>
+                    <label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 0.4rem;">
+                      Telemetry Polling Interval
+                    </label>
+                    <select style="width: 100%; padding: 0.6rem 0.85rem; border-radius: 8px; background: var(--bg-surface); border: 1px solid var(--border-light); color: var(--text-primary); font-size: 0.84rem;">
+                      <option value="5">Real-Time WebSocket (Sub-second stream)</option>
+                      <option value="15" selected>Every 15 Seconds (Recommended)</option>
+                      <option value="60">Every 1 Minute</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+                  <button class="btn-secondary" onclick="setState({ settingsModalOpen: false })">Cancel</button>
+                  <button class="btn-primary" onclick="showToast('Settings saved successfully!'); setState({ settingsModalOpen: false });">Save Preferences</button>
+                </div>
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    function renderApp() {
+      const appContainer = document.getElementById('app');
+      if (!appState.currentUser) {
+        appContainer.innerHTML = renderLogin();
+      } else {
+        appContainer.innerHTML = renderDashboard();
+      }
+    }
+
+    function handleLoginSubmit(event) {
+      event.preventDefault();
+      const user = DEMO_USERS.find(u => u.role === appState.selectedRole) || DEMO_USERS[0];
+      setState({ currentUser: user, loginModalOpen: false });
+    }
+
+    // Initial Render - Immediate, zero dependencies, zero blank screens!
+    renderApp();
+  </script>
+</body>
+</html>

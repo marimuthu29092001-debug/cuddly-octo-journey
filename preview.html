@@ -1,0 +1,2361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Stackly — Enterprise SLA Performance & Uptime Dashboard</title>
+  
+  <!-- Google Fonts: Playfair Display + Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,600;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- React & Babel Standalone for Instant Zero-Setup Preview -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* ==========================================================================
+       STACKLY SLA DASHBOARD - DESIGN SYSTEM (3 THEMES: LIGHT PRO, DARK, ORANGE)
+       ========================================================================== */
+    :root, [data-theme="dark"] {
+      --bg-primary: #090a0f;
+      --bg-secondary: #0f1118;
+      --bg-surface: #12141f;
+      --bg-surface-elevated: #1a1d2d;
+      --bg-subtle: #191c2b;
+      --bg-muted: #24293e;
+      --text-primary: #ffffff;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --brand-primary: #ff6b00;
+      --brand-primary-hover: #ff8533;
+      --brand-light: rgba(255, 107, 0, 0.15);
+      --brand-border: rgba(255, 107, 0, 0.4);
+      --brand-gradient: linear-gradient(135deg, #ff6b00 0%, #ff8800 45%, #f59e0b 100%);
+      --status-healthy: #10b981;
+      --status-healthy-bg: rgba(16, 185, 129, 0.15);
+      --status-healthy-border: rgba(16, 185, 129, 0.4);
+      --status-warning: #ff9800;
+      --status-warning-bg: rgba(255, 152, 0, 0.15);
+      --status-warning-border: rgba(255, 152, 0, 0.4);
+      --status-critical: #ef4444;
+      --status-critical-bg: rgba(239, 68, 68, 0.15);
+      --status-critical-border: rgba(239, 68, 68, 0.4);
+      --border-light: #24283c;
+      --border-subtle: #191c2b;
+      --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+      --shadow-md: 0 6px 16px -2px rgba(0, 0, 0, 0.6);
+      --shadow-lg: 0 12px 28px -4px rgba(0, 0, 0, 0.7);
+      --shadow-xl: 0 20px 40px -6px rgba(0, 0, 0, 0.8);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --radius-full: 9999px;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-heading: 'Playfair Display', Georgia, 'Times New Roman', serif;
+      --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #090a0f;
+      --bg-secondary: #0f1118;
+      --bg-surface: #12141f;
+      --bg-surface-elevated: #1a1d2d;
+      --bg-subtle: #191c2b;
+      --bg-muted: #24293e;
+      --text-primary: #ffffff;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --brand-primary: #ff6b00;
+      --brand-primary-hover: #ff8533;
+      --brand-light: rgba(255, 107, 0, 0.15);
+      --brand-border: rgba(255, 107, 0, 0.4);
+      --brand-gradient: linear-gradient(135deg, #ff6b00 0%, #ff8800 45%, #f59e0b 100%);
+      --status-healthy: #10b981;
+      --status-healthy-bg: rgba(16, 185, 129, 0.15);
+      --status-healthy-border: rgba(16, 185, 129, 0.4);
+      --status-warning: #ff9800;
+      --status-warning-bg: rgba(255, 152, 0, 0.15);
+      --status-warning-border: rgba(255, 152, 0, 0.4);
+      --status-critical: #ef4444;
+      --status-critical-bg: rgba(239, 68, 68, 0.15);
+      --status-critical-border: rgba(239, 68, 68, 0.4);
+      --border-light: #24283c;
+      --border-subtle: #191c2b;
+      --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+      --shadow-md: 0 6px 16px -2px rgba(0, 0, 0, 0.6);
+      --shadow-lg: 0 12px 28px -4px rgba(0, 0, 0, 0.7);
+      --shadow-xl: 0 20px 40px -6px rgba(0, 0, 0, 0.8);
+    }
+
+    [data-theme="orange"] {
+      --bg-primary: #0b0c13;
+      --bg-secondary: #141520;
+      --bg-surface: #191b29;
+      --bg-surface-elevated: #222538;
+      --bg-subtle: rgba(255, 107, 0, 0.08);
+      --bg-muted: rgba(255, 107, 0, 0.16);
+      --text-primary: #ffffff;
+      --text-secondary: #fed7aa;
+      --text-muted: #fdba74;
+      --brand-primary: #ff6b00;
+      --brand-primary-hover: #ff8533;
+      --brand-light: rgba(255, 107, 0, 0.18);
+      --brand-border: rgba(255, 107, 0, 0.45);
+      --brand-gradient: linear-gradient(135deg, #ff6b00 0%, #ff8800 45%, #f59e0b 100%);
+      --status-healthy: #10b981;
+      --status-healthy-bg: rgba(16, 185, 129, 0.18);
+      --status-healthy-border: rgba(16, 185, 129, 0.45);
+      --status-warning: #ff9800;
+      --status-warning-bg: rgba(255, 152, 0, 0.18);
+      --status-warning-border: rgba(255, 152, 0, 0.45);
+      --status-critical: #ef4444;
+      --status-critical-bg: rgba(239, 68, 68, 0.18);
+      --status-critical-border: rgba(239, 68, 68, 0.45);
+      --border-light: rgba(255, 107, 0, 0.25);
+      --border-subtle: rgba(255, 107, 0, 0.12);
+      --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.6);
+      --shadow-md: 0 6px 16px -2px rgba(0, 0, 0, 0.7);
+      --shadow-lg: 0 12px 28px -4px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 107, 0, 0.15);
+      --shadow-xl: 0 20px 40px -6px rgba(0, 0, 0, 0.9), 0 0 30px rgba(255, 107, 0, 0.25);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.015em;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background: var(--brand-gradient);
+      color: #05141f;
+      font-weight: 700;
+      font-size: 0.875rem;
+      padding: 0.625rem 1.25rem;
+      border-radius: var(--radius-md);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0, 198, 167, 0.35);
+      transition: all 0.2s ease;
+    }
+    .btn-primary:hover {
+      box-shadow: 0 6px 20px rgba(0, 198, 167, 0.55);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-light);
+      font-weight: 600;
+      font-size: 0.875rem;
+      padding: 0.625rem 1.125rem;
+      border-radius: var(--radius-md);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-secondary:hover {
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      border-color: #cbd5e1;
+    }
+
+    /* Cards */
+    .sla-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .sla-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: #cbd5e1;
+    }
+    .sla-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .sla-card-title {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+    }
+    .sla-card-subtitle {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Pills & Badges */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.25rem 0.625rem;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .status-pill.healthy {
+      background-color: var(--status-healthy-bg);
+      color: #065f46;
+      border: 1px solid var(--status-healthy-border);
+    }
+    .status-pill.warning {
+      background-color: var(--status-warning-bg);
+      color: #92400e;
+      border: 1px solid var(--status-warning-border);
+    }
+    .status-pill.neutral {
+      background-color: var(--bg-subtle);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-light);
+    }
+    .status-indicator-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: currentColor;
+    }
+    .status-indicator-dot.pulse {
+      animation: pulseDot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.2); }
+    }
+
+    /* Grids */
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+    }
+    @media (max-width: 1200px) {
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .grid-4 { grid-template-columns: 1fr; }
+    }
+
+    /* 5-Image Slideshow Landing & Login Styles */
+    .landing-login-wrapper {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      background-color: #070d18;
+      color: #ffffff;
+      font-family: var(--font-sans);
+    }
+    .bg-slideshow-container {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .bg-slide-item {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      opacity: 0;
+      transform: scale(1.01);
+      transition: opacity 1.3s cubic-bezier(0.4, 0, 0.2, 1), transform 7s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .bg-slide-item.active {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+    .bg-overlay-gradient {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 40%, rgba(10, 18, 36, 0.55) 0%, rgba(7, 13, 26, 0.82) 65%, rgba(4, 8, 16, 0.96) 100%),
+                  linear-gradient(to bottom, rgba(7, 13, 26, 0.65) 0%, rgba(7, 13, 26, 0.85) 60%, rgba(4, 8, 16, 0.98) 100%);
+      pointer-events: none;
+    }
+    .bg-overlay-grid {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+      background-size: 32px 32px;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    .landing-navbar {
+      position: relative;
+      z-index: 15;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 3rem;
+      max-width: 1700px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .landing-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+    }
+    .landing-brand-name {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      color: #ffffff;
+    }
+    .landing-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      background: rgba(10, 15, 26, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 0.35rem 0.65rem;
+      border-radius: 9999px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);
+    }
+    .nav-link {
+      background: none;
+      border: 1px solid transparent;
+      font-family: var(--font-sans);
+      font-size: 0.84rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.75);
+      cursor: pointer;
+      padding: 0.4rem 0.8rem;
+      border-radius: 9999px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      text-decoration: none;
+      outline: none;
+    }
+    .nav-link:hover {
+      color: #ff9800;
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .nav-link.active {
+      color: #ff7800 !important;
+      font-weight: 700;
+      background: rgba(255, 107, 0, 0.14);
+      border-color: rgba(255, 107, 0, 0.35);
+      box-shadow: 0 0 14px rgba(255, 107, 0, 0.3);
+    }
+    .landing-nav-actions { display: flex; align-items: center; gap: 0.875rem; }
+    .btn-nav-login {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: #ffffff;
+      font-size: 0.875rem;
+      font-weight: 600;
+      padding: 0.6rem 1.35rem;
+      border-radius: 9999px;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.25s;
+    }
+    .btn-nav-login:hover { background: rgba(255, 255, 255, 0.16); }
+    .btn-nav-signup {
+      background: linear-gradient(135deg, #00c6a7 0%, #00b4d8 100%);
+      color: #05141f;
+      font-size: 0.875rem;
+      font-weight: 700;
+      padding: 0.6rem 1.5rem;
+      border-radius: 9999px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(0, 198, 167, 0.45);
+      transition: all 0.25s;
+    }
+    .btn-nav-signup:hover { transform: translateY(-1px); box-shadow: 0 6px 25px rgba(0, 198, 167, 0.6); }
+
+    .landing-hero-center {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 2rem 1.5rem;
+      max-width: 980px;
+      margin: 0 auto;
+    }
+    .hero-announcement-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(0, 198, 167, 0.08);
+      border: 1px solid rgba(0, 198, 167, 0.35);
+      padding: 0.4rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #00c6a7;
+      margin-bottom: 2rem;
+      backdrop-filter: blur(8px);
+    }
+    .hero-main-headline {
+      font-family: var(--font-sans);
+      font-size: 4.25rem;
+      font-weight: 800;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
+    }
+    .hero-main-headline .highlight-enterprise {
+      color: #00c6a7;
+      text-shadow: 0 0 35px rgba(0, 198, 167, 0.4);
+    }
+    .hero-main-headline .highlight-os {
+      color: #06b6d4;
+      text-shadow: 0 0 35px rgba(6, 182, 212, 0.45);
+    }
+    .hero-subtext {
+      font-size: 1.15rem;
+      line-height: 1.65;
+      color: rgba(255, 255, 255, 0.78);
+      max-width: 780px;
+      margin-bottom: 2.5rem;
+    }
+    .hero-cta-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .btn-hero-teal {
+      background: linear-gradient(135deg, #00c6a7 0%, #00b4d8 100%);
+      color: #05141f;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 0.85rem 2.25rem;
+      border-radius: 9999px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 6px 28px rgba(0, 198, 167, 0.45);
+      transition: all 0.25s;
+    }
+    .btn-hero-teal:hover { transform: translateY(-2px); box-shadow: 0 8px 35px rgba(0, 198, 167, 0.65); }
+    .btn-hero-glass {
+      background: rgba(26, 36, 56, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0.85rem 2rem;
+      border-radius: 9999px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.25s;
+    }
+    .btn-hero-glass:hover { background: rgba(40, 54, 84, 0.85); transform: translateY(-2px); }
+
+    .landing-bottom-bar {
+      position: relative;
+      z-index: 15;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 3rem;
+      max-width: 1700px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .slide-dot-pill {
+      width: 38px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 9999px;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .slide-dot-pill.active {
+      width: 58px;
+      background: linear-gradient(90deg, #00c6a7, #06b6d4);
+    }
+    .slide-arrow-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .slide-arrow-btn:hover { background: rgba(0, 198, 167, 0.2); border-color: #00c6a7; color: #00c6a7; }
+
+    /* Frosted Glass Login Modal */
+    .auth-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(4, 8, 16, 0.75);
+      backdrop-filter: blur(14px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .auth-modal-card {
+      position: relative;
+      max-width: 460px;
+      width: 100%;
+      background: rgba(13, 20, 36, 0.94);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 20px;
+      padding: 2.25rem 2rem;
+      box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.75), 0 0 30px rgba(0, 198, 167, 0.1);
+      backdrop-filter: blur(24px);
+    }
+    .login-input {
+      width: 100%;
+      padding: 0.75rem 0.875rem 0.75rem 2.5rem;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 10px;
+      font-size: 0.9375rem;
+      color: #ffffff;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    .login-input:focus {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: #00c6a7;
+      box-shadow: 0 0 0 3px rgba(0, 198, 167, 0.2);
+    }
+    .role-chip {
+      padding: 0.5rem 0.25rem;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #ffffff;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .role-chip:hover { border-color: #00c6a7; background: rgba(0, 198, 167, 0.12); }
+    .role-chip.active { background: rgba(0, 198, 167, 0.2); color: #ffffff; border-color: #00c6a7; box-shadow: 0 0 10px rgba(0, 198, 167, 0.3); }
+
+    /* Dashboard Layout */
+    .app-layout {
+      display: flex;
+      min-height: 100vh;
+      background-color: var(--bg-primary);
+    }
+    .app-sidebar {
+      width: 260px;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-light);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+      z-index: 30;
+      transition: transform 0.25s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+    .app-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background-color: var(--bg-primary);
+      transition: background-color 0.2s ease;
+    }
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: var(--bg-surface);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-light);
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.75rem;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    .app-content {
+      flex: 1;
+      padding: 1.75rem 2rem 3rem 2rem;
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    @media (max-width: 1024px) {
+      .app-sidebar {
+        position: fixed;
+        top: 62px;
+        bottom: 0;
+        left: 0;
+        transform: translateX(-100%);
+        box-shadow: var(--shadow-xl);
+      }
+      .app-sidebar.mobile-open { transform: translateX(0); }
+      .app-content { padding: 1.25rem 1rem 2rem 1rem; }
+    }
+
+    /* User Profile Dropdown Styles (Exact match to requested UI) */
+    @keyframes dropdownFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.97);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    .user-profile-menu-item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.75rem 0.95rem;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      color: var(--text-primary);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .user-profile-menu-item:hover {
+      background: var(--bg-subtle);
+    }
+    .user-profile-menu-item.logout-item {
+      color: #ef4444;
+      font-weight: 700;
+    }
+    .user-profile-menu-item.logout-item:hover {
+      background: rgba(239, 68, 68, 0.08);
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- Main React App Script -->
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // SLA Mock Data
+    const COMPANY_INFO = {
+      name: "Stackly",
+      version: "v3.8.4-LTS",
+      environment: "Production Cluster (Global)",
+      complianceScore: "99.982%",
+      targetSla: "99.900%",
+      penaltiesAvoided: "$148,500",
+      activeServices: 48,
+      mtta: "1m 42s",
+      mttr: "14m 20s"
+    };
+
+    const KPI_METRICS = [
+      { id: "sla", label: "Global SLA Compliance", value: "99.982%", sub: "Target: 99.900%", change: "+0.04% vs target", color: "#10b981", bg: "#ecfdf5", border: "#a7f3d0" },
+      { id: "srv", label: "Monitored Services", value: "48 / 48", sub: "47 Operational, 1 Warning", change: "100% active telemetry", color: "#2563eb", bg: "#eff6ff", border: "#bfdbfe" },
+      { id: "mttr", label: "Mean Time to Resolve (MTTR)", value: "14m 20s", sub: "SLA Cap: 45m 00s", change: "-3m 15s faster MTTR", color: "#8b5cf6", bg: "#f5f3ff", border: "#ddd6fe" },
+      { id: "pen", label: "SLA Penalties Avoided", value: "$148,500", sub: "Zero Breaches Recorded", change: "100% rebate margin", color: "#f59e0b", bg: "#fffbeb", border: "#fde68a" }
+    ];
+
+    const DEMO_USERS = [
+      { role: "Super Admin", name: "Super Admin", title: "VP Cloud Infra", email: "admin@stackly.com", avatar: "SA" },
+      { role: "SLA Manager", name: "Sarah Chen", title: "Principal SRE", email: "sarah.chen@stackly.io", avatar: "SC" },
+      { role: "Enterprise Client", name: "Marcus Sterling", title: "CTO, Finovate", email: "marcus@finovate.com", avatar: "MS" }
+    ];
+
+    const SLA_SHOWCASE_IMAGES = [
+      { id: "1", title: "Mission-Critical Cloud Datacenter Infrastructure", cat: "Tier 4 Uptime Guarantee", img: "./public/images/datacenter-servers.jpg", metric: "99.999% Hardware Uptime", desc: "Multi-region redundant power, N+2 cooling, and distributed physical server racks ensuring zero hardware-level single points of failure.", tag: "Physical SLA" },
+      { id: "2", title: "24/7 Global SLA Operations Command Center", cat: "NOC Reliability Telemetry", img: "./public/images/ops-command-center.jpg", metric: "< 2 Min Response MTTA", desc: "Dedicated site reliability engineers monitor live heartbeat signals across all 48 distributed cloud microservices around the clock.", tag: "24/7 NOC" },
+      { id: "3", title: "Stackly 99.99% Enterprise SLA Guarantee Shield", cat: "Contractual Compliance", img: "./public/images/uptime-shield.jpg", metric: "$148,500 Penalties Avoided", desc: "Bank-grade enterprise contracts with real-time automated SLA compliance verification and instant service credit compensation.", tag: "SLA Shield" },
+      { id: "4", title: "Global Anycast Edge Network & Low-Latency Routing", cat: "Edge Performance", img: "./public/images/global-edge-network.jpg", metric: "18ms Global Avg Latency", desc: "Over 340 edge points of presence intelligently route inbound traffic away from degraded regional backbones in sub-millisecond intervals.", tag: "Network Edge" },
+      { id: "5", title: "Rapid SRE Incident Response & Escalation Squad", cat: "Incident Management", img: "./public/images/sre-team.jpg", metric: "14m 20s MTTR Average", desc: "Certified reliability engineers and DevOps architects triage P1/P2 incidents with automated runbooks and live war rooms.", tag: "Human Ops" }
+    ];
+
+    const SERVICES = [
+      { id: "1", name: "Stackly Core API Gateway", type: "Ingress Router", tier: "Platinum (99.99%)", uptime: "99.995%", latency: "18ms", req: "42,800 req/s", err: "0.002%", status: "Operational" },
+      { id: "2", name: "Identity & SSO Auth Engine", type: "Security Core", tier: "Platinum (99.99%)", uptime: "99.991%", latency: "38ms", req: "14,200 req/s", err: "0.008%", status: "Operational" },
+      { id: "3", name: "Transaction & Billing Ledger", type: "Financial Engine", tier: "Platinum (99.99%)", uptime: "99.999%", latency: "112ms", req: "3,400 req/s", err: "0.0001%", status: "Operational" },
+      { id: "4", name: "PostgreSQL HA Cluster", type: "Distributed DB", tier: "Platinum (99.99%)", uptime: "99.988%", latency: "5ms", req: "98,000 qps", err: "0.012%", status: "Operational" },
+      { id: "5", name: "Edge CDN Asset Pipeline", type: "Edge Delivery", tier: "Gold (99.90%)", uptime: "99.998%", latency: "7ms", req: "125,000 req/s", err: "0.001%", status: "Operational" },
+      { id: "6", name: "Real-time Notification & WebSockets", type: "Event Streaming", tier: "Gold (99.90%)", uptime: "99.940%", latency: "84ms", req: "26,000 msg/s", err: "0.058%", status: "Degraded" },
+      { id: "7", name: "Search & Semantic Vector Index", type: "Search Cluster", tier: "Gold (99.90%)", uptime: "99.972%", latency: "62ms", req: "8,900 qps", err: "0.024%", status: "Operational" },
+      { id: "8", name: "Enterprise Webhook Dispatcher", type: "Async Queue", tier: "Silver (99.50%)", uptime: "99.990%", latency: "88ms", req: "18,400 ev/s", err: "0.010%", status: "Operational" }
+    ];
+
+    const SLA_TIERS = [
+      { tier: "Platinum Enterprise", target: "99.990%", current: "99.994%", clients: 142, downtime: "2m 14s used / 4m 23s allowed", refund: "30% credit clause", badgeBg: "#eef2ff", badgeColor: "#4338ca" },
+      { tier: "Gold Business", target: "99.900%", current: "99.982%", clients: 486, downtime: "7m 52s used / 43m 49s allowed", refund: "20% credit clause", badgeBg: "#fffbeb", badgeColor: "#b45309" },
+      { tier: "Silver Growth", target: "99.500%", current: "99.890%", clients: 1250, downtime: "48m 10s used / 3h 39m allowed", refund: "10% credit clause", badgeBg: "#f8fafc", badgeColor: "#475569" },
+      { tier: "Standard Developer", target: "99.000%", current: "99.950%", clients: 3890, downtime: "22m 05s used / 7h 18m allowed", refund: "Best effort SLA", badgeBg: "#ecfdf5", badgeColor: "#059669" }
+    ];
+
+    // ==========================================
+    // 1. ANIMATED LOGIN COMPONENT (5-IMAGE CAROUSEL + STACKLY LANDING)
+    // ==========================================
+    const BACKGROUND_SLIDES = [
+      {
+        id: 0,
+        url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=2000&q=85',
+        fallback: './public/images/ops-command-center.jpg',
+        title: 'Enterprise Analytics OS',
+        tag: 'Slide 01 • Next-Gen Cloud Operations'
+      },
+      {
+        id: 1,
+        url: './public/images/datacenter-servers.jpg',
+        fallback: './public/images/datacenter-servers.jpg',
+        title: 'Tier-4 Cloud Datacenter Infrastructure',
+        tag: 'Slide 02 • 99.999% Hardware Uptime'
+      },
+      {
+        id: 2,
+        url: './public/images/ops-command-center.jpg',
+        fallback: './public/images/ops-command-center.jpg',
+        title: '24/7 Global NOC Command Telemetry',
+        tag: 'Slide 03 • Real-Time Uptime Monitoring'
+      },
+      {
+        id: 3,
+        url: './public/images/uptime-shield.jpg',
+        fallback: './public/images/uptime-shield.jpg',
+        title: 'Autonomous SLA Guarantee Shield',
+        tag: 'Slide 04 • Contractual Breach Protection'
+      },
+      {
+        id: 4,
+        url: './public/images/global-edge-network.jpg',
+        fallback: './public/images/global-edge-network.jpg',
+        title: 'Global Anycast Low-Latency Edge Mesh',
+        tag: 'Slide 05 • Sub-Millisecond Routing'
+      }
+    ];
+
+    function StacklyLogo({ height = 32, variant = 'white' }) {
+      const textColor = variant === 'white' ? '#ffffff' : '#1b365d';
+      const iconWidth = Math.round(height * 0.95);
+      const fontSize = Math.round(height * 0.58);
+      return (
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', verticalAlign: 'middle', userSelect: 'none' }}>
+          <svg width={iconWidth} height={height} viewBox="0 0 38 42" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+            <path d="M22 3.5C28.5 6 33.5 12.5 31.5 20C30 25 24 27.5 18 25C13.5 23 12 18 15 11.5C17 7.5 19.5 4.5 22 3.5Z" fill="#6ecbb7"/>
+            <path d="M19 4.5C13.5 9 11 16 14.5 22C16 24 20 25 22.5 23.5C18 20 17 14 20 8C20.5 7 20 5.5 19 4.5Z" fill="#88e4d1"/>
+            <path d="M18.5 38.5C12 36 7 29.5 9 22C10.5 17 16.5 14.5 22.5 17C27 19 28.5 24 25.5 30.5C23.5 34.5 21 37.5 18.5 38.5Z" fill="#1b365d"/>
+            <path d="M21.5 37.5C27 33 29.5 26 26 20C24.5 18 20.5 17 18 18.5C22.5 22 23.5 28 20.5 34C20 35 20.5 36.5 21.5 37.5Z" fill="#2d5284"/>
+          </svg>
+          <span style={{ fontFamily: "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif", fontSize: `${fontSize}px`, fontWeight: 900, letterSpacing: '0.12em', color: textColor, lineHeight: 1 }}>
+            STACKLY
+          </span>
+          <span style={{ background: 'rgba(255, 107, 0, 0.18)', border: '1px solid rgba(255, 107, 0, 0.4)', color: '#ff7800', fontSize: '0.65rem', fontWeight: 800, padding: '0.18rem 0.5rem', borderRadius: '6px', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+            SLA
+          </span>
+        </span>
+      );
+    }
+
+    function LoginPage({ onLogin }) {
+      const [activeSlide, setActiveSlide] = useState(0);
+      const [isPaused, setIsPaused] = useState(false);
+      const [modalOpen, setModalOpen] = useState(false);
+      const [role, setRole] = useState(DEMO_USERS[0].role);
+      const [email, setEmail] = useState(DEMO_USERS[0].email);
+      const [password, setPassword] = useState("••••••••••••");
+      const [loading, setLoading] = useState(false);
+
+      // 7 Interactive Landing Telemetry Sections
+      const [landingSection, setLandingSection] = useState('slo');
+      const [simulatedDowntimeMins, setSimulatedDowntimeMins] = useState(4.5);
+      const [errorSpikeActive, setErrorSpikeActive] = useState(false);
+      const [selectedHeatmapDay, setSelectedHeatmapDay] = useState(89);
+
+      useEffect(() => {
+        if (isPaused) return;
+        const timer = setInterval(() => {
+          setActiveSlide(prev => (prev + 1) % BACKGROUND_SLIDES.length);
+        }, 5000);
+        return () => clearInterval(timer);
+      }, [isPaused]);
+
+      const handleRoleClick = (u) => {
+        setRole(u.role);
+        setEmail(u.email);
+      };
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setTimeout(() => {
+          const user = DEMO_USERS.find(u => u.role === role) || DEMO_USERS[0];
+          setLoading(false);
+          onLogin(user);
+        }, 500);
+      };
+
+      const nextSlide = () => setActiveSlide(prev => (prev + 1) % BACKGROUND_SLIDES.length);
+      const prevSlide = () => setActiveSlide(prev => (prev - 1 + BACKGROUND_SLIDES.length) % BACKGROUND_SLIDES.length);
+
+      return (
+        <div 
+          className="landing-login-wrapper"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          {/* 5-Image Crossfade Background */}
+          <div className="bg-slideshow-container">
+            {BACKGROUND_SLIDES.map((slide, idx) => (
+              <div
+                key={slide.id}
+                className={`bg-slide-item ${idx === activeSlide ? 'active' : ''}`}
+                style={{
+                  backgroundImage: `url(${slide.url}), url(${slide.fallback})`,
+                }}
+              />
+            ))}
+            <div className="bg-overlay-gradient"></div>
+            <div className="bg-overlay-grid"></div>
+          </div>
+
+          {/* Top Navbar */}
+          <header className="landing-navbar">
+            <div className="landing-brand" onClick={() => setLandingSection('slo')} style={{ cursor: 'pointer' }}>
+              <StacklyLogo height={32} variant="white" />
+            </div>
+
+            <nav className="landing-nav-links">
+              <button 
+                type="button" 
+                className={`nav-link ${landingSection === 'slo' ? 'active' : ''}`}
+                onClick={() => setLandingSection('slo')}
+              >
+                SLO Health
+              </button>
+              <button 
+                type="button" 
+                className={`nav-link ${landingSection === 'error-budget' ? 'active' : ''}`}
+                onClick={() => setLandingSection('error-budget')}
+              >
+                Error Budgets
+              </button>
+              <button 
+                type="button" 
+                className={`nav-link ${landingSection === 'penalties' ? 'active' : ''}`}
+                onClick={() => setLandingSection('penalties')}
+              >
+                Penalty Simulator
+              </button>
+              <button 
+                type="button" 
+                className={`nav-link ${landingSection === 'heatmap' ? 'active' : ''}`}
+                onClick={() => setLandingSection('heatmap')}
+              >
+                90D Heatmap
+              </button>
+              <button 
+                type="button" 
+                className={`nav-link ${landingSection === 'incidents' ? 'active' : ''}`}
+                onClick={() => setLandingSection('incidents')}
+              >
+                Incidents
+              </button>
+              <button 
+                type="button" 
+                className={`nav-link ${landingSection === 'edge' ? 'active' : ''}`}
+                onClick={() => setLandingSection('edge')}
+              >
+                Global Edge
+              </button>
+              <button 
+                type="button" 
+                className={`nav-link ${landingSection === 'contracts' ? 'active' : ''}`}
+                onClick={() => setLandingSection('contracts')}
+              >
+                Contracts
+              </button>
+            </nav>
+
+            <div className="landing-nav-actions">
+              <button 
+                type="button" 
+                className="btn-nav-login"
+                onClick={() => setModalOpen(true)}
+              >
+                Log In
+              </button>
+              <button 
+                type="button" 
+                className="btn-nav-signup"
+                onClick={() => setModalOpen(true)}
+              >
+                Launch Cockpit
+              </button>
+            </div>
+          </header>
+
+          {/* Hero Section */}
+          <main className="landing-hero-center">
+            <div className="hero-announcement-pill">
+              <span className="announcement-dot" style={{ background: '#ff6b00', boxShadow: '0 0 8px #ff6b00' }}></span>
+              <span>New: Autonomous SLA Breach Copilot & SRE Telemetry v2.0 Released</span>
+            </div>
+
+            <h1 className="hero-main-headline">
+              The Global <span className="highlight-enterprise">SLA Intelligence</span><br />
+              <span className="highlight-os">Command OS</span> for 2026
+            </h1>
+
+            <p className="hero-subtext">
+              Monitor 99.999% high-availability, track real-time error budget burn rates, eliminate contractual breach penalties, and orchestrate SRE microservices across global edge clusters.
+            </p>
+
+            <div className="hero-cta-group">
+              <button 
+                type="button" 
+                className="btn-hero-teal"
+                onClick={() => setModalOpen(true)}
+              >
+                Launch SLA Cockpit
+              </button>
+              <button 
+                type="button" 
+                className="btn-hero-glass"
+                onClick={() => setLandingSection('penalties')}
+              >
+                Simulate SLA Penalties
+              </button>
+            </div>
+
+            {/* Dynamic Telemetry Showcase (Live Related Content for the 7 Navbar Links) */}
+            <div className="landing-interactive-showcase" id="landingTelemetrySection" style={{ width: '100%', maxWidth: '1140px', margin: '1.75rem auto 1.5rem auto', textAlign: 'left' }}>
+              {landingSection === 'slo' && (
+                <div className="telemetry-showcase-panel" style={{ background: 'rgba(13, 20, 36, 0.94)', border: '1px solid rgba(255, 107, 0, 0.32)', borderRadius: '20px', padding: '1.6rem 1.85rem', backdropFilter: 'blur(28px)', boxShadow: '0 25px 70px rgba(0, 0, 0, 0.75), 0 0 40px rgba(255, 107, 0, 0.14)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', paddingBottom: '1.25rem', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', marginBottom: '1.35rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 10px #10b981', display: 'inline-block' }}></span>
+                      <div>
+                        <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#ff7800', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                          Active Telemetry View &bull; SLO Health
+                        </div>
+                        <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>
+                          Production SLO Availability: <span style={{ color: '#10b981' }}>99.994%</span>
+                        </h3>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
+                      <span style={{ background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.35)', color: '#10b981', fontSize: '0.6875rem', fontWeight: 700, padding: '0.15rem 0.55rem', borderRadius: '9999px' }}>18 of 18 SLOs In Bounds</span>
+                      <button type="button" onClick={() => setModalOpen(true)} style={{ background: 'linear-gradient(135deg, #ff6b00, #ff8800)', color: '#000000', fontSize: '0.8125rem', fontWeight: 700, padding: '0.45rem 1.15rem', borderRadius: '9999px', border: 'none', cursor: 'pointer' }}>
+                        Launch Cockpit &rarr;
+                      </button>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
+                    <div style={{ background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.09)', borderRadius: '14px', padding: '1.15rem 1.25rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                        <span>⚡</span><span style={{ color: '#10b981', fontWeight: 700, fontSize: '0.75rem' }}>99.998%</span>
+                      </div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#ffffff' }}>Core API Ingress Gateway</div>
+                      <div style={{ fontSize: '1.45rem', fontWeight: 800, color: '#ffffff', margin: '0.35rem 0' }}>12ms <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>p99</span></div>
+                      <div style={{ fontSize: '0.71875rem', color: 'rgba(255,255,255,0.55)' }}>42,800 req/s &bull; 0 breach minutes</div>
+                    </div>
+
+                    <div style={{ background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.09)', borderRadius: '14px', padding: '1.15rem 1.25rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                        <span>💳</span><span style={{ color: '#10b981', fontWeight: 700, fontSize: '0.75rem' }}>99.992%</span>
+                      </div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#ffffff' }}>Transaction Ledger</div>
+                      <div style={{ fontSize: '1.45rem', fontWeight: 800, color: '#ffffff', margin: '0.35rem 0' }}>28ms <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>p99</span></div>
+                      <div style={{ fontSize: '0.71875rem', color: 'rgba(255,255,255,0.55)' }}>18,400 tps &bull; Strict ACID</div>
+                    </div>
+
+                    <div style={{ background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.09)', borderRadius: '14px', padding: '1.15rem 1.25rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                        <span>🌊</span><span style={{ color: '#f59e0b', fontWeight: 700, fontSize: '0.75rem' }}>99.985% Watch</span>
+                      </div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#ffffff' }}>Kafka Event Streaming</div>
+                      <div style={{ fontSize: '1.45rem', fontWeight: 800, color: '#ffffff', margin: '0.35rem 0' }}>110ms <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>p99</span></div>
+                      <div style={{ fontSize: '0.71875rem', color: 'rgba(255,255,255,0.55)' }}>Consumer lag: 1.2s &bull; Auto-scaled</div>
+                    </div>
+
+                    <div style={{ background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.09)', borderRadius: '14px', padding: '1.15rem 1.25rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                        <span>🛡️</span><span style={{ color: '#10b981', fontWeight: 700, fontSize: '0.75rem' }}>100.00%</span>
+                      </div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#ffffff' }}>Anycast Edge Cache</div>
+                      <div style={{ fontSize: '1.45rem', fontWeight: 800, color: '#ffffff', margin: '0.35rem 0' }}>4ms <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>p99</span></div>
+                      <div style={{ fontSize: '0.71875rem', color: 'rgba(255,255,255,0.55)' }}>24 Global PoPs &bull; Zero downtime</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {landingSection === 'error-budget' && (
+                <div className="telemetry-showcase-panel" style={{ background: 'rgba(13, 20, 36, 0.94)', border: '1px solid rgba(255, 107, 0, 0.32)', borderRadius: '20px', padding: '1.6rem 1.85rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', paddingBottom: '1.25rem', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', marginBottom: '1.35rem' }}>
+                    <div>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#ff7800', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                        Active Telemetry View &bull; Error Budgets
+                      </div>
+                      <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>
+                        Monthly Remaining Budget: <span style={{ color: errorSpikeActive ? '#ef4444' : '#10b981' }}>{errorSpikeActive ? '58.4%' : '84.2%'}</span>
+                      </h3>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button type="button" onClick={() => setErrorSpikeActive(!errorSpikeActive)} style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#ffffff', fontSize: '0.8125rem', fontWeight: 600, padding: '0.45rem 1rem', borderRadius: '9999px', cursor: 'pointer' }}>
+                        {errorSpikeActive ? '⚡ Reset Simulation' : '🚨 Simulate 12x Traffic Spike'}
+                      </button>
+                      <button type="button" onClick={() => setModalOpen(true)} style={{ background: 'linear-gradient(135deg, #ff6b00, #ff8800)', color: '#000000', fontSize: '0.8125rem', fontWeight: 700, padding: '0.45rem 1.15rem', borderRadius: '9999px', border: 'none', cursor: 'pointer' }}>
+                        Open Policies &rarr;
+                      </button>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+                    <div style={{ background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.09)', borderRadius: '14px', padding: '1.15rem 1.25rem' }}>
+                      <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'rgba(255,255,255,0.7)', marginBottom: '0.5rem' }}>1-Hour Burn</div>
+                      <div style={{ fontSize: '2rem', fontWeight: 800, color: '#ffffff' }}>{errorSpikeActive ? '12.4x' : '0.8x'}</div>
+                      <div style={{ fontSize: '0.75rem', color: errorSpikeActive ? '#ef4444' : 'rgba(255,255,255,0.55)', marginTop: '0.25rem' }}>
+                        {errorSpikeActive ? 'Automated freeze active' : 'Normal consumption'}
+                      </div>
+                    </div>
+                    <div style={{ background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.09)', borderRadius: '14px', padding: '1.15rem 1.25rem' }}>
+                      <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'rgba(255,255,255,0.7)', marginBottom: '0.5rem' }}>6-Hour Burn</div>
+                      <div style={{ fontSize: '2rem', fontWeight: 800, color: '#ffffff' }}>{errorSpikeActive ? '3.8x' : '1.1x'}</div>
+                      <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.55)', marginTop: '0.25rem' }}>Paging threshold: 6.0x</div>
+                    </div>
+                    <div style={{ background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.09)', borderRadius: '14px', padding: '1.15rem 1.25rem' }}>
+                      <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'rgba(255,255,255,0.7)', marginBottom: '0.5rem' }}>24-Hour Burn</div>
+                      <div style={{ fontSize: '2rem', fontWeight: 800, color: '#ffffff' }}>0.9x</div>
+                      <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.55)', marginTop: '0.25rem' }}>26.4 Days until depletion</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {landingSection === 'penalties' && (
+                <div className="telemetry-showcase-panel" style={{ background: 'rgba(13, 20, 36, 0.94)', border: '1px solid rgba(255, 107, 0, 0.32)', borderRadius: '20px', padding: '1.6rem 1.85rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', paddingBottom: '1.25rem', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', marginBottom: '1.35rem' }}>
+                    <div>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#ff7800', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                        Active Telemetry View &bull; Penalty Simulator
+                      </div>
+                      <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>
+                        SLA Service Credit: <span style={{ color: simulatedDowntimeMins <= 4.38 ? '#10b981' : simulatedDowntimeMins <= 15 ? '#ffaa00' : '#ef4444' }}>
+                          {simulatedDowntimeMins <= 4.38 ? '$0.00 (Zero Penalty)' : simulatedDowntimeMins <= 15 ? '$12,500.00 (5% Rebate)' : simulatedDowntimeMins <= 30 ? '$37,500.00 (15% Rebate)' : '$75,000.00 (30% Max Cap)'}
+                        </span>
+                      </h3>
+                    </div>
+                    <button type="button" onClick={() => setModalOpen(true)} style={{ background: 'linear-gradient(135deg, #ff6b00, #ff8800)', color: '#000000', fontSize: '0.8125rem', fontWeight: 700, padding: '0.45rem 1.15rem', borderRadius: '9999px', border: 'none', cursor: 'pointer' }}>
+                      Open Audit &rarr;
+                    </button>
+                  </div>
+
+                  <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '14px', padding: '1.25rem', marginBottom: '1.25rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                      <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#ffffff' }}>Simulated Monthly Outage Duration:</span>
+                      <span style={{ fontSize: '1.15rem', fontWeight: 800, color: '#ff7800', background: 'rgba(255,107,0,0.15)', padding: '0.2rem 0.65rem', borderRadius: '6px' }}>{simulatedDowntimeMins.toFixed(1)} Minutes</span>
+                    </div>
+                    <input 
+                      type="range" 
+                      min="0" 
+                      max="60" 
+                      step="0.5" 
+                      value={simulatedDowntimeMins} 
+                      onChange={(e) => setSimulatedDowntimeMins(parseFloat(e.target.value))}
+                      style={{ width: '100%', accentColor: '#ff6b00', cursor: 'pointer' }}
+                    />
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
+                    <div style={{ background: 'rgba(255, 255, 255, 0.04)', borderRadius: '14px', padding: '1.15rem 1.25rem' }}>
+                      <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>Contract Value</div>
+                      <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#ffffff' }}>$250,000 / mo</div>
+                    </div>
+                    <div style={{ background: 'rgba(255, 255, 255, 0.04)', borderRadius: '14px', padding: '1.15rem 1.25rem' }}>
+                      <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>Simulated Availability</div>
+                      <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#ffffff' }}>{((43200 - simulatedDowntimeMins) / 43200 * 100).toFixed(4)}%</div>
+                    </div>
+                    <div style={{ background: 'rgba(255, 255, 255, 0.04)', borderRadius: '14px', padding: '1.15rem 1.25rem' }}>
+                      <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>Credit Due</div>
+                      <div style={{ fontSize: '1.5rem', fontWeight: 800, color: simulatedDowntimeMins <= 4.38 ? '#10b981' : '#ff7800' }}>
+                        {simulatedDowntimeMins <= 4.38 ? '0% Credit' : simulatedDowntimeMins <= 15 ? '5% Credit' : simulatedDowntimeMins <= 30 ? '15% Credit' : '30% Credit'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {landingSection === 'heatmap' && (
+                <div className="telemetry-showcase-panel" style={{ background: 'rgba(13, 20, 36, 0.94)', border: '1px solid rgba(255, 107, 0, 0.32)', borderRadius: '20px', padding: '1.6rem 1.85rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', paddingBottom: '1.25rem', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', marginBottom: '1.35rem' }}>
+                    <div>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#ff7800', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                        Active Telemetry View &bull; 90-Day Continuous Availability Heatmap
+                      </div>
+                      <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>
+                        90-Day Rolling Availability: <span style={{ color: '#10b981' }}>99.992%</span>
+                      </h3>
+                    </div>
+                    <button type="button" onClick={() => setModalOpen(true)} style={{ background: 'linear-gradient(135deg, #ff6b00, #ff8800)', color: '#000000', fontSize: '0.8125rem', fontWeight: 700, padding: '0.45rem 1.15rem', borderRadius: '9999px', border: 'none', cursor: 'pointer' }}>
+                      Audit PDF &rarr;
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(30, 1fr)', gap: '4px', padding: '0.875rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px' }}>
+                    {Array.from({ length: 90 }).map((_, idx) => (
+                      <button 
+                        key={idx}
+                        type="button" 
+                        onClick={() => setSelectedHeatmapDay(idx)}
+                        style={{ height: '18px', borderRadius: '3px', background: idx === 72 ? '#f59e0b' : idx === 41 ? '#f59e0b' : '#10b981', border: selectedHeatmapDay === idx ? '2px solid #ffffff' : 'none', cursor: 'pointer' }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {landingSection === 'incidents' && (
+                <div className="telemetry-showcase-panel" style={{ background: 'rgba(13, 20, 36, 0.94)', border: '1px solid rgba(255, 107, 0, 0.32)', borderRadius: '20px', padding: '1.6rem 1.85rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+                    <div>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#ff7800', textTransform: 'uppercase' }}>Incident Triage</div>
+                      <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff' }}>0 Critical P1 Breaches</h3>
+                    </div>
+                    <span style={{ color: '#10b981', fontWeight: 700, fontSize: '0.8125rem' }}>Mean MTTR: 4m 18s (SLA: 15m)</span>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    <div style={{ background: 'rgba(255,255,255,0.04)', padding: '1rem', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <strong style={{ color: '#ffffff' }}>INC-8921: EU-Central Rate Limiting Spike</strong>
+                        <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.55)' }}>Mitigated in 4m 12s &bull; Auto-scaled pods &bull; SLA Intact</div>
+                      </div>
+                      <span style={{ color: '#10b981', fontWeight: 700, fontSize: '0.75rem' }}>RESOLVED</span>
+                    </div>
+                    <div style={{ background: 'rgba(255,255,255,0.04)', padding: '1rem', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <strong style={{ color: '#ffffff' }}>INC-8894: PostgreSQL Replica Lag</strong>
+                        <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.55)' }}>Mitigated in 2m 45s &bull; Autonomous failover &bull; Zero data loss</div>
+                      </div>
+                      <span style={{ color: '#10b981', fontWeight: 700, fontSize: '0.75rem' }}>RESOLVED</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {landingSection === 'edge' && (
+                <div className="telemetry-showcase-panel" style={{ background: 'rgba(13, 20, 36, 0.94)', border: '1px solid rgba(255, 107, 0, 0.32)', borderRadius: '20px', padding: '1.6rem 1.85rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+                    <div>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#ff7800', textTransform: 'uppercase' }}>Global Edge Mesh</div>
+                      <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff' }}>24 Regions &bull; Sub-50ms Routing</h3>
+                    </div>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.875rem' }}>
+                    {[
+                      { name: 'US-East (Virginia)', ping: '12ms' },
+                      { name: 'US-West (Oregon)', ping: '18ms' },
+                      { name: 'EU-Central (Frankfurt)', ping: '14ms' },
+                      { name: 'AP-South (Mumbai)', ping: '32ms' }
+                    ].map((r, i) => (
+                      <div key={i} style={{ background: 'rgba(255,255,255,0.04)', padding: '1rem', borderRadius: '12px' }}>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#ffffff' }}>{r.name}</div>
+                        <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#10b981', marginTop: '4px' }}>{r.ping}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {landingSection === 'contracts' && (
+                <div className="telemetry-showcase-panel" style={{ background: 'rgba(13, 20, 36, 0.94)', border: '1px solid rgba(255, 107, 0, 0.32)', borderRadius: '20px', padding: '1.6rem 1.85rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+                    <div>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#ff7800', textTransform: 'uppercase' }}>Contractual Tiers</div>
+                      <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff' }}>Enterprise Master Service Agreements</h3>
+                    </div>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
+                    {[
+                      { tier: 'Platinum Sovereign', uptime: '99.999%', mttr: '5 min P1 Response', color: '#ff6b00' },
+                      { tier: 'Gold Mission Critical', uptime: '99.99%', mttr: '15 min P1 Response', color: '#10b981' },
+                      { tier: 'Silver Business', uptime: '99.95%', mttr: '1 hr P1 Response', color: '#3b82f6' }
+                    ].map((t, i) => (
+                      <div key={i} style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${t.color}`, padding: '1.15rem', borderRadius: '14px' }}>
+                        <div style={{ color: t.color, fontWeight: 800, fontSize: '0.85rem' }}>{t.tier}</div>
+                        <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#ffffff', margin: '4px 0' }}>{t.uptime}</div>
+                        <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)' }}>{t.mttr}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="hero-quick-login-hint">
+              <span>Explore SLA Demo as:</span>
+              <button
+                type="button"
+                className="quick-role-badge"
+                style={{ color: '#ff7800' }}
+                onClick={() => {
+                  handleRoleClick(DEMO_USERS[0]);
+                  setModalOpen(true);
+                }}
+              >
+                Super Admin (VP Ops)
+              </button>
+              <button
+                type="button"
+                className="quick-role-badge"
+                style={{ color: '#ff7800' }}
+                onClick={() => {
+                  handleRoleClick(DEMO_USERS[1]);
+                  setModalOpen(true);
+                }}
+              >
+                SLA Manager (Lead SRE)
+              </button>
+              <button
+                type="button"
+                className="quick-role-badge"
+                style={{ color: '#ff7800' }}
+                onClick={() => {
+                  handleRoleClick(DEMO_USERS[2]);
+                  setModalOpen(true);
+                }}
+              >
+                Enterprise Auditor
+              </button>
+            </div>
+          </main>
+
+          {/* Bottom Bar Controls */}
+          <footer className="landing-bottom-bar">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
+              <span style={{ fontFamily: 'var(--font-heading)', fontSize: '1.25rem', fontWeight: 800, color: '#ff6b00' }}>
+                0{activeSlide + 1}
+              </span>
+              <span style={{ fontSize: '0.8125rem', color: 'rgba(255, 255, 255, 0.45)', fontWeight: 600 }}>
+                / 0{BACKGROUND_SLIDES.length}
+              </span>
+              <span style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.65)', marginLeft: '0.5rem' }}>
+                &bull; {BACKGROUND_SLIDES[activeSlide].title}
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              {BACKGROUND_SLIDES.map((_, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  className={`slide-dot-pill ${idx === activeSlide ? 'active' : ''}`}
+                  onClick={() => setActiveSlide(idx)}
+                />
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <button type="button" className="slide-arrow-btn" onClick={prevSlide}>&larr;</button>
+              <button type="button" className="slide-arrow-btn" onClick={nextSlide}>&rarr;</button>
+            </div>
+          </footer>
+
+          {/* Frosted Glass Login Modal */}
+          {modalOpen && (
+            <div className="auth-modal-backdrop" onClick={() => setModalOpen(false)}>
+              <div className="auth-modal-card" onClick={e => e.stopPropagation()}>
+                <button 
+                  onClick={() => setModalOpen(false)}
+                  style={{
+                    position: 'absolute',
+                    top: '1.25rem',
+                    right: '1.25rem',
+                    background: 'rgba(255,255,255,0.08)',
+                    border: '1px solid rgba(255,255,255,0.15)',
+                    color: '#94a3b8',
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    cursor: 'pointer',
+                    fontSize: '1rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  ✕
+                </button>
+
+                <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.85rem' }}>
+                    <StacklyLogo height={32} variant="white" showBadge={true} />
+                  </div>
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#ffffff', fontFamily: 'var(--font-heading)' }}>
+                    Sign in to <span style={{ color: '#ff6b00' }}>SLA Command Center</span>
+                  </h2>
+                  <p style={{ fontSize: '0.8125rem', color: '#94a3b8', marginTop: '0.25rem' }}>
+                    Access high-availability SLA command telemetry
+                  </p>
+                </div>
+
+                {/* Role Switcher */}
+                <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '0.75rem', marginBottom: '1.25rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.6875rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+                    <span>1-Click Demo Profile</span>
+                    <span style={{ color: '#ff7800' }}>Select Role</span>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+                    {DEMO_USERS.map(u => (
+                      <button
+                        key={u.role}
+                        type="button"
+                        className={`role-chip ${role === u.role ? 'active' : ''}`}
+                        onClick={() => handleRoleClick(u)}
+                      >
+                        {u.role}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                      Enterprise SSO Email
+                    </label>
+                    <input
+                      type="email"
+                      className="login-input"
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      required
+                      style={{ paddingLeft: '1rem' }}
+                    />
+                  </div>
+
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
+                      <label style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#cbd5e1' }}>
+                        Password
+                      </label>
+                      <span style={{ fontSize: '0.75rem', color: '#ff7800' }}>Pre-filled Demo</span>
+                    </div>
+                    <input
+                      type="password"
+                      className="login-input"
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
+                      required
+                      style={{ paddingLeft: '1rem' }}
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="btn-hero-teal"
+                    disabled={loading}
+                    style={{ width: '100%', justifyContent: 'center', padding: '0.85rem', fontSize: '0.9375rem', marginTop: '0.5rem' }}
+                  >
+                    {loading ? "Authenticating Cluster..." : "Launch SLA Command Center →"}
+                  </button>
+                </form>
+
+                <div style={{ marginTop: '1.25rem', textAlign: 'center', fontSize: '0.72rem', color: '#64748b' }}>
+                  🔒 SOC 2 Type II Certified &bull; 256-bit TLS Encryption
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // ==========================================
+    // 2. MAIN SLA DASHBOARD APPLICATION
+    // ==========================================
+    function SlaDashboard({ currentUser, onLogout }) {
+      const [theme, setTheme] = useState(localStorage.getItem('stackly_theme') || 'light');
+      const [activeTab, setActiveTab] = useState('overview');
+      const [search, setSearch] = useState('');
+      const [selectedImg, setSelectedImg] = useState(0);
+      const [imgModal, setImgModal] = useState(null);
+      const [reportModal, setReportModal] = useState(false);
+      const [pingMsg, setPingMsg] = useState('');
+      const [mitigateMsg, setMitigateMsg] = useState('');
+      const [sidebarOpen, setSidebarOpen] = useState(false);
+      const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+      const [profileModal, setProfileModal] = useState(false);
+      const [settingsModal, setSettingsModal] = useState(false);
+
+      useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('stackly_theme', theme);
+      }, [theme]);
+
+      const activeHeroImg = SLA_SHOWCASE_IMAGES[selectedImg];
+
+      const filteredServices = SERVICES.filter(s => 
+        s.name.toLowerCase().includes(search.toLowerCase()) ||
+        s.type.toLowerCase().includes(search.toLowerCase())
+      );
+
+      return (
+        <div className="app-layout">
+          {/* Mobile backdrop */}
+          {sidebarOpen && (
+            <div 
+              style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.4)', zIndex: 25 }}
+              onClick={() => setSidebarOpen(false)}
+            />
+          )}
+
+          {/* Sidebar */}
+          <aside className={`app-sidebar ${sidebarOpen ? 'mobile-open' : ''}`}>
+            <div style={{ padding: '1.5rem 1rem' }}>
+              <div style={{ padding: '0 0.5rem', marginBottom: '1.5rem' }}>
+                <StacklyLogo height={28} variant="white" showBadge={true} />
+              </div>
+
+              <div style={{ fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', padding: '0 0.75rem', marginBottom: '0.5rem' }}>
+                Navigation
+              </div>
+
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                {[
+                  { id: 'overview', label: 'SLA Command Center', icon: '📊' },
+                  { id: 'visuals', label: '5 SLA Visuals Showcase', icon: '🖼️', badge: '5 Visuals' },
+                  { id: 'services', label: 'Microservices & Health', icon: '🖥️', badge: '48' },
+                  { id: 'tiers', label: 'SLA Contracts & Tiers', icon: '📜' },
+                  { id: 'incidents', label: 'Incidents & Breach Log', icon: '⚠️', badge: '1 Warning', badgeBg: 'var(--status-warning-bg)', badgeColor: 'var(--status-warning)' },
+                  { id: 'latency', label: 'Global Edge Latency', icon: '🌐' }
+                ].map(item => (
+                  <li key={item.id}>
+                    <button
+                      type="button"
+                      onClick={() => { setActiveTab(item.id); setSidebarOpen(false); }}
+                      style={{
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.75rem',
+                        padding: '0.625rem 0.875rem',
+                        borderRadius: '10px',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        border: '1px solid transparent',
+                        cursor: 'pointer',
+                        background: activeTab === item.id ? 'var(--brand-light)' : 'transparent',
+                        color: activeTab === item.id ? 'var(--brand-primary)' : 'var(--text-secondary)',
+                        borderColor: activeTab === item.id ? 'var(--brand-border)' : 'transparent',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <span>{item.icon}</span>
+                      <span>{item.label}</span>
+                      {item.badge && (
+                        <span style={{
+                          marginLeft: 'auto',
+                          fontSize: '0.6875rem',
+                          fontWeight: 700,
+                          padding: '0.15rem 0.45rem',
+                          borderRadius: '9999px',
+                          background: item.badgeBg || 'var(--bg-subtle)',
+                          color: item.badgeColor || 'var(--text-secondary)'
+                        }}>
+                          {item.badge}
+                        </span>
+                      )}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Sidebar bottom card */}
+            <div style={{ margin: '1rem', padding: '1rem', background: 'var(--bg-subtle)', border: '1px solid var(--border-light)', borderRadius: '12px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>Quarterly SLA</span>
+                <span style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--status-healthy)', fontFamily: 'var(--font-mono)' }}>99.982%</span>
+              </div>
+              <div style={{ width: '100%', height: '6px', background: 'var(--border-light)', borderRadius: '9999px', overflow: 'hidden', marginBottom: '0.5rem' }}>
+                <div style={{ width: '99.9%', height: '100%', background: 'var(--status-healthy)', borderRadius: '9999px' }}></div>
+              </div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                🛡️ Target: 99.90% &bull; <span style={{ color: 'var(--status-healthy)', fontWeight: 700 }}>Compliant</span>
+              </div>
+            </div>
+          </aside>
+
+          {/* Main Area */}
+          <div className="app-main">
+            {/* Header */}
+            <header className="app-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <button 
+                  style={{ background: 'var(--bg-subtle)', border: '1px solid var(--border-light)', width: '38px', height: '38px', borderRadius: '8px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', color: 'var(--text-primary)' }}
+                  onClick={() => setSidebarOpen(!sidebarOpen)}
+                >
+                  ☰
+                </button>
+                <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.65rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0, lineHeight: 1 }}>
+                  Dashboard
+                </h1>
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  background: 'var(--status-healthy-bg)',
+                  border: '1px solid var(--status-healthy-border)',
+                  padding: '0.3rem 0.75rem',
+                  borderRadius: '9999px',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  color: 'var(--status-healthy)'
+                }}>
+                  <span className="status-indicator-dot pulse" style={{ color: 'var(--status-healthy)' }}></span>
+                  <span>99.98% Compliant (All SLA Targets Met)</span>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
+                {/* Dedicated Dark Theme Indicator Pill (Only Dark Mode as requested) */}
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '9999px', padding: '0.38rem 0.95rem', fontSize: '0.8125rem', fontWeight: 700, color: '#ffffff', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)' }}>
+                  <span style={{ fontSize: '0.95rem' }}>🌙</span>
+                  <span style={{ letterSpacing: '0.02em' }}>Dark</span>
+                </div>
+
+                <button 
+                  className="btn-primary" 
+                  onClick={() => setReportModal(true)}
+                  style={{ padding: '0.45rem 0.85rem', fontSize: '0.8125rem' }}
+                >
+                  📥 Export SLA Report
+                </button>
+
+                {/* User Profile & Dropdown Menu matching user request screenshot */}
+                <div style={{ position: 'relative' }}>
+                  <button 
+                    type="button" 
+                    id="profile-menu-trigger"
+                    onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', background: 'var(--bg-surface)', border: '1px solid var(--border-light)', padding: '0.35rem 0.75rem', borderRadius: '10px', cursor: 'pointer', transition: 'all 0.15s ease', boxShadow: 'var(--shadow-sm)' }}
+                    title="User Profile & Account Menu"
+                  >
+                    <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: 'linear-gradient(135deg, #ff6b00, #ff8800)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '0.78rem', boxShadow: '0 2px 6px rgba(255, 107, 0, 0.35)' }}>
+                      {currentUser.avatar || 'SA'}
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
+                      <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.1 }}>{currentUser.name || 'Super Admin'}</span>
+                      <span style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>{currentUser.role || 'Super Admin'}</span>
+                    </div>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--text-muted)', transform: profileDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s ease' }}>
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
+
+                  {/* Dropdown Menu exactly matching screenshot */}
+                  {profileDropdownOpen && (
+                    <>
+                      <div style={{ position: 'fixed', inset: 0, zIndex: 89 }} onClick={() => setProfileDropdownOpen(false)} />
+                      
+                      <div style={{ position: 'absolute', right: 0, top: 'calc(100% + 8px)', zIndex: 90, width: '250px', background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '16px', boxShadow: '0 16px 36px -4px rgba(0, 0, 0, 0.16), 0 4px 12px rgba(0, 0, 0, 0.08)', overflow: 'hidden', animation: 'dropdownFadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1)', textAlign: 'left' }}>
+                        {/* User Header (Super Admin / admin@stackly.com) */}
+                        <div style={{ padding: '1.15rem 1.25rem 0.95rem 1.25rem', borderBottom: '1px solid var(--border-light)' }}>
+                          <div style={{ fontFamily: 'var(--font-sans)', fontSize: '1.08rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.2, letterSpacing: '-0.01em' }}>
+                            {currentUser.name || 'Super Admin'}
+                          </div>
+                          <div style={{ fontFamily: 'var(--font-sans)', fontSize: '0.84rem', color: 'var(--text-muted)', marginTop: '0.35rem', wordBreak: 'break-all' }}>
+                            {currentUser.email || 'admin@stackly.com'}
+                          </div>
+                        </div>
+
+                        {/* Menu Options */}
+                        <div style={{ padding: '0.45rem 0.45rem 0.35rem 0.45rem' }}>
+                          {/* My Profile */}
+                          <button 
+                            type="button" 
+                            className="user-profile-menu-item"
+                            onClick={() => { setProfileDropdownOpen(false); setProfileModal(true); }}
+                          >
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                              <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <span>My Profile</span>
+                          </button>
+
+                          {/* Settings */}
+                          <button 
+                            type="button" 
+                            className="user-profile-menu-item"
+                            onClick={() => { setProfileDropdownOpen(false); setSettingsModal(true); }}
+                          >
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+                              <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <span>Settings</span>
+                          </button>
+                        </div>
+
+                        {/* Separator */}
+                        <div style={{ borderTop: '1px solid var(--border-light)', margin: '0.2rem 0.5rem' }}></div>
+
+                        {/* Logout Button (Red icon [-> and Red text) */}
+                        <div style={{ padding: '0.25rem 0.45rem 0.45rem 0.45rem' }}>
+                          <button 
+                            type="button" 
+                            className="user-profile-menu-item logout-item"
+                            onClick={() => { setProfileDropdownOpen(false); onLogout(); }}
+                          >
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                              <polyline points="16 17 21 12 16 7"></polyline>
+                              <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                            <span>Logout</span>
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </header>
+
+            {/* Body */}
+            <main className="app-content">
+              {/* Welcome Hero Bar */}
+              <div style={{
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-light)',
+                borderRadius: '16px',
+                padding: '1.25rem 1.75rem',
+                marginBottom: '1.75rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '1rem',
+                boxShadow: 'var(--shadow-sm)'
+              }}>
+                <div>
+                  <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                    Welcome back, {currentUser.name}
+                  </h2>
+                  <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                    Stackly SLA Telemetry Engine &bull; Environment: <strong style={{ color: 'var(--text-secondary)' }}>{COMPANY_INFO.environment}</strong> &bull; System Status: <strong style={{ color: 'var(--status-healthy)' }}>Optimal</strong>
+                  </p>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  <div style={{ background: 'var(--bg-subtle)', border: '1px solid var(--border-light)', padding: '0.35rem 0.75rem', borderRadius: '8px', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                    ⏱️ MTTR: <strong style={{ color: 'var(--text-primary)' }}>{COMPANY_INFO.mttr}</strong>
+                  </div>
+                  <div style={{ background: 'var(--status-healthy-bg)', border: '1px solid var(--status-healthy-border)', padding: '0.35rem 0.75rem', borderRadius: '8px', fontSize: '0.75rem', color: 'var(--status-healthy)', fontWeight: 700 }}>
+                    🛡️ Global SLA: {COMPANY_INFO.complianceScore}
+                  </div>
+                </div>
+              </div>
+
+              {/* 4 KPIs Grid */}
+              <div className="grid-4" style={{ marginBottom: '1.75rem' }}>
+                {KPI_METRICS.map(kpi => (
+                  <div 
+                    key={kpi.id} 
+                    className="sla-card"
+                    style={{ borderLeft: `4px solid ${kpi.color}`, background: 'var(--bg-surface)', borderTop: '1px solid var(--border-light)', borderRight: '1px solid var(--border-light)', borderBottom: '1px solid var(--border-light)' }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+                      <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-secondary)' }}>{kpi.label}</span>
+                      <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'var(--bg-subtle)', border: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem' }}>
+                        ⚡
+                      </div>
+                    </div>
+                    <div style={{ fontSize: '1.875rem', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-sans)', letterSpacing: '-0.02em', marginBottom: '0.25rem' }}>
+                      {kpi.value}
+                    </div>
+                    <div style={{ fontSize: '0.78125rem', color: 'var(--text-muted)' }}>{kpi.sub}</div>
+                    <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid var(--border-light)', fontSize: '0.75rem', color: 'var(--status-healthy)', fontWeight: 600 }}>
+                      {kpi.change}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* 5 SLA Visuals Showcase Component */}
+              {(activeTab === 'overview' || activeTab === 'visuals') && (
+                <div className="sla-card" style={{ marginBottom: '1.75rem', background: 'var(--bg-surface)', border: '1px solid var(--border-light)' }}>
+                  <div className="sla-card-header">
+                    <div>
+                      <div className="sla-card-title">
+                        <span style={{ color: 'var(--text-primary)' }}>🏆 Stackly SLA Infrastructure & Reliability Pillars</span>
+                        <span className="status-pill healthy" style={{ marginLeft: '0.5rem' }}>5 Facilities</span>
+                      </div>
+                      <div className="sla-card-subtitle" style={{ color: 'var(--text-muted)' }}>
+                        Multi-region cloud redundancy, 24/7 NOC command center, low-latency edge routing, and automated compliance shields.
+                      </div>
+                    </div>
+                    <button 
+                      className="btn-secondary"
+                      onClick={() => setImgModal(activeHeroImg)}
+                      style={{ padding: '0.4rem 0.75rem', fontSize: '0.75rem' }}
+                    >
+                      🔍 Full Zoom
+                    </button>
+                  </div>
+
+                  {/* Featured Hero Box */}
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1.4fr 1fr',
+                    gap: '1.5rem',
+                    background: 'var(--bg-subtle)',
+                    border: '1px solid var(--border-light)',
+                    borderRadius: '16px',
+                    padding: '1.25rem',
+                    marginBottom: '1.25rem'
+                  }}>
+                    <div 
+                      style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', aspectRatio: '16/9', background: 'var(--border-light)', cursor: 'pointer' }}
+                      onClick={() => setImgModal(activeHeroImg)}
+                    >
+                      <img 
+                        src={activeHeroImg.img} 
+                        alt={activeHeroImg.title}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                      />
+                      <div style={{
+                        position: 'absolute',
+                        top: '0.75rem',
+                        left: '0.75rem',
+                        background: 'rgba(0,0,0,0.7)',
+                        backdropFilter: 'blur(8px)',
+                        padding: '0.3rem 0.75rem',
+                        borderRadius: '9999px',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        color: '#ffffff'
+                      }}>
+                        {activeHeroImg.tag}
+                      </div>
+                      <div style={{
+                        position: 'absolute',
+                        bottom: '0.75rem',
+                        right: '0.75rem',
+                        background: 'rgba(0,0,0,0.85)',
+                        color: 'white',
+                        padding: '0.35rem 0.75rem',
+                        borderRadius: '8px',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        fontFamily: 'var(--font-mono)'
+                      }}>
+                        {activeHeroImg.metric}
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
+                      <div>
+                        <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--brand-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                          {activeHeroImg.cat}
+                        </span>
+                        <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '0.25rem' }}>
+                          {activeHeroImg.title}
+                        </h3>
+                      </div>
+                      <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                        {activeHeroImg.desc}
+                      </p>
+                      <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '10px', padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div>
+                          <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Verified SLA Uptime</div>
+                          <div style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--status-healthy)', fontFamily: 'var(--font-mono)' }}>
+                            {activeHeroImg.metric}
+                          </div>
+                        </div>
+                        <span className="status-pill healthy">🛡️ Audited 2026</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 5 Thumbnails */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.875rem' }}>
+                    {SLA_SHOWCASE_IMAGES.map((imgItem, idx) => (
+                      <div
+                        key={imgItem.id}
+                        onClick={() => setSelectedImg(idx)}
+                        style={{
+                          cursor: 'pointer',
+                          border: selectedImg === idx ? '2px solid var(--brand-primary)' : '1px solid var(--border-light)',
+                          borderRadius: '12px',
+                          padding: '0.375rem',
+                          background: 'var(--bg-surface)',
+                          boxShadow: selectedImg === idx ? '0 4px 12px rgba(255,107,0,0.25)' : 'none',
+                          transition: 'all 0.15s ease'
+                        }}
+                      >
+                        <div style={{ borderRadius: '8px', overflow: 'hidden', aspectRatio: '16/10', marginBottom: '0.5rem' }}>
+                          <img src={imgItem.img} alt={imgItem.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        </div>
+                        <div style={{ fontSize: '0.75rem', fontWeight: selectedImg === idx ? 700 : 600, color: selectedImg === idx ? 'var(--brand-primary)' : 'var(--text-secondary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {imgItem.tag}
+                        </div>
+                        <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                          {imgItem.metric}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Uptime Trend Chart */}
+              {(activeTab === 'overview' || activeTab === 'latency') && (
+                <div className="sla-card" style={{ marginBottom: '1.75rem', background: 'var(--bg-surface)', border: '1px solid var(--border-light)' }}>
+                  <div className="sla-card-header">
+                    <div>
+                      <div className="sla-card-title">
+                        <span style={{ color: 'var(--text-primary)' }}>📈 Real-time SLA Performance Trend (24h Window)</span>
+                        <span className="status-pill healthy" style={{ marginLeft: '0.5rem' }}>Target: 99.950%</span>
+                      </div>
+                      <div className="sla-card-subtitle" style={{ color: 'var(--text-muted)' }}>
+                        Continuous synthetic probes across all 24 ingress gateways. Current: 99.982%
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* SVG Chart */}
+                  <div style={{ width: '100%', overflowX: 'auto' }}>
+                    <svg viewBox="0 0 700 180" style={{ width: '100%', height: 'auto', minWidth: '500px', display: 'block' }}>
+                      <defs>
+                        <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#ff6b00" stopOpacity="0.3" />
+                          <stop offset="100%" stopColor="#ff6b00" stopOpacity="0.0" />
+                        </linearGradient>
+                      </defs>
+                      <line x1="40" y1="30" x2="660" y2="30" stroke="var(--border-light)" strokeDasharray="3 3" />
+                      <line x1="40" y1="80" x2="660" y2="80" stroke="var(--border-light)" strokeDasharray="3 3" />
+                      <line x1="40" y1="130" x2="660" y2="130" stroke="var(--border-light)" />
+                      
+                      {/* SLA Cap Baseline (99.95%) */}
+                      <line x1="40" y1="110" x2="660" y2="110" stroke="#ef4444" strokeWidth="1.5" strokeDasharray="4 4" />
+                      <text x="650" y="105" textAnchor="end" fill="#dc2626" fontSize="10" fontWeight="700">Contractual SLA Minimum (99.950%)</text>
+
+                      {/* Area Fill & Line */}
+                      <path d="M 40,40 L 95,45 L 150,55 L 205,50 L 260,65 L 315,95 L 370,75 L 425,60 L 480,50 L 535,45 L 590,48 L 645,52 L 645,130 L 40,130 Z" fill="url(#chartGrad)" />
+                      <path d="M 40,40 L 95,45 L 150,55 L 205,50 L 260,65 L 315,95 L 370,75 L 425,60 L 480,50 L 535,45 L 590,48 L 645,52" fill="none" stroke="#ff6b00" strokeWidth="3" strokeLinecap="round" />
+
+                      {/* Data Dots */}
+                      {[
+                        { x: 40, y: 40, t: '00:00' }, { x: 95, y: 45, t: '02:00' }, { x: 150, y: 55, t: '04:00' },
+                        { x: 205, y: 50, t: '06:00' }, { x: 260, y: 65, t: '08:00' }, { x: 315, y: 95, t: '10:00' },
+                        { x: 370, y: 75, t: '12:00' }, { x: 425, y: 60, t: '14:00' }, { x: 480, y: 50, t: '16:00' },
+                        { x: 535, y: 45, t: '18:00' }, { x: 590, y: 48, t: '20:00' }, { x: 645, y: 52, t: 'Now' }
+                      ].map((p, i) => (
+                        <g key={i}>
+                          <circle cx={p.x} cy={p.y} r="4" fill="var(--bg-surface)" stroke="#ff6b00" strokeWidth="2" />
+                          <text x={p.x} y="150" textAnchor="middle" fill="var(--text-muted)" fontSize="9" fontWeight="600">{p.t}</text>
+                        </g>
+                      ))}
+                    </svg>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--border-light)', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    <div style={{ display: 'flex', gap: '1rem' }}>
+                      <span>Measured Uptime: <strong style={{ color: 'var(--text-primary)' }}>99.982%</strong></span>
+                      <span>SLA Cap: <strong style={{ color: '#ef4444' }}>99.950%</strong></span>
+                      <span>⚡ Avg Latency: <strong style={{ color: 'var(--text-primary)' }}>22ms</strong></span>
+                    </div>
+                    <span style={{ color: 'var(--status-healthy)', fontWeight: 600 }}>✅ Zero SLA Breach Periods</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Microservices Matrix */}
+              {(activeTab === 'overview' || activeTab === 'services') && (
+                <div className="sla-card" style={{ marginBottom: '1.75rem', background: 'var(--bg-surface)', border: '1px solid var(--border-light)' }}>
+                  <div className="sla-card-header">
+                    <div>
+                      <div className="sla-card-title">
+                        <span style={{ color: 'var(--text-primary)' }}>🖥️ Service-Level Performance & Uptime Matrix</span>
+                        <span className="status-pill neutral" style={{ marginLeft: '0.5rem' }}>8 Critical Services</span>
+                      </div>
+                      <div className="sla-card-subtitle" style={{ color: 'var(--text-muted)' }}>
+                        Per-service SLA commitments, response times, throughput, and error rates.
+                      </div>
+                    </div>
+                    <div>
+                      <input 
+                        type="text" 
+                        placeholder="Filter services..." 
+                        value={search} 
+                        onChange={e => setSearch(e.target.value)}
+                        style={{ padding: '0.45rem 0.85rem', border: '1px solid var(--border-light)', borderRadius: '8px', fontSize: '0.8125rem', background: 'var(--bg-subtle)', color: 'var(--text-primary)', outline: 'none' }}
+                      />
+                    </div>
+                  </div>
+
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.8125rem' }}>
+                      <thead>
+                        <tr style={{ borderBottom: '2px solid var(--border-light)', color: 'var(--text-muted)', fontSize: '0.72rem', textTransform: 'uppercase' }}>
+                          <th style={{ padding: '0.75rem 1rem' }}>Microservice</th>
+                          <th style={{ padding: '0.75rem 0.75rem' }}>SLA Tier</th>
+                          <th style={{ padding: '0.75rem 0.75rem' }}>Uptime</th>
+                          <th style={{ padding: '0.75rem 0.75rem' }}>Latency</th>
+                          <th style={{ padding: '0.75rem 0.75rem' }}>Throughput</th>
+                          <th style={{ padding: '0.75rem 0.75rem' }}>Error Rate</th>
+                          <th style={{ padding: '0.75rem 1rem', textAlign: 'right' }}>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredServices.map(srv => {
+                          const isDegraded = srv.status === 'Degraded';
+                          return (
+                            <tr key={srv.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
+                              <td style={{ padding: '0.875rem 1rem' }}>
+                                <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{srv.name}</div>
+                                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{srv.type}</div>
+                              </td>
+                              <td style={{ padding: '0.875rem 0.75rem' }}>
+                                <span style={{ fontSize: '0.72rem', fontWeight: 600, padding: '0.2rem 0.5rem', borderRadius: '4px', background: srv.tier.includes('Platinum') ? 'rgba(255, 107, 0, 0.12)' : 'rgba(245, 158, 11, 0.12)', color: srv.tier.includes('Platinum') ? 'var(--brand-primary)' : 'var(--status-warning)', border: '1px solid var(--border-light)' }}>
+                                  {srv.tier}
+                                </span>
+                              </td>
+                              <td style={{ padding: '0.875rem 0.75rem', fontWeight: 800, fontFamily: 'var(--font-mono)', color: isDegraded ? 'var(--status-warning)' : 'var(--status-healthy)' }}>
+                                {srv.uptime}
+                              </td>
+                              <td style={{ padding: '0.875rem 0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--text-primary)' }}>{srv.latency}</td>
+                              <td style={{ padding: '0.875rem 0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)' }}>{srv.req}</td>
+                              <td style={{ padding: '0.875rem 0.75rem', fontFamily: 'var(--font-mono)', color: isDegraded ? 'var(--status-critical)' : 'var(--status-healthy)' }}>{srv.err}</td>
+                              <td style={{ padding: '0.875rem 1rem', textAlign: 'right' }}>
+                                <span className={`status-pill ${isDegraded ? 'warning' : 'healthy'}`}>
+                                  {srv.status}
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* SLA Tiers Cards */}
+              {(activeTab === 'overview' || activeTab === 'tiers') && (
+                <div className="sla-card" style={{ marginBottom: '1.75rem', background: 'var(--bg-surface)', border: '1px solid var(--border-light)' }}>
+                  <div className="sla-card-header">
+                    <div>
+                      <div className="sla-card-title">
+                        <span style={{ color: 'var(--text-primary)' }}>📜 SLA Contract Tiers & Downtime Budget</span>
+                        <span className="status-pill healthy" style={{ marginLeft: '0.5rem' }}>100% SLA Adherence</span>
+                      </div>
+                      <div className="sla-card-subtitle" style={{ color: 'var(--text-muted)' }}>
+                        Legally binding service credits and contractual downtime budgets across all client tiers.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid-4">
+                    {SLA_TIERS.map(t => (
+                      <div key={t.tier} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '12px', padding: '1.125rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                          <span style={{ fontSize: '0.75rem', fontWeight: 700, padding: '0.2rem 0.5rem', borderRadius: '9999px', background: 'var(--bg-subtle)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }}>
+                            {t.tier}
+                          </span>
+                          <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{t.clients} clients</span>
+                        </div>
+                        <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)', marginBottom: '0.25rem' }}>
+                          {t.current} <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500 }}>/ {t.target}</span>
+                        </div>
+                        <div style={{ background: 'var(--bg-subtle)', border: '1px solid var(--border-light)', padding: '0.5rem', borderRadius: '6px', fontSize: '0.7rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                          {t.downtime}
+                        </div>
+                        <div style={{ fontSize: '0.7rem', color: 'var(--status-healthy)', fontWeight: 600 }}>
+                          Clause: {t.refund}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Incidents & Breaches */}
+              {(activeTab === 'overview' || activeTab === 'incidents') && (
+                <div className="sla-card" style={{ marginBottom: '1.75rem', background: 'var(--bg-surface)', border: '1px solid var(--border-light)' }}>
+                  <div className="sla-card-header">
+                    <div>
+                      <div className="sla-card-title">
+                        <span style={{ color: 'var(--text-primary)' }}>⚠️ Active Incidents & SLA Breach Countdown</span>
+                        <span className="status-pill warning" style={{ marginLeft: '0.5rem' }}>1 Warning</span>
+                      </div>
+                      <div className="sla-card-subtitle" style={{ color: 'var(--text-muted)' }}>
+                        Real-time incident response telemetry and MTTR breach countdown timers.
+                      </div>
+                    </div>
+                  </div>
+
+                  {mitigateMsg && (
+                    <div style={{ background: 'var(--status-healthy-bg)', border: '1px solid var(--status-healthy-border)', color: 'var(--status-healthy)', padding: '0.75rem', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.8125rem' }}>
+                      {mitigateMsg}
+                    </div>
+                  )}
+
+                  <div style={{ border: '1px solid var(--status-warning-border)', borderRadius: '12px', padding: '1.25rem', background: 'var(--status-warning-bg)', marginBottom: '1rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '0.2rem 0.5rem', borderRadius: '4px', background: 'var(--bg-surface)', color: 'var(--status-warning)', border: '1px solid var(--status-warning-border)' }}>
+                          P2 - High
+                        </span>
+                        <strong style={{ color: 'var(--text-primary)' }}>INC-4821: WebSocket Connection Pool Saturation in AP-South-1</strong>
+                      </div>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--status-warning)', background: 'var(--bg-surface)', padding: '0.25rem 0.625rem', borderRadius: '6px', border: '1px solid var(--status-warning-border)' }}>
+                        ⏱️ Time to SLA Breach: 26 mins
+                      </div>
+                    </div>
+                    <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
+                      Service: Real-time Notification & WebSockets &bull; Started: 34 mins ago &bull; Lead: Sarah Chen (Principal SRE)
+                    </p>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                      <button 
+                        className="btn-primary" 
+                        onClick={() => { setMitigateMsg("Automated SRE mitigation runbook executed! Auto-scaled 8 additional socket workers in Mumbai."); setTimeout(() => setMitigateMsg(''), 4000); }}
+                        style={{ padding: '0.4rem 0.75rem', fontSize: '0.75rem' }}
+                      >
+                        ⚡ Execute Mitigation Script
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Regional Edge Latency */}
+              {(activeTab === 'overview' || activeTab === 'latency') && (
+                <div className="sla-card" style={{ marginBottom: '1.75rem', background: 'var(--bg-surface)', border: '1px solid var(--border-light)' }}>
+                  <div className="sla-card-header">
+                    <div>
+                      <div className="sla-card-title">
+                        <span style={{ color: 'var(--text-primary)' }}>🌐 Global Edge Nodes & Regional SLA Latency</span>
+                        <span className="status-pill healthy" style={{ marginLeft: '0.5rem' }}>340+ Edge PoPs</span>
+                      </div>
+                      <div className="sla-card-subtitle" style={{ color: 'var(--text-muted)' }}>
+                        Sub-millisecond packet latency monitoring across five continental edge hubs.
+                      </div>
+                    </div>
+                    <button 
+                      className="btn-secondary"
+                      onClick={() => { setPingMsg("Global edge probe completed: 340 PoPs verified. 100% routes operational."); setTimeout(() => setPingMsg(''), 4000); }}
+                      style={{ padding: '0.4rem 0.75rem', fontSize: '0.75rem' }}
+                    >
+                      📡 Probe Edge PoPs
+                    </button>
+                  </div>
+
+                  {pingMsg && (
+                    <div style={{ background: 'var(--status-healthy-bg)', border: '1px solid var(--status-healthy-border)', color: 'var(--status-healthy)', padding: '0.75rem', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.8125rem' }}>
+                      {pingMsg}
+                    </div>
+                  )}
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
+                    {[
+                      { reg: "North America (Virginia/Oregon)", uptime: "99.994%", ping: "14ms", nodes: 96, status: "Optimal" },
+                      { reg: "Europe (Frankfurt/London)", uptime: "99.988%", ping: "18ms", nodes: 74, status: "Optimal" },
+                      { reg: "Asia-Pacific (Tokyo/Mumbai)", uptime: "99.952%", ping: "46ms", nodes: 68, status: "Investigating" },
+                      { reg: "South America (São Paulo)", uptime: "99.980%", ping: "64ms", nodes: 26, status: "Optimal" }
+                    ].map(r => (
+                      <div key={r.reg} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '12px', padding: '1rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                          <strong style={{ fontSize: '0.84rem', color: 'var(--text-primary)' }}>{r.reg}</strong>
+                          <span className={`status-pill ${r.status === 'Optimal' ? 'healthy' : 'warning'}`} style={{ fontSize: '0.6875rem' }}>{r.status}</span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                          <span>Uptime: <strong style={{ color: 'var(--status-healthy)', fontFamily: 'var(--font-mono)' }}>{r.uptime}</strong></span>
+                          <span>Ping: <strong style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>{r.ping}</strong></span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </main>
+
+            {/* Footer */}
+            <footer style={{ borderTop: '1px solid var(--border-light)', background: 'var(--bg-surface)', padding: '1.25rem 2rem', fontSize: '0.8125rem', color: 'var(--text-muted)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+              <div>
+                <strong style={{ color: 'var(--text-primary)' }}>Stackly Cloud SLA Command Center</strong> &bull; Version: {COMPANY_INFO.version} &bull; <span style={{ color: 'var(--status-healthy)', fontWeight: 600 }}>Zero Active Penalties</span>
+              </div>
+              <div>
+                &copy; 2026 Stackly Technologies Inc. All rights reserved.
+              </div>
+            </footer>
+          </div>
+
+          {/* Full Image Zoom Modal */}
+          {imgModal && (
+            <div 
+              style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.75)', backdropFilter: 'blur(8px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}
+              onClick={() => setImgModal(null)}
+            >
+              <div 
+                style={{ maxWidth: '900px', width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '20px', overflow: 'hidden', boxShadow: 'var(--shadow-xl)' }}
+                onClick={e => e.stopPropagation()}
+              >
+                <img src={imgModal.img} alt={imgModal.title} style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover' }} />
+                <div style={{ padding: '1.5rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)' }}>{imgModal.title}</h3>
+                    <span className="status-pill healthy">{imgModal.metric}</span>
+                  </div>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.6 }}>{imgModal.desc}</p>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
+                    <button className="btn-secondary" onClick={() => setImgModal(null)}>Close Preview</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Report Modal */}
+          {reportModal && (
+            <div 
+              style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.7)', backdropFilter: 'blur(8px)', zIndex: 110, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}
+              onClick={() => setReportModal(false)}
+            >
+              <div 
+                style={{ maxWidth: '680px', width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '20px', padding: '2rem', boxShadow: 'var(--shadow-xl)' }}
+                onClick={e => e.stopPropagation()}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-light)', paddingBottom: '1rem', marginBottom: '1.25rem' }}>
+                  <div>
+                    <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-primary)' }}>Executive SLA Compliance Audit Report</h2>
+                    <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>Stackly Cloud Technologies &bull; Q3 2026 Audit</p>
+                  </div>
+                  <button onClick={() => setReportModal(false)} style={{ border: 'none', background: 'var(--bg-subtle)', color: 'var(--text-primary)', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer' }}>✕</button>
+                </div>
+                <div style={{ background: 'var(--bg-subtle)', border: '1px solid var(--border-light)', borderRadius: '12px', padding: '1.25rem', marginBottom: '1.25rem', fontSize: '0.84rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem', marginBottom: '1rem' }}>
+                    <div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>MEASURED UPTIME</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--status-healthy)' }}>{COMPANY_INFO.complianceScore}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>MTTR AVERAGE</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--brand-primary)' }}>{COMPANY_INFO.mttr}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>PENALTY LIABILITY</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--status-healthy)' }}>$0.00</div>
+                    </div>
+                  </div>
+                  <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                    This document certifies that Stackly Cloud has fully complied with all contractual SLA commitments across all customer enterprise tiers for the Q3 2026 audit interval.
+                  </p>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+                  <button className="btn-secondary" onClick={() => window.print()}>🖨️ Print</button>
+                  <button className="btn-primary" onClick={() => { alert("Downloaded Stackly_SLA_Audit_Report.pdf"); setReportModal(false); }}>📥 Download Signed PDF</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* My Profile Modal */}
+          {profileModal && (
+            <div 
+              style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.7)', backdropFilter: 'blur(8px)', zIndex: 110, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}
+              onClick={() => setProfileModal(false)}
+            >
+              <div 
+                style={{ maxWidth: '600px', width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '20px', padding: '2rem', boxShadow: 'var(--shadow-xl)' }}
+                onClick={e => e.stopPropagation()}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid var(--border-light)', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div style={{ width: '54px', height: '54px', borderRadius: '50%', background: 'linear-gradient(135deg, #ff6b00, #ff8800)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1.35rem', boxShadow: '0 4px 14px rgba(255, 107, 0, 0.4)' }}>
+                      {currentUser.avatar || 'SA'}
+                    </div>
+                    <div>
+                      <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, lineHeight: 1.2 }}>{currentUser.name || 'Super Admin'}</h2>
+                      <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>{currentUser.email || 'admin@stackly.com'}</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setProfileModal(false)} style={{ border: 'none', background: 'var(--bg-subtle)', color: 'var(--text-primary)', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem' }}>✕</button>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.75rem' }}>
+                    <div style={{ background: 'var(--bg-subtle)', border: '1px solid var(--border-light)', borderRadius: '12px', padding: '1rem' }}>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.04em' }}>Assigned Role</div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '0.25rem' }}>{currentUser.role || 'Super Admin'}</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--brand-primary)', marginTop: '0.15rem' }}>Full SLA Authority</div>
+                    </div>
+                    <div style={{ background: 'var(--bg-subtle)', border: '1px solid var(--border-light)', borderRadius: '12px', padding: '1rem' }}>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.04em' }}>Security Verification</div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--status-healthy)', marginTop: '0.25rem' }}>🛡️ SOC-2 &bull; 2FA Active</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>Hardware Token Enforced</div>
+                    </div>
+                  </div>
+
+                  <div style={{ background: 'var(--bg-subtle)', border: '1px solid var(--border-light)', borderRadius: '12px', padding: '1rem' }}>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, marginBottom: '0.4rem' }}>Permissions & Scope</div>
+                    <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+                      Global infrastructure cluster telemetry, contractual SLA thresholds override, real-time war room coordination, and financial penalty disbursement authorization.
+                    </p>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.5rem' }}>
+                  <button className="btn-secondary" onClick={() => setProfileModal(false)}>Close</button>
+                  <button className="btn-primary" onClick={() => { alert('Profile updated successfully!'); setProfileModal(false); }}>Save Changes</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Settings Modal */}
+          {settingsModal && (
+            <div 
+              style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.7)', backdropFilter: 'blur(8px)', zIndex: 110, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}
+              onClick={() => setSettingsModal(false)}
+            >
+              <div 
+                style={{ maxWidth: '600px', width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '20px', padding: '2rem', boxShadow: 'var(--shadow-xl)' }}
+                onClick={e => e.stopPropagation()}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-light)', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
+                  <div>
+                    <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>SLA Console Settings</h2>
+                    <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>Configure visual theme, alert notifications & sync</p>
+                  </div>
+                  <button onClick={() => setSettingsModal(false)} style={{ border: 'none', background: 'var(--bg-subtle)', color: 'var(--text-primary)', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem' }}>✕</button>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                  {/* Theme Select */}
+                  <div>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', display: 'block', marginBottom: '0.5rem' }}>
+                      Dashboard Visual Theme
+                    </label>
+                    <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '12px', padding: '0.85rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                        <span style={{ fontSize: '1.25rem' }}>🌙</span>
+                        <div>
+                          <div style={{ fontWeight: 800, fontSize: '0.9rem', color: '#ffffff' }}>Dark Theme</div>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>High-Contrast Obsidian &amp; Cyber Orange (Active)</div>
+                        </div>
+                      </div>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 700, padding: '0.2rem 0.65rem', borderRadius: '9999px', background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.4)' }}>Active</span>
+                    </div>
+                  </div>
+
+                  {/* Notifications */}
+                  <div style={{ background: 'var(--bg-subtle)', border: '1px solid var(--border-light)', borderRadius: '12px', padding: '1rem' }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>
+                      Incident Notification Channels
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                      <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontSize: '0.84rem', color: 'var(--text-primary)' }}>
+                        <span>🔔 Audio alert on SLA Breach Warning (&lt; 30m MTTR)</span>
+                        <input type="checkbox" defaultChecked style={{ accentColor: '#ff6b00', width: '16px', height: '16px' }} />
+                      </label>
+                      <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontSize: '0.84rem', color: 'var(--text-primary)' }}>
+                        <span>📱 Urgent P1 PagerDuty SMS Escalation</span>
+                        <input type="checkbox" defaultChecked style={{ accentColor: '#ff6b00', width: '16px', height: '16px' }} />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.5rem' }}>
+                  <button className="btn-secondary" onClick={() => setSettingsModal(false)}>Cancel</button>
+                  <button className="btn-primary" onClick={() => { alert('Settings saved successfully!'); setSettingsModal(false); }}>Save Preferences</button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // ==========================================
+    // ROOT APP
+    // ==========================================
+    function App() {
+      const [user, setUser] = useState(null);
+
+      if (!user) {
+        return <LoginPage onLogin={u => setUser(u)} />;
+      }
+      return <SlaDashboard currentUser={user} onLogout={() => setUser(null)} />;
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
