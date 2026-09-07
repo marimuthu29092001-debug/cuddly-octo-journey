@@ -53,6 +53,21 @@ export default function SlaRecordsTable({
     }
   }, [externalStatus]);
 
+  // Lock body scroll when record details modal is open
+  useEffect(() => {
+    if (selectedRecord) {
+      document.documentElement.classList.add('modal-open');
+      document.body.classList.add('modal-open');
+    } else {
+      document.documentElement.classList.remove('modal-open');
+      document.body.classList.remove('modal-open');
+    }
+    return () => {
+      document.documentElement.classList.remove('modal-open');
+      document.body.classList.remove('modal-open');
+    };
+  }, [selectedRecord]);
+
   // Simulate smooth loading state whenever filter or date range changes
   const handleDateRangeChange = (range) => {
     setDateRange(range);
@@ -589,7 +604,7 @@ export default function SlaRecordsTable({
         /* =========================================================================
            SLA DATA TABLE (RESPONSIVE)
            ========================================================================= */
-        <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+        <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain', overscrollBehaviorX: 'contain' }}>
           <table style={{
             width: '100%',
             borderCollapse: 'collapse',
@@ -839,9 +854,13 @@ export default function SlaRecordsTable({
             alignItems: 'center',
             justifyContent: 'center',
             zIndex: 100,
-            padding: '1.5rem'
+            padding: '1.5rem',
+            overscrollBehavior: 'contain',
+            touchAction: 'none'
           }}
           onClick={() => setSelectedRecord(null)}
+          onTouchMove={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
+          onWheel={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
         >
           <div 
             style={{
@@ -853,7 +872,9 @@ export default function SlaRecordsTable({
               padding: '1.75rem',
               boxShadow: '0 25px 60px rgba(0,0,0,0.6)',
               position: 'relative',
-              animation: 'fadeInModal 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+              animation: 'fadeInModal 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+              overscrollBehavior: 'contain',
+              touchAction: 'auto'
             }}
             onClick={(e) => e.stopPropagation()}
           >

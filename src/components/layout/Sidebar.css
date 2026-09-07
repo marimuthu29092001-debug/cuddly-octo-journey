@@ -13,6 +13,7 @@
   transition: transform var(--transition-normal);
   z-index: 35;
   backdrop-filter: blur(14px);
+  overscroll-behavior: contain;
 }
 
 .sidebar-brand-header {
@@ -191,5 +192,7 @@
     background: rgba(15, 23, 42, 0.4);
     backdrop-filter: blur(4px);
     z-index: 30;
+    overscroll-behavior: contain;
+    touch-action: none;
   }
 }

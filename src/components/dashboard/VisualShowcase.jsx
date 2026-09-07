@@ -17,6 +17,21 @@ export default function VisualShowcase() {
   const [activeIdx, setActiveIdx] = useState(0);
   const [modalImage, setModalImage] = useState(null);
 
+  // Lock body scroll when modal image zoom is active
+  useEffect(() => {
+    if (modalImage) {
+      document.documentElement.classList.add('modal-open');
+      document.body.classList.add('modal-open');
+    } else {
+      document.documentElement.classList.remove('modal-open');
+      document.body.classList.remove('modal-open');
+    }
+    return () => {
+      document.documentElement.classList.remove('modal-open');
+      document.body.classList.remove('modal-open');
+    };
+  }, [modalImage]);
+
   const activeItem = SLA_SHOWCASE_IMAGES[activeIdx];
 
   return (
@@ -249,6 +264,8 @@ export default function VisualShowcase() {
       {modalImage && (
         <div 
           onClick={() => setModalImage(null)}
+          onTouchMove={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
+          onWheel={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
           style={{
             position: 'fixed',
             inset: 0,
@@ -258,7 +275,9 @@ export default function VisualShowcase() {
             alignItems: 'center',
             justifyContent: 'center',
             zIndex: 100,
-            padding: '1.5rem'
+            padding: '1.5rem',
+            overscrollBehavior: 'contain',
+            touchAction: 'none'
           }}
         >
           <div 
@@ -268,6 +287,8 @@ export default function VisualShowcase() {
               width: '100%',
               background: '#ffffff',
               borderRadius: '20px',
+              overscrollBehavior: 'contain',
+              touchAction: 'auto',
               overflow: 'hidden',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
             }}

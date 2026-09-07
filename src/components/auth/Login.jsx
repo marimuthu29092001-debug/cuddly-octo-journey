@@ -89,6 +89,21 @@ export default function Login({ onLoginSuccess }) {
     return () => clearInterval(timer);
   }, [isPaused]);
 
+  // Lock body scroll when auth modal is open to prevent background scrolling (backscrole)
+  useEffect(() => {
+    if (authModalOpen) {
+      document.documentElement.classList.add('modal-open');
+      document.body.classList.add('modal-open');
+    } else {
+      document.documentElement.classList.remove('modal-open');
+      document.body.classList.remove('modal-open');
+    }
+    return () => {
+      document.documentElement.classList.remove('modal-open');
+      document.body.classList.remove('modal-open');
+    };
+  }, [authModalOpen]);
+
   // Demo user role selector
   const handleRoleSelect = (user) => {
     setSelectedRole(user.role);
@@ -578,7 +593,12 @@ export default function Login({ onLoginSuccess }) {
           FROSTED GLASS LOGIN MODAL (Triggered by Log In / Sign Up)
           ========================================================================= */}
       {authModalOpen && (
-        <div className="auth-modal-backdrop" onClick={() => setAuthModalOpen(false)}>
+        <div 
+          className="auth-modal-backdrop" 
+          onClick={() => setAuthModalOpen(false)}
+          onTouchMove={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
+          onWheel={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
+        >
           <div 
             className="auth-modal-card" 
             onClick={(e) => e.stopPropagation()}

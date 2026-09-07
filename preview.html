@@ -145,7 +145,9 @@
       max-width: 100vw;
       overflow-x: hidden;
       position: relative;
+      overscroll-behavior: none;
       overscroll-behavior-x: none;
+      overscroll-behavior-y: none;
       -webkit-text-size-adjust: 100%;
     }
 
@@ -157,6 +159,9 @@
       -webkit-font-smoothing: antialiased;
       min-height: 100vh;
       overflow-x: hidden;
+      overscroll-behavior: none;
+      overscroll-behavior-x: none;
+      overscroll-behavior-y: none;
     }
 
     /* Prevent background scroll (backscrole) when modal is open */
@@ -167,6 +172,8 @@
       max-height: 100vh !important;
       touch-action: none !important;
       -webkit-overflow-scrolling: auto !important;
+      position: fixed !important;
+      width: 100% !important;
     }
 
     /* Buttons */

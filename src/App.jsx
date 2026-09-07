@@ -43,6 +43,21 @@ export default function App() {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 
+  // Lock body scroll when modal or mobile sidebar is open (prevents backscroll / background scroll)
+  useEffect(() => {
+    if (reportModalOpen || mobileSidebarOpen) {
+      document.documentElement.classList.add('modal-open');
+      document.body.classList.add('modal-open');
+    } else {
+      document.documentElement.classList.remove('modal-open');
+      document.body.classList.remove('modal-open');
+    }
+    return () => {
+      document.documentElement.classList.remove('modal-open');
+      document.body.classList.remove('modal-open');
+    };
+  }, [reportModalOpen, mobileSidebarOpen]);
+
   // Handle Login
   const handleLoginSuccess = (user) => {
     setCurrentUser(user);
