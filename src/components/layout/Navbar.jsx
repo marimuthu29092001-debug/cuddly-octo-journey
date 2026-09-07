@@ -68,28 +68,8 @@ export default function Navbar({
         </div>
       </div>
 
-      {/* Right Area: Theme Selector, Time Filter, Export CTA, Notifications, Profile, Logout */}
+      {/* Right Area: Time Filter, Export CTA, Notifications, Profile, Logout */}
       <div className="navbar-right">
-        {/* Dedicated Dark Theme Indicator Pill (Only Dark Mode as requested) */}
-        <div 
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.45rem',
-            background: 'var(--bg-surface)',
-            border: '1px solid var(--border-light)',
-            borderRadius: '9999px',
-            padding: '0.38rem 0.95rem',
-            fontSize: '0.8125rem',
-            fontWeight: 700,
-            color: '#ffffff',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)'
-          }}
-          title="Exclusive High-Contrast Dark Theme"
-        >
-          <span style={{ fontSize: '0.95rem' }}>🌙</span>
-          <span style={{ letterSpacing: '0.02em' }}>Dark</span>
-        </div>
 
         {/* Time Period Filter */}
         <div className="time-range-select-wrapper">
