@@ -1360,37 +1360,6 @@
             </div>
           </main>
 
-          {/* Bottom Bar Controls */}
-          <footer className="landing-bottom-bar">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
-              <span style={{ fontFamily: 'var(--font-heading)', fontSize: '1.25rem', fontWeight: 800, color: '#ff6b00' }}>
-                0{activeSlide + 1}
-              </span>
-              <span style={{ fontSize: '0.8125rem', color: 'rgba(255, 255, 255, 0.45)', fontWeight: 600 }}>
-                / 0{BACKGROUND_SLIDES.length}
-              </span>
-              <span style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.65)', marginLeft: '0.5rem' }}>
-                &bull; {BACKGROUND_SLIDES[activeSlide].title}
-              </span>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              {BACKGROUND_SLIDES.map((_, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  className={`slide-dot-pill ${idx === activeSlide ? 'active' : ''}`}
-                  onClick={() => setActiveSlide(idx)}
-                />
-              ))}
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <button type="button" className="slide-arrow-btn" onClick={prevSlide}>&larr;</button>
-              <button type="button" className="slide-arrow-btn" onClick={nextSlide}>&rarr;</button>
-            </div>
-          </footer>
-
           {/* Frosted Glass Login Modal */}
           {modalOpen && (
             <div className="auth-modal-backdrop" onClick={() => setModalOpen(false)}>

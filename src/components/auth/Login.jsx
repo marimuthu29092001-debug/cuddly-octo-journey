@@ -7,8 +7,6 @@ import {
   EyeOff, 
   ArrowRight, 
   X, 
-  ChevronLeft, 
-  ChevronRight, 
   Sparkles, 
   Activity,
   Layers,
@@ -90,15 +88,6 @@ export default function Login({ onLoginSuccess }) {
 
     return () => clearInterval(timer);
   }, [isPaused]);
-
-  // Handle slide navigation
-  const nextSlide = () => {
-    setActiveSlide((prev) => (prev + 1) % BACKGROUND_SLIDES.length);
-  };
-
-  const prevSlide = () => {
-    setActiveSlide((prev) => (prev - 1 + BACKGROUND_SLIDES.length) % BACKGROUND_SLIDES.length);
-  };
 
   // Demo user role selector
   const handleRoleSelect = (user) => {
@@ -584,54 +573,6 @@ export default function Login({ onLoginSuccess }) {
           </button>
         </div>
       </main>
-
-      {/* =========================================================================
-          BOTTOM SLIDESHOW CONTROLS (5-IMAGE INDICATORS)
-          ========================================================================= */}
-      <footer className="landing-bottom-bar">
-        {/* Slide Counter & Tag */}
-        <div className="slideshow-info">
-          <span className="slide-counter-number">
-            0{activeSlide + 1} <span style={{ opacity: 0.5 }}>/ 05</span>
-          </span>
-          <span className="slide-caption-title">{BACKGROUND_SLIDES[activeSlide].tag}</span>
-        </div>
-
-        {/* 5 Dots Indicators */}
-        <div className="slideshow-dots-row">
-          {BACKGROUND_SLIDES.map((slide, idx) => (
-            <button
-              key={slide.id}
-              type="button"
-              className={`slide-dot-pill ${idx === activeSlide ? 'active' : ''}`}
-              onClick={() => setActiveSlide(idx)}
-              aria-label={`Jump to background slide ${idx + 1}`}
-            >
-              <span className="dot-progress-bar"></span>
-            </button>
-          ))}
-        </div>
-
-        {/* Next / Prev Navigation */}
-        <div className="slideshow-arrows-group">
-          <button 
-            type="button" 
-            className="slide-arrow-btn" 
-            onClick={prevSlide}
-            aria-label="Previous background image"
-          >
-            <ChevronLeft size={16} />
-          </button>
-          <button 
-            type="button" 
-            className="slide-arrow-btn" 
-            onClick={nextSlide}
-            aria-label="Next background image"
-          >
-            <ChevronRight size={16} />
-          </button>
-        </div>
-      </footer>
 
       {/* =========================================================================
           FROSTED GLASS LOGIN MODAL (Triggered by Log In / Sign Up)
