@@ -3025,7 +3025,127 @@
 
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
                       ${[
-              ` : ''}
+                        { reg: "North America (Virginia/Oregon)", uptime: "99.994%", ping: "14ms", nodes: 96, status: "Optimal", target: "< 25ms" },
+                        { reg: "Europe (Frankfurt/London)", uptime: "99.988%", ping: "18ms", nodes: 74, status: "Optimal", target: "< 30ms" },
+                        { reg: "Asia-Pacific (Tokyo/Mumbai)", uptime: "99.952%", ping: "46ms", nodes: 68, status: "Optimal", target: "< 50ms" },
+                        { reg: "South America (São Paulo)", uptime: "99.980%", ping: "64ms", nodes: 26, status: "Optimal", target: "< 80ms" }
+                      ].map(r => `
+                        <div style="background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: 12px; padding: 1rem;">
+                          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <strong style="font-size: 0.84rem; color: var(--text-primary);">${r.reg}</strong>
+                            <span class="status-pill ${r.status === 'Optimal' ? 'healthy' : 'warning'}" style="font-size: 0.6875rem;">${r.status}</span>
+                          </div>
+                          <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.35rem;">
+                            <span>Uptime: <strong style="color: var(--status-healthy); font-family: var(--font-mono);">${r.uptime}</strong></span>
+                            <span>Ping: <strong style="color: var(--brand-primary); font-family: var(--font-mono); font-size: 0.875rem;">${r.ping}</strong></span>
+                          </div>
+                          <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); padding-top: 0.35rem; border-top: 1px dashed var(--border-light);">
+                            <span>Active PoPs: <strong>${r.nodes}</strong></span>
+                            <span>Target: <strong>${r.target}</strong></span>
+                          </div>
+                        </div>
+                      `).join('')}
+                    </div>
+
+                    <!-- Regional PoP Network Matrix Table -->
+                    <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                      <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.8125rem;">
+                        <thead>
+                          <tr style="border-bottom: 1px solid var(--border-light); color: var(--text-muted); font-size: 0.72rem; font-weight: 700; text-transform: uppercase;">
+                            <th style="padding: 0.65rem 0.85rem;">Edge Hub</th>
+                            <th style="padding: 0.65rem 0.75rem;">Location</th>
+                            <th style="padding: 0.65rem 0.75rem;">Routing Protocol</th>
+                            <th style="padding: 0.65rem 0.75rem;">Current Latency</th>
+                            <th style="padding: 0.65rem 0.75rem;">SLA Target</th>
+                            <th style="padding: 0.65rem 0.75rem;">Packet Loss</th>
+                            <th style="padding: 0.65rem 0.85rem; text-align: right;">Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          ${[
+                            { hub: 'US-East-1', loc: 'Ashburn, VA', proto: 'BGP Anycast + QUIC', lat: '12ms', tgt: '< 25ms', loss: '0.000%', stat: 'Optimal' },
+                            { hub: 'US-West-2', loc: 'Portland, OR', proto: 'BGP Anycast + QUIC', lat: '16ms', tgt: '< 25ms', loss: '0.001%', stat: 'Optimal' },
+                            { hub: 'EU-West-1', loc: 'Dublin, Ireland', proto: 'BGP Anycast + HTTP/3', lat: '17ms', tgt: '< 30ms', loss: '0.000%', stat: 'Optimal' },
+                            { hub: 'EU-Central-1', loc: 'Frankfurt, Germany', proto: 'BGP Anycast + HTTP/3', lat: '19ms', tgt: '< 30ms', loss: '0.000%', stat: 'Optimal' },
+                            { hub: 'AP-South-1', loc: 'Mumbai, India', proto: 'Direct Connect + QUIC', lat: '41ms', tgt: '< 50ms', loss: '0.002%', stat: 'Optimal' },
+                            { hub: 'AP-Northeast-1', loc: 'Tokyo, Japan', proto: 'BGP Anycast + HTTP/3', lat: '45ms', tgt: '< 50ms', loss: '0.001%', stat: 'Optimal' },
+                            { hub: 'SA-East-1', loc: 'São Paulo, Brazil', proto: 'BGP Anycast + HTTP/3', lat: '62ms', tgt: '< 80ms', loss: '0.003%', stat: 'Optimal' }
+                          ].map(node => `
+                            <tr style="border-bottom: 1px solid var(--border-subtle);">
+                              <td style="padding: 0.75rem 0.85rem; font-family: var(--font-mono); font-weight: 700; color: var(--brand-primary);">${node.hub}</td>
+                              <td style="padding: 0.75rem 0.75rem; font-weight: 600; color: var(--text-primary);">${node.loc}</td>
+                              <td style="padding: 0.75rem 0.75rem; color: var(--text-secondary); font-size: 0.75rem;">${node.proto}</td>
+                              <td style="padding: 0.75rem 0.75rem; font-family: var(--font-mono); font-weight: 800; color: var(--status-healthy);">${node.lat}</td>
+                              <td style="padding: 0.75rem 0.75rem; font-family: var(--font-mono); color: var(--text-muted);">${node.tgt}</td>
+                              <td style="padding: 0.75rem 0.75rem; font-family: var(--font-mono); color: var(--status-healthy);">${node.loss}</td>
+                              <td style="padding: 0.75rem 0.85rem; text-align: right;">
+                                <span class="status-pill healthy" style="font-size: 0.7rem;">${node.stat}</span>
+                              </td>
+                            </tr>
+                          `).join('')}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                `;
+
+                // Conditional Views by Active Tab:
+                if (appState.activeTab === 'latency') {
+                  return `
+                    ${renderTabBanner()}
+                    ${renderLatency()}
+                    ${renderTrendChart()}
+                    ${renderKpiCards()}
+                  `;
+                }
+
+                if (appState.activeTab === 'visuals') {
+                  return `
+                    ${renderTabBanner()}
+                    ${renderVisualsShowcase()}
+                    ${renderKpiCards()}
+                    ${renderSlaTiers()}
+                  `;
+                }
+
+                if (appState.activeTab === 'services') {
+                  return `
+                    ${renderTabBanner()}
+                    ${renderMicroservices()}
+                    ${renderKpiCards()}
+                    ${renderTrendChart()}
+                  `;
+                }
+
+                if (appState.activeTab === 'tiers') {
+                  return `
+                    ${renderTabBanner()}
+                    ${renderSlaTiers()}
+                    ${renderSlaTable()}
+                  `;
+                }
+
+                if (appState.activeTab === 'incidents') {
+                  return `
+                    ${renderTabBanner()}
+                    ${renderIncidents()}
+                    ${renderSlaTable()}
+                  `;
+                }
+
+                // Default: 'overview' (SLA Command Center)
+                return `
+                  ${renderWelcomeHero()}
+                  ${renderKpiCards()}
+                  ${renderSlaTable()}
+                  ${renderVisualsShowcase()}
+                  ${renderTrendChart()}
+                  ${renderMicroservices()}
+                  ${renderSlaTiers()}
+                  ${renderIncidents()}
+                  ${renderLatency()}
+                `;
+              })()}
             </main>
 
             <!-- Footer -->
