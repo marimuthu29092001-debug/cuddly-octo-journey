@@ -29,6 +29,7 @@ export default function ReportExportModal({ isOpen, onClose }) {
   return (
     <div 
       onClick={onClose}
+      onTouchMove={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
       style={{
         position: 'fixed',
         inset: 0,
@@ -38,8 +39,9 @@ export default function ReportExportModal({ isOpen, onClose }) {
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 110,
-        padding: '1.5rem',
-        overscrollBehavior: 'contain'
+        padding: 'clamp(0.5rem, 3vw, 1.5rem)',
+        overscrollBehavior: 'none',
+        touchAction: 'none'
       }}
     >
       <div 
@@ -47,14 +49,15 @@ export default function ReportExportModal({ isOpen, onClose }) {
         style={{
           maxWidth: '740px',
           width: '100%',
-          maxHeight: '90vh',
+          maxHeight: '92vh',
           overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
           overscrollBehavior: 'contain',
-          touchAction: 'auto',
+          touchAction: 'pan-y',
           background: 'var(--bg-surface-elevated)',
           borderRadius: '20px',
           boxShadow: 'var(--shadow-xl)',
-          padding: '2rem',
+          padding: 'clamp(1rem, 4vw, 2rem)',
           border: '1px solid var(--border-light)',
           position: 'relative',
           backdropFilter: 'blur(20px)'

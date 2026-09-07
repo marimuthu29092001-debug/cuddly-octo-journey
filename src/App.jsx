@@ -74,6 +74,8 @@ export default function App() {
     if (reportModalOpen || mobileSidebarOpen) {
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
+      document.documentElement.classList.add('modal-open');
+      document.body.classList.add('modal-open');
     } else {
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';

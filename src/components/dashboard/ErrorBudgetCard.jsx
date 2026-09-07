@@ -37,7 +37,7 @@ export default function ErrorBudgetCard() {
         </div>
 
         {/* Tier Selector Pills */}
-        <div style={{ display: 'flex', gap: '0.4rem', background: 'var(--bg-subtle)', padding: '0.25rem', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-light)' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', background: 'var(--bg-subtle)', padding: '0.25rem', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-light)' }}>
           {ERROR_BUDGET_METRICS.tiers.map((t, idx) => (
             <button
               key={t.tierName}
@@ -62,7 +62,7 @@ export default function ErrorBudgetCard() {
       </div>
 
       {/* Main 3-Column Error Budget Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem', marginBottom: '1.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 250px), 1fr))', gap: '1.25rem', marginBottom: '1.5rem' }}>
         {/* Metric 1: Budget Gauge & Remaining */}
         <div style={{ background: 'var(--bg-subtle)', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-md)', padding: '1.25rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>

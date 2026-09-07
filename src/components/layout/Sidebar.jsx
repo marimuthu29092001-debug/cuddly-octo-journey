@@ -15,6 +15,7 @@ import {
   Calendar
 } from 'lucide-react';
 import { COMPANY_INFO } from '../../data/slaData';
+import StacklyLogo from '../common/StacklyLogo';
 import './Sidebar.css';
 
 export default function Sidebar({ 
@@ -51,6 +52,7 @@ export default function Sidebar({
         <div 
           className="mobile-sidebar-backdrop" 
           onClick={() => setMobileSidebarOpen(false)}
+          onTouchMove={(e) => e.preventDefault()}
         />
       )}
 

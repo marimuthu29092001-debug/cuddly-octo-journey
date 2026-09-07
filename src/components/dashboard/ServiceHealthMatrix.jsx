@@ -75,12 +75,13 @@ export default function ServiceHealthMatrix({ searchTerm = '' }) {
       </div>
 
       {/* Services Table */}
-      <div style={{ overflowX: 'auto' }}>
+      <div className="table-responsive-container" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', overscrollBehaviorX: 'contain' }}>
         <table style={{
           width: '100%',
           borderCollapse: 'collapse',
           textAlign: 'left',
-          fontSize: '0.8125rem'
+          fontSize: '0.8125rem',
+          minWidth: '760px'
         }}>
           <thead>
             <tr style={{

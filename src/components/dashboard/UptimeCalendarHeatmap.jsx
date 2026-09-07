@@ -43,7 +43,7 @@ export default function UptimeCalendarHeatmap() {
         </div>
 
         {/* Filter Controls */}
-        <div style={{ display: 'flex', gap: '0.4rem', background: 'var(--bg-subtle)', padding: '0.25rem', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-light)' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', background: 'var(--bg-subtle)', padding: '0.25rem', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-light)' }}>
           <button
             type="button"
             onClick={() => setFilterMode('all')}
@@ -138,7 +138,7 @@ export default function UptimeCalendarHeatmap() {
         </div>
 
         {/* Legend */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', flexWrap: 'wrap', gap: '0.75rem', marginTop: '1rem', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
             <span style={{ width: '10px', height: '10px', borderRadius: '2px', background: '#00c6a7' }}></span>
             <span>100% Optimal</span>

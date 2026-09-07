@@ -121,7 +121,7 @@ export default function SlaCreditCalculator() {
           </div>
 
           {/* Tier Switcher for Simulator */}
-          <div style={{ display: 'flex', gap: '0.35rem', background: 'var(--bg-subtle)', padding: '0.25rem', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-light)' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', background: 'var(--bg-subtle)', padding: '0.25rem', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-light)' }}>
             {['platinum', 'gold', 'silver'].map((t) => (
               <button
                 key={t}
@@ -213,8 +213,8 @@ export default function SlaCreditCalculator() {
       </div>
 
       {/* Contractual Tier Terms Table */}
-      <div style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8125rem' }}>
+      <div className="table-responsive-container" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', overscrollBehaviorX: 'contain' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8125rem', minWidth: '600px' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid var(--border-light)', color: 'var(--text-muted)', textAlign: 'left' }}>
               <th style={{ padding: '0.75rem', fontWeight: 600 }}>SLA Compliance Band</th>
