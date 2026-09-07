@@ -132,11 +132,12 @@
       letter-spacing: -0.015em;
     }
 
-    html, body {
+    html {
       width: 100%;
-      max-width: 100vw;
+      min-height: 100%;
       overflow-x: hidden;
-      position: relative;
+      overflow-y: auto !important;
+      scroll-behavior: smooth;
       -webkit-text-size-adjust: 100%;
     }
 
@@ -146,9 +147,13 @@
       color: var(--text-primary);
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
+      width: 100%;
       min-height: 100vh;
+      margin: 0;
+      padding: 0;
       overflow-x: hidden;
-      overflow-y: auto !important;
+      overflow-y: visible !important;
+      position: relative;
     }
 
     /* Buttons */
@@ -892,6 +897,9 @@
     .app-layout {
       display: flex;
       min-height: 100vh;
+      width: 100%;
+      position: relative;
+      overflow-y: visible;
       background-color: var(--bg-primary);
     }
     .app-sidebar {
@@ -910,6 +918,8 @@
       display: flex;
       flex-direction: column;
       min-width: 0;
+      min-height: 100vh;
+      overflow-y: visible;
       background-color: var(--bg-primary);
       transition: background-color 0.2s ease;
     }
@@ -933,8 +943,11 @@
       max-width: 1600px;
       width: 100%;
       margin: 0 auto;
+      overflow-y: visible;
     }
-
+    .mobile-backdrop-overlay {
+      display: none;
+    }
     @media (max-width: 1024px) {
       .app-sidebar {
         position: fixed;
@@ -949,6 +962,14 @@
       .app-sidebar.mobile-open { transform: translateX(0); }
       .app-header { height: 60px; padding: 0 1rem; }
       .app-content { padding: 1.25rem 0.85rem 2rem 0.85rem; }
+      .mobile-backdrop-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.5);
+        backdrop-filter: blur(4px);
+        z-index: 25;
+      }
       .hide-mobile { display: none !important; }
       .show-mobile-btn { display: flex !important; }
     }
@@ -1252,8 +1273,10 @@
 
       if (isAnyModalOpen) {
         document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
       } else {
-        document.body.style.overflow = 'auto';
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
         document.documentElement.classList.remove('modal-open');
         document.body.classList.remove('modal-open');
       }
@@ -2158,8 +2181,8 @@
 
       return `
         <div class="app-layout">
-          <!-- Mobile Sidebar Backdrop -->
-          ${appState.sidebarOpen ? `<div style="position: fixed; inset: 0; background: rgba(15,23,42,0.4); z-index: 25;" onclick="setState({ sidebarOpen: false })"></div>` : ''}
+          <!-- Mobile Sidebar Backdrop - only active on mobile screens -->
+          ${appState.sidebarOpen ? `<div class="mobile-backdrop-overlay" onclick="setState({ sidebarOpen: false })"></div>` : ''}
 
           <!-- Sidebar -->
           <aside class="app-sidebar ${appState.sidebarOpen ? 'mobile-open' : ''}">
@@ -3206,7 +3229,8 @@
       if (!appState.currentUser) {
         appContainer.innerHTML = renderLogin();
       } else {
-        document.body.style.overflow = 'auto';
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
         document.documentElement.classList.remove('modal-open');
         document.body.classList.remove('modal-open');
         appContainer.innerHTML = renderDashboard();

@@ -140,11 +140,12 @@
       letter-spacing: -0.015em;
     }
 
-    html, body {
+    html {
       width: 100%;
-      max-width: 100vw;
+      min-height: 100%;
       overflow-x: hidden;
-      position: relative;
+      overflow-y: auto !important;
+      scroll-behavior: smooth;
       -webkit-text-size-adjust: 100%;
     }
 
@@ -154,9 +155,13 @@
       color: var(--text-primary);
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
+      width: 100%;
       min-height: 100vh;
+      margin: 0;
+      padding: 0;
       overflow-x: hidden;
-      overflow-y: auto !important;
+      overflow-y: visible !important;
+      position: relative;
     }
 
     /* Buttons */
@@ -300,8 +305,6 @@
       justify-content: space-between;
       overflow-x: hidden;
       overflow-y: auto;
-      overscroll-behavior: none;
-      overscroll-behavior-y: none;
       background-color: #070d18;
       color: #ffffff;
       font-family: var(--font-sans);
@@ -666,6 +669,9 @@
     .app-layout {
       display: flex;
       min-height: 100vh;
+      width: 100%;
+      position: relative;
+      overflow-y: visible;
       background-color: var(--bg-primary);
     }
     .app-sidebar {
@@ -684,6 +690,8 @@
       display: flex;
       flex-direction: column;
       min-width: 0;
+      min-height: 100vh;
+      overflow-y: visible;
       background-color: var(--bg-primary);
       transition: background-color 0.2s ease;
     }
@@ -707,6 +715,10 @@
       max-width: 1600px;
       width: 100%;
       margin: 0 auto;
+      overflow-y: visible;
+    }
+    .mobile-backdrop-overlay {
+      display: none;
     }
     @media (max-width: 1024px) {
       .app-sidebar {
@@ -719,6 +731,14 @@
       }
       .app-sidebar.mobile-open { transform: translateX(0); }
       .app-content { padding: 1.25rem 1rem 2rem 1rem; }
+      .mobile-backdrop-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.5);
+        backdrop-filter: blur(4px);
+        z-index: 25;
+      }
     }
 
     /* User Profile Dropdown Styles (Exact match to requested UI) */
@@ -924,13 +944,17 @@
       // Lock body scroll when login modal is open to prevent background scrolling (backscrole)
       useEffect(() => {
         if (modalOpen) {
-          document.documentElement.classList.add('modal-open');
-          document.body.classList.add('modal-open');
+          document.body.style.overflow = 'hidden';
+          document.documentElement.style.overflow = 'hidden';
         } else {
+          document.body.style.overflow = '';
+          document.documentElement.style.overflow = '';
           document.documentElement.classList.remove('modal-open');
           document.body.classList.remove('modal-open');
         }
         return () => {
+          document.body.style.overflow = '';
+          document.documentElement.style.overflow = '';
           document.documentElement.classList.remove('modal-open');
           document.body.classList.remove('modal-open');
         };
@@ -948,6 +972,8 @@
           const user = DEMO_USERS.find(u => u.role === role) || DEMO_USERS[0];
           setLoading(false);
           setModalOpen(false);
+          document.body.style.overflow = '';
+          document.documentElement.style.overflow = '';
           document.documentElement.classList.remove('modal-open');
           document.body.classList.remove('modal-open');
           onLogin(user);
@@ -1531,11 +1557,13 @@
       useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem('stackly_theme', theme);
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
         document.documentElement.classList.remove('modal-open');
         document.body.classList.remove('modal-open');
       }, [theme]);
 
-      // Lock body scroll when any modal or drawer is open to prevent background scrolling (backscrole)
+      // Lock body scroll only when a modal is open to prevent background scrolling (backscrole)
       useEffect(() => {
         const isAnyModalOpen = Boolean(
           reportModal || 
@@ -1547,13 +1575,17 @@
         );
 
         if (isAnyModalOpen) {
-          document.documentElement.classList.add('modal-open');
-          document.body.classList.add('modal-open');
+          document.body.style.overflow = 'hidden';
+          document.documentElement.style.overflow = 'hidden';
         } else {
+          document.body.style.overflow = '';
+          document.documentElement.style.overflow = '';
           document.documentElement.classList.remove('modal-open');
           document.body.classList.remove('modal-open');
         }
         return () => {
+          document.body.style.overflow = '';
+          document.documentElement.style.overflow = '';
           document.documentElement.classList.remove('modal-open');
           document.body.classList.remove('modal-open');
         };
@@ -1568,13 +1600,11 @@
 
       return (
         <div className="app-layout">
-          {/* Mobile backdrop */}
+          {/* Mobile backdrop - only displays on screen <= 1024px */}
           {sidebarOpen && (
             <div 
-              style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.4)', zIndex: 25, overscrollBehavior: 'contain', touchAction: 'none' }}
+              className="mobile-backdrop-overlay"
               onClick={() => setSidebarOpen(false)}
-              onTouchMove={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
-              onWheel={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
             />
           )}
 
@@ -2428,13 +2458,11 @@
           {/* Full Image Zoom Modal */}
           {imgModal && (
             <div 
-              style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.75)', backdropFilter: 'blur(8px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', overscrollBehavior: 'contain', touchAction: 'none' }}
+              style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.75)', backdropFilter: 'blur(8px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', overscrollBehavior: 'contain' }}
               onClick={() => setImgModal(null)}
-              onTouchMove={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
-              onWheel={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
             >
               <div 
-                style={{ maxWidth: '900px', width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '20px', overflow: 'hidden', boxShadow: 'var(--shadow-xl)', overscrollBehavior: 'contain', touchAction: 'auto' }}
+                style={{ maxWidth: '900px', width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '20px', overflow: 'hidden', boxShadow: 'var(--shadow-xl)', overscrollBehavior: 'contain' }}
                 onClick={e => e.stopPropagation()}
               >
                 <img src={imgModal.img} alt={imgModal.title} style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover' }} />
@@ -2455,13 +2483,11 @@
           {/* Report Modal */}
           {reportModal && (
             <div 
-              style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.7)', backdropFilter: 'blur(8px)', zIndex: 110, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', overscrollBehavior: 'contain', touchAction: 'none' }}
+              style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.7)', backdropFilter: 'blur(8px)', zIndex: 110, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', overscrollBehavior: 'contain' }}
               onClick={() => setReportModal(false)}
-              onTouchMove={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
-              onWheel={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
             >
               <div 
-                style={{ maxWidth: '680px', width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '20px', padding: '2rem', boxShadow: 'var(--shadow-xl)', overscrollBehavior: 'contain', touchAction: 'auto', maxHeight: '90vh', overflowY: 'auto' }}
+                style={{ maxWidth: '680px', width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '20px', padding: '2rem', boxShadow: 'var(--shadow-xl)', overscrollBehavior: 'contain', maxHeight: '90vh', overflowY: 'auto' }}
                 onClick={e => e.stopPropagation()}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-light)', paddingBottom: '1rem', marginBottom: '1.25rem' }}>
@@ -2501,13 +2527,11 @@
           {/* My Profile Modal */}
           {profileModal && (
             <div 
-              style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.7)', backdropFilter: 'blur(8px)', zIndex: 110, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', overscrollBehavior: 'contain', touchAction: 'none' }}
+              style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.7)', backdropFilter: 'blur(8px)', zIndex: 110, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', overscrollBehavior: 'contain' }}
               onClick={() => setProfileModal(false)}
-              onTouchMove={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
-              onWheel={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
             >
               <div 
-                style={{ maxWidth: '600px', width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '20px', padding: '2rem', boxShadow: 'var(--shadow-xl)', overscrollBehavior: 'contain', touchAction: 'auto' }}
+                style={{ maxWidth: '600px', width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '20px', padding: '2rem', boxShadow: 'var(--shadow-xl)', overscrollBehavior: 'contain' }}
                 onClick={e => e.stopPropagation()}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid var(--border-light)', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
@@ -2556,13 +2580,11 @@
           {/* SLA Record Details Modal */}
           {selectedRecord && (
             <div 
-              style={{ position: 'fixed', inset: 0, background: 'rgba(5, 10, 20, 0.75)', backdropFilter: 'blur(10px)', zIndex: 120, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', overscrollBehavior: 'contain', touchAction: 'none' }}
+              style={{ position: 'fixed', inset: 0, background: 'rgba(5, 10, 20, 0.75)', backdropFilter: 'blur(10px)', zIndex: 120, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', overscrollBehavior: 'contain' }}
               onClick={() => setSelectedRecord(null)}
-              onTouchMove={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
-              onWheel={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
             >
               <div 
-                style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '16px', maxWidth: '600px', width: '100%', padding: '1.75rem', boxShadow: '0 25px 60px rgba(0,0,0,0.6)', overscrollBehavior: 'contain', touchAction: 'auto' }}
+                style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '16px', maxWidth: '600px', width: '100%', padding: '1.75rem', boxShadow: '0 25px 60px rgba(0,0,0,0.6)', overscrollBehavior: 'contain' }}
                 onClick={e => e.stopPropagation()}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
@@ -2594,13 +2616,11 @@
           {/* Settings Modal */}
           {settingsModal && (
             <div 
-              style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.7)', backdropFilter: 'blur(8px)', zIndex: 110, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', overscrollBehavior: 'contain', touchAction: 'none' }}
+              style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.7)', backdropFilter: 'blur(8px)', zIndex: 110, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', overscrollBehavior: 'contain' }}
               onClick={() => setSettingsModal(false)}
-              onTouchMove={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
-              onWheel={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
             >
               <div 
-                style={{ maxWidth: '600px', width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '20px', padding: '2rem', boxShadow: 'var(--shadow-xl)', overscrollBehavior: 'contain', touchAction: 'auto' }}
+                style={{ maxWidth: '600px', width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '20px', padding: '2rem', boxShadow: 'var(--shadow-xl)', overscrollBehavior: 'contain' }}
                 onClick={e => e.stopPropagation()}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-light)', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
