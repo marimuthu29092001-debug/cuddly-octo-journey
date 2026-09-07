@@ -1065,11 +1065,28 @@
       { role: "Enterprise Client", name: "Marcus Sterling", title: "CTO, Finovate", email: "marcus@finovate.com", avatar: "MS" }
     ];
 
+    // 4 SLA Statistics Cards Data (Total SLA, Active SLA, Breached SLA, Completed SLA with Progress Indicators)
     const KPI_METRICS = [
-      { id: "sla", label: "Global SLA Compliance", value: "99.982%", sub: "Target: 99.900%", change: "+0.04% vs target", color: "#10b981", bg: "#ecfdf5", border: "#a7f3d0", icon: "🛡️" },
-      { id: "srv", label: "Monitored Services", value: "48 / 48", sub: "47 Operational, 1 Warning", change: "100% active telemetry", color: "#2563eb", bg: "#eff6ff", border: "#bfdbfe", icon: "🖥️" },
-      { id: "mttr", label: "Mean Time to Resolve (MTTR)", value: "14m 20s", sub: "SLA Cap: 45m 00s", change: "-3m 15s faster MTTR", color: "#8b5cf6", bg: "#f5f3ff", border: "#ddd6fe", icon: "⏱️" },
-      { id: "pen", label: "SLA Penalties Avoided", value: "$148,500", sub: "Zero Breaches Recorded", change: "100% rebate margin", color: "#f59e0b", bg: "#fffbeb", border: "#fde68a", icon: "💰" }
+      { id: "total", key: "total", label: "Total SLA", value: "1,248", sub: "1,248 Total SLA agreements monitored", progress: 100, progressText: "100% Monitored", change: "+12 agreements this quarter", color: "#2563eb", bg: "rgba(37, 99, 235, 0.12)", border: "rgba(37, 99, 235, 0.35)", icon: "🛡️", status: "All Monitored" },
+      { id: "active", key: "active", label: "Active SLA", value: "1,180", sub: "1,180 Active agreements in compliance", progress: 94.6, progressText: "94.6% Compliant", change: "99.98% avg uptime achievement", color: "#10b981", bg: "rgba(16, 185, 129, 0.12)", border: "rgba(16, 185, 129, 0.35)", icon: "⚡", status: "Active" },
+      { id: "breached", key: "breached", label: "Breached SLA", value: "2", sub: "2 Agreements breached • Remediation ongoing", progress: 0.16, progressText: "0.16% Breach Rate", change: "Within safety cap (<0.5%)", color: "#ef4444", bg: "rgba(239, 68, 68, 0.12)", border: "rgba(239, 68, 68, 0.35)", icon: "⚠️", status: "Breached" },
+      { id: "completed", key: "completed", label: "Completed SLA", value: "66", sub: "66 Agreements fulfilled & archived", progress: 100, progressText: "100% Fulfilled", change: "Zero breach penalties incurred", color: "#8b5cf6", bg: "rgba(139, 92, 246, 0.12)", border: "rgba(139, 92, 246, 0.35)", icon: "✅", status: "Completed" }
+    ];
+
+    // Comprehensive SLA Data Table Records
+    const SLA_RECORDS = [
+      { id: "SLA-4091", name: "Core Banking API Gateway SLA", client: "Finovate Global", tier: "Platinum Enterprise", targetSla: 99.99, currentSla: 99.995, progress: 100, status: "Active", dateRange: "Sep 01 - Sep 30, 2026", penalty: "$0 (Target Exceeded)", response: "18ms", region: "Global Anycast" },
+      { id: "SLA-4092", name: "Payment Settlement & Ledger", client: "Acme Financial Inc", tier: "Platinum Enterprise", targetSla: 99.99, currentSla: 99.999, progress: 100, status: "Active", dateRange: "Sep 01 - Sep 30, 2026", penalty: "$0 (Target Exceeded)", response: "112ms", region: "US-East Multi-AZ" },
+      { id: "SLA-4093", name: "AP-South WebSocket Stream Gateway", client: "Apex Media Stream", tier: "Gold Business", targetSla: 99.90, currentSla: 99.782, progress: 88.2, status: "Breached", dateRange: "Sep 01 - Sep 30, 2026", penalty: "20% Refund ($14,200)", response: "84ms", region: "AP-South (Mumbai)" },
+      { id: "SLA-4094", name: "Identity & OAuth SSO Cluster", client: "OmniHealth Cloud", tier: "Platinum Enterprise", targetSla: 99.99, currentSla: 99.991, progress: 99.2, status: "Active", dateRange: "Sep 01 - Sep 30, 2026", penalty: "$0 (Compliant)", response: "38ms", region: "US-East / EU-Central" },
+      { id: "SLA-4095", name: "Enterprise Webhook Dispatcher", client: "Starlight SaaS", tier: "Silver Growth", targetSla: 99.50, currentSla: 99.990, progress: 100, status: "Completed", dateRange: "Aug 01 - Aug 31, 2026", penalty: "$0 (Met with Distinction)", response: "88ms", region: "Global SQS/Kafka" },
+      { id: "SLA-4096", name: "Edge CDN Static Asset Pipeline", client: "Vortex Commerce", tier: "Gold Business", targetSla: 99.90, currentSla: 99.998, progress: 100, status: "Active", dateRange: "Sep 01 - Sep 30, 2026", penalty: "$0 (Target Exceeded)", response: "7ms", region: "340+ Global PoPs" },
+      { id: "SLA-4097", name: "PostgreSQL High-Availability Cluster", client: "Finovate Global", tier: "Platinum Enterprise", targetSla: 99.99, currentSla: 99.988, progress: 98.8, status: "Active", dateRange: "Sep 01 - Sep 30, 2026", penalty: "$0 (Safe Buffer)", response: "5ms", region: "Multi-AZ Isolated" },
+      { id: "SLA-4098", name: "Legacy Merchant Webhook Gateway", client: "OldBank Systems", tier: "Silver Growth", targetSla: 99.50, currentSla: 98.420, progress: 74.5, status: "Breached", dateRange: "Sep 01 - Sep 30, 2026", penalty: "50% Invoice Refund ($8,900)", response: "320ms", region: "US-Central Legacy" },
+      { id: "SLA-4099", name: "AI Copilot Inference Gateway", client: "Cognitive Labs", tier: "Gold Business", targetSla: 99.90, currentSla: 99.985, progress: 100, status: "Active", dateRange: "Sep 01 - Sep 30, 2026", penalty: "$0 (Compliant)", response: "42ms", region: "US-West Multi-GPU" },
+      { id: "SLA-4100", name: "Q2 Enterprise Datacenter Migration", client: "Acme Financial Inc", tier: "Platinum Enterprise", targetSla: 99.99, currentSla: 99.998, progress: 100, status: "Completed", dateRange: "Apr 01 - Jun 30, 2026", penalty: "$0 (100% Payout Met)", response: "14ms", region: "US-East Multi-AZ" },
+      { id: "SLA-4101", name: "Elasticsearch & Vector Semantic Index", client: "Nexus Search", tier: "Gold Business", targetSla: 99.90, currentSla: 99.972, progress: 99.5, status: "Active", dateRange: "Sep 01 - Sep 30, 2026", penalty: "$0 (Compliant)", response: "62ms", region: "US-East & EU-West" },
+      { id: "SLA-4102", name: "Global Anycast DNS & Steering", client: "All Enterprise Clients", tier: "Platinum Enterprise", targetSla: 99.99, currentSla: 100.00, progress: 100, status: "Completed", dateRange: "Jul 01 - Jul 31, 2026", penalty: "$0 (Zero Downtime)", response: "2ms", region: "Planetary Edge Mesh" }
     ];
 
     const SLA_SHOWCASE_IMAGES = [
@@ -2372,26 +2389,304 @@
                 </div>
               </div>
 
-              <!-- 4 KPIs Grid -->
+              <!-- 4 SLA Statistics Cards (Total SLA, Active SLA, Breached SLA, Completed SLA with Progress Indicators) -->
               <div class="grid-4" style="margin-bottom: 1.75rem;">
-                ${KPI_METRICS.map(kpi => `
-                  <div class="sla-card" style="border-left: 4px solid ${kpi.color}; background: var(--bg-surface); border-top: 1px solid var(--border-light); border-right: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light);">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
-                      <span style="font-size: 0.8125rem; font-weight: 600; color: var(--text-secondary);">${kpi.label}</span>
-                      <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--bg-subtle); border: 1px solid var(--border-light); display: flex; align-items: center; justify-content: center; font-size: 1rem;">
-                        ${kpi.icon}
+                ${KPI_METRICS.map(kpi => {
+                  const isSelected = (appState.slaStatusFilter || 'all') === (kpi.key === 'total' ? 'all' : kpi.key);
+                  return `
+                    <div class="sla-card" 
+                         onclick="setState({ slaStatusFilter: '${kpi.key === 'total' ? 'all' : kpi.key}' })"
+                         style="border-left: 4px solid ${kpi.color}; background: var(--bg-surface); border-top: 1px solid var(--border-light); border-right: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); cursor: pointer; transition: all 0.2s; box-shadow: ${isSelected ? '0 0 0 2px ' + kpi.color + ', 0 8px 24px ' + kpi.color + '25' : 'var(--shadow-sm)'}; transform: ${isSelected ? 'translateY(-2px)' : 'none'};">
+                      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                        <div style="display: flex; align-items: center; gap: 0.45rem;">
+                          <span style="width: 8px; height: 8px; border-radius: 50%; background: ${kpi.color}; box-shadow: 0 0 8px ${kpi.color};"></span>
+                          <span style="font-size: 0.8125rem; font-weight: 700; color: var(--text-secondary);">${kpi.label}</span>
+                        </div>
+                        <div style="width: 32px; height: 32px; border-radius: 8px; background: ${kpi.bg}; border: 1px solid ${kpi.border}; display: flex; align-items: center; justify-content: center; font-size: 1rem;">
+                          ${kpi.icon}
+                        </div>
+                      </div>
+
+                      <div style="display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.25rem;">
+                        <span style="font-size: 1.875rem; font-weight: 800; color: var(--text-primary); font-family: var(--font-sans); letter-spacing: -0.02em;">
+                          ${kpi.value}
+                        </span>
+                        <span style="font-size: 0.72rem; font-weight: 700; padding: 0.12rem 0.5rem; border-radius: 9999px; background: ${kpi.bg}; color: ${kpi.color}; border: 1px solid ${kpi.border};">
+                          ${kpi.status}
+                        </span>
+                      </div>
+
+                      <div style="font-size: 0.78125rem; color: var(--text-muted); margin-bottom: 0.75rem;">${kpi.sub}</div>
+
+                      <!-- Embedded Progress Indicator -->
+                      <div style="margin-bottom: 0.75rem;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.7rem; margin-bottom: 0.25rem;">
+                          <span style="color: var(--text-muted);">Progress</span>
+                          <span style="color: ${kpi.color}; font-weight: 700; font-family: var(--font-mono);">${kpi.progressText}</span>
+                        </div>
+                        <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.08); border-radius: 9999px; overflow: hidden;">
+                          <div style="width: ${Math.min(100, Math.max(6, kpi.progress))}%; height: 100%; background: ${kpi.color}; border-radius: 9999px;"></div>
+                        </div>
+                      </div>
+
+                      <div style="padding-top: 0.65rem; border-top: 1px solid var(--border-light); font-size: 0.75rem; color: ${kpi.color}; font-weight: 600; display: flex; justify-content: space-between; align-items: center;">
+                        <span>${kpi.change}</span>
+                        <span style="font-size: 0.6875rem; color: var(--text-muted);">${isSelected ? 'Filtered' : 'Click to filter'} ↗</span>
                       </div>
                     </div>
-                    <div style="font-size: 1.875rem; font-weight: 800; color: var(--text-primary); font-family: var(--font-sans); letter-spacing: -0.02em; margin-bottom: 0.25rem;">
-                      ${kpi.value}
+                  `;
+                }).join('')}
+              </div>
+
+              <!-- =========================================================================
+                   SLA DATA TABLE & RECORDS COMPONENT
+                   ========================================================================= -->
+              ${(() => {
+                const sTerm = (appState.slaSearchTerm !== undefined ? appState.slaSearchTerm : (appState.searchTerm || '')).toLowerCase();
+                const sFilter = appState.slaStatusFilter || 'all';
+                const tFilter = appState.slaTierFilter || 'all';
+                const dRange = appState.slaDateRange || '30d';
+
+                const matchedRecords = SLA_RECORDS.filter(r => {
+                  const mSearch = !sTerm || 
+                    r.name.toLowerCase().includes(sTerm) || 
+                    r.id.toLowerCase().includes(sTerm) || 
+                    r.client.toLowerCase().includes(sTerm) ||
+                    r.region.toLowerCase().includes(sTerm);
+                  const mStatus = sFilter === 'all' || r.status.toLowerCase() === sFilter.toLowerCase();
+                  const mTier = tFilter === 'all' || r.tier.toLowerCase().includes(tFilter.toLowerCase());
+                  return mSearch && mStatus && mTier;
+                });
+
+                const allCount = SLA_RECORDS.length;
+                const actCount = SLA_RECORDS.filter(r => r.status === 'Active').length;
+                const brkCount = SLA_RECORDS.filter(r => r.status === 'Breached').length;
+                const cmpCount = SLA_RECORDS.filter(r => r.status === 'Completed').length;
+
+                return `
+                  <div class="sla-card" style="margin-bottom: 1.75rem; background: var(--bg-surface); border: 1px solid var(--border-light);">
+                    <!-- Header with Title and Date Range Filter -->
+                    <div class="sla-card-header" style="flex-wrap: wrap; gap: 1rem; align-items: flex-start;">
+                      <div>
+                        <div class="sla-card-title">
+                          <span style="color: var(--text-primary); font-weight: 800;">📋 SLA Data Table & Active Records</span>
+                          <span class="status-pill neutral" style="margin-left: 0.5rem;">
+                            ${matchedRecords.length} of ${allCount} Agreements
+                          </span>
+                        </div>
+                        <div class="sla-card-subtitle" style="color: var(--text-muted);">
+                          Monitored service-level agreements, attainment progress indicators, breach liabilities, and contractual status.
+                        </div>
+                      </div>
+
+                      <!-- Date Range Filter -->
+                      <div style="display: flex; align-items: center; gap: 0.35rem; background: var(--bg-subtle); padding: 0.25rem 0.5rem; border-radius: 10px; border: 1px solid var(--border-light);">
+                        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; margin-right: 0.25rem;">📅 Date Range:</span>
+                        ${['24h', '7d', '30d', '90d', 'all'].map(r => `
+                          <button 
+                            type="button" 
+                            class="role-chip ${dRange === r ? 'active' : ''}" 
+                            onclick="setState({ slaTableLoading: true, slaDateRange: '${r}' }); setTimeout(() => setState({ slaTableLoading: false }), 320);"
+                            style="padding: 0.2rem 0.55rem; font-size: 0.72rem;"
+                          >
+                            ${r === '24h' ? '24h' : r === '7d' ? '7 Days' : r === '30d' ? '30 Days' : r === '90d' ? '90 Days' : 'All Time'}
+                          </button>
+                        `).join('')}
+                        <button 
+                          type="button" 
+                          class="btn-secondary" 
+                          onclick="setState({ slaTableLoading: true }); setTimeout(() => setState({ slaTableLoading: false }), 400);" 
+                          style="padding: 0.2rem 0.55rem; font-size: 0.72rem; margin-left: 0.25rem;"
+                        >
+                          🔄 Sync
+                        </button>
+                      </div>
                     </div>
-                    <div style="font-size: 0.78125rem; color: var(--text-muted);">${kpi.sub}</div>
-                    <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border-light); font-size: 0.75rem; color: var(--status-healthy); font-weight: 600;">
-                      ${kpi.change}
+
+                    <!-- Search & Filter Controls Bar -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.875rem; padding: 0.875rem 1rem; background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: 12px; margin-bottom: 1.25rem;">
+                      <!-- Search Input -->
+                      <div style="display: flex; align-items: center; gap: 0.5rem; background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 8px; padding: 0.35rem 0.75rem; flex: 1 1 240px; max-width: 360px;">
+                        <span style="color: var(--text-muted); font-size: 0.85rem;">🔍</span>
+                        <input 
+                          type="text" 
+                          placeholder="Search agreement, client, SLA ID..." 
+                          value="${appState.slaSearchTerm !== undefined ? appState.slaSearchTerm : (appState.searchTerm || '')}"
+                          oninput="setState({ slaSearchTerm: this.value })"
+                          style="background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 0.8125rem; width: 100%; font-family: inherit;"
+                        />
+                        ${(appState.slaSearchTerm || appState.searchTerm) ? `
+                          <button type="button" onclick="setState({ slaSearchTerm: '', searchTerm: '' })" style="background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 0;">✕</button>
+                        ` : ''}
+                      </div>
+
+                      <!-- Status Filter Pills -->
+                      <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+                        <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Status:</span>
+                        <button type="button" class="role-chip ${sFilter === 'all' ? 'active' : ''}" onclick="setState({ slaStatusFilter: 'all' })" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">
+                          All (${allCount})
+                        </button>
+                        <button type="button" class="role-chip ${sFilter === 'active' ? 'active' : ''}" onclick="setState({ slaStatusFilter: 'active' })" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; color: ${sFilter === 'active' ? '#fff' : '#10b981'};">
+                          Active (${actCount})
+                        </button>
+                        <button type="button" class="role-chip ${sFilter === 'breached' ? 'active' : ''}" onclick="setState({ slaStatusFilter: 'breached' })" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; color: ${sFilter === 'breached' ? '#fff' : '#ef4444'};">
+                          Breached (${brkCount})
+                        </button>
+                        <button type="button" class="role-chip ${sFilter === 'completed' ? 'active' : ''}" onclick="setState({ slaStatusFilter: 'completed' })" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; color: ${sFilter === 'completed' ? '#fff' : '#8b5cf6'};">
+                          Completed (${cmpCount})
+                        </button>
+                      </div>
+
+                      <!-- Tier Filter Dropdown -->
+                      <div style="display: flex; align-items: center; gap: 0.4rem;">
+                        <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Tier:</span>
+                        <select onchange="setState({ slaTierFilter: this.value })" style="background: var(--bg-surface); border: 1px solid var(--border-light); color: var(--text-primary); border-radius: 8px; padding: 0.35rem 0.65rem; font-size: 0.75rem; font-weight: 600; outline: none; cursor: pointer;">
+                          <option value="all" ${tFilter === 'all' ? 'selected' : ''}>All Tiers</option>
+                          <option value="Platinum" ${tFilter === 'Platinum' ? 'selected' : ''}>Platinum Enterprise</option>
+                          <option value="Gold" ${tFilter === 'Gold' ? 'selected' : ''}>Gold Business</option>
+                          <option value="Silver" ${tFilter === 'Silver' ? 'selected' : ''}>Silver Growth</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <!-- Loading State Skeleton -->
+                    ${appState.slaTableLoading ? `
+                      <div style="padding: 2.5rem 1rem; text-align: center;">
+                        <div style="display: inline-flex; align-items: center; gap: 0.65rem; margin-bottom: 1.25rem; font-size: 0.875rem; font-weight: 600; color: var(--text-secondary);">
+                          <span style="display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,107,0,0.3); border-top-color: #ff6b00; border-radius: 50%; animation: spin 0.7s linear infinite;"></span>
+                          <span>Loading SLA telemetry & records...</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                          ${[1, 2, 3, 4].map(() => `
+                            <div style="height: 42px; border-radius: 8px; background: rgba(255,255,255,0.04); animation: pulse 1.2s infinite;"></div>
+                          `).join('')}
+                        </div>
+                      </div>
+                    ` : matchedRecords.length === 0 ? `
+                      <!-- Empty State Component -->
+                      <div style="padding: 3rem 1.5rem; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.02); border-radius: 12px; border: 1px dashed var(--border-light); margin: 0.5rem 0;">
+                        <div style="width: 52px; height: 52px; border-radius: 50%; background: rgba(255, 107, 0, 0.1); border: 1px solid rgba(255, 107, 0, 0.3); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #ff6b00; margin-bottom: 0.875rem;">
+                          🔍
+                        </div>
+                        <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.35rem;">
+                          No SLA Records Found
+                        </h3>
+                        <p style="font-size: 0.84rem; color: var(--text-muted); max-width: 420px; line-height: 1.5; margin-bottom: 1.25rem;">
+                          ${sTerm ? `No SLA agreements matched your search query "${sTerm}".` : `No agreements found under the "${sFilter}" status filter.`}
+                          Try adjusting your search criteria or reset filters.
+                        </p>
+                        <button type="button" class="btn-primary" onclick="setState({ slaSearchTerm: '', searchTerm: '', slaStatusFilter: 'all', slaTierFilter: 'all' })" style="padding: 0.45rem 1rem; font-size: 0.8125rem;">
+                          🔄 Reset All Filters
+                        </button>
+                      </div>
+                    ` : `
+                      <!-- Responsive SLA Data Table -->
+                      <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.8125rem; min-width: 860px;">
+                          <thead>
+                            <tr style="border-bottom: 1px solid var(--border-light); color: var(--text-muted); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
+                              <th style="padding: 0.75rem 1rem;">SLA ID</th>
+                              <th style="padding: 0.75rem 0.75rem;">Agreement & Client</th>
+                              <th style="padding: 0.75rem 0.75rem;">Tier</th>
+                              <th style="padding: 0.75rem 0.75rem;">Target SLA</th>
+                              <th style="padding: 0.75rem 0.75rem;">Current SLA</th>
+                              <th style="padding: 0.75rem 0.75rem; width: 150px;">Progress Indicator</th>
+                              <th style="padding: 0.75rem 0.75rem;">Status Indicator</th>
+                              <th style="padding: 0.75rem 0.75rem;">Period</th>
+                              <th style="padding: 0.75rem 0.75rem;">Penalty Liability</th>
+                              <th style="padding: 0.75rem 1rem; textAlign: right;">Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            ${matchedRecords.map(rec => {
+                              const isBreached = rec.status === 'Breached';
+                              const isCompleted = rec.status === 'Completed';
+
+                              return `
+                                <tr style="border-bottom: 1px solid var(--border-subtle); transition: background-color 0.15s ease;"
+                                    onmouseenter="this.style.backgroundColor='var(--bg-hover)'"
+                                    onmouseleave="this.style.backgroundColor='transparent'">
+                                  <td style="padding: 0.875rem 1rem;">
+                                    <span style="font-family: var(--font-mono); font-weight: 700; color: var(--brand-primary); font-size: 0.75rem; background: rgba(255, 107, 0, 0.08); padding: 0.2rem 0.45rem; border-radius: 6px; border: 1px solid rgba(255, 107, 0, 0.25);">
+                                      ${rec.id}
+                                    </span>
+                                  </td>
+                                  <td style="padding: 0.875rem 0.75rem;">
+                                    <div style="font-weight: 700; color: var(--text-primary); line-height: 1.25;">
+                                      ${rec.name}
+                                    </div>
+                                    <div style="font-size: 0.71875rem; color: var(--text-muted); margin-top: 0.15rem;">
+                                      ${rec.client} &bull; <span style="color: var(--text-secondary);">${rec.region}</span>
+                                    </div>
+                                  </td>
+                                  <td style="padding: 0.875rem 0.75rem;">
+                                    <span style="font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 6px; background: ${rec.tier.includes('Platinum') ? 'rgba(99, 102, 241, 0.15)' : rec.tier.includes('Gold') ? 'rgba(245, 158, 11, 0.15)' : 'rgba(148, 163, 184, 0.15)'}; color: ${rec.tier.includes('Platinum') ? '#818cf8' : rec.tier.includes('Gold') ? '#fbbf24' : '#cbd5e1'};">
+                                      ${rec.tier}
+                                    </span>
+                                  </td>
+                                  <td style="padding: 0.875rem 0.75rem;">
+                                    <span style="font-family: var(--font-mono); font-weight: 700; color: var(--text-secondary);">
+                                      ${rec.targetSla}%
+                                    </span>
+                                  </td>
+                                  <td style="padding: 0.875rem 0.75rem;">
+                                    <span style="font-family: var(--font-mono); font-weight: 800; font-size: 0.875rem; color: ${isBreached ? '#ef4444' : isCompleted ? '#8b5cf6' : '#10b981'};">
+                                      ${rec.currentSla}%
+                                    </span>
+                                  </td>
+
+                                  <!-- Progress Indicator -->
+                                  <td style="padding: 0.875rem 0.75rem;">
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.6875rem; margin-bottom: 0.2rem;">
+                                      <span style="color: var(--text-muted);">Target</span>
+                                      <span style="font-weight: 700; font-family: var(--font-mono); color: ${isBreached ? '#ef4444' : '#10b981'};">${rec.progress}%</span>
+                                    </div>
+                                    <div style="width: 100%; height: 5px; background: rgba(255,255,255,0.08); border-radius: 9999px; overflow: hidden;">
+                                      <div style="width: ${Math.min(100, Math.max(6, rec.progress))}%; height: 100%; background: ${isBreached ? '#ef4444' : isCompleted ? '#8b5cf6' : '#10b981'}; border-radius: 9999px;"></div>
+                                    </div>
+                                  </td>
+
+                                  <!-- Status Indicator Badge -->
+                                  <td style="padding: 0.875rem 0.75rem;">
+                                    <span style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.15rem 0.55rem; border-radius: 9999px; font-size: 0.72rem; font-weight: 700; background: ${isBreached ? 'rgba(239, 68, 68, 0.15)' : isCompleted ? 'rgba(139, 92, 246, 0.15)' : 'rgba(16, 185, 129, 0.15)'}; color: ${isBreached ? '#ef4444' : isCompleted ? '#8b5cf6' : '#10b981'}; border: 1px solid ${isBreached ? 'rgba(239,68,68,0.35)' : isCompleted ? 'rgba(139,92,246,0.35)' : 'rgba(16,185,129,0.35)'};">
+                                      <span style="width: 6px; height: 6px; border-radius: 50%; background: ${isBreached ? '#ef4444' : isCompleted ? '#8b5cf6' : '#10b981'};"></span>
+                                      ${rec.status}
+                                    </span>
+                                  </td>
+
+                                  <td style="padding: 0.875rem 0.75rem; font-size: 0.75rem; color: var(--text-secondary);">
+                                    ${rec.dateRange}
+                                  </td>
+                                  <td style="padding: 0.875rem 0.75rem; font-size: 0.75rem; font-weight: 600; color: ${isBreached ? '#ef4444' : 'var(--text-muted)'};">
+                                    ${rec.penalty}
+                                  </td>
+                                  <td style="padding: 0.875rem 1rem; text-align: right;">
+                                    <button type="button" class="btn-secondary" onclick="showToast('SLA Details: ' + '${rec.id} • ' + '${rec.name}');" style="padding: 0.2rem 0.5rem; font-size: 0.72rem;">
+                                      View
+                                    </button>
+                                  </td>
+                                </tr>
+                              `;
+                            }).join('')}
+                          </tbody>
+                        </table>
+                      </div>
+                    `}
+
+                    <!-- Footer Table Bar -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border-light); font-size: 0.75rem; color: var(--text-muted);">
+                      <div>
+                        Displaying <strong>${matchedRecords.length}</strong> records &bull; Active Date Window: <strong>${dRange === '24h' ? 'Last 24 Hours' : dRange === '7d' ? 'Last 7 Days' : dRange === '30d' ? 'September 2026' : 'Fiscal Q3'}</strong>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 0.875rem;">
+                        <span>🟢 Active: <strong>${actCount}</strong></span>
+                        <span>🔴 Breached: <strong>${brkCount}</strong></span>
+                        <span>🟣 Completed: <strong>${cmpCount}</strong></span>
+                      </div>
                     </div>
                   </div>
-                `).join('')}
-              </div>
+                `;
+              })()}
 
               <!-- 5 SLA Visuals Showcase Component -->
               ${(appState.activeTab === 'overview' || appState.activeTab === 'visuals') ? `

@@ -4,6 +4,7 @@ import Navbar from './components/layout/Navbar';
 import Sidebar from './components/layout/Sidebar';
 import Footer from './components/layout/Footer';
 import KpiStatsGrid from './components/dashboard/KpiStatsGrid';
+import SlaRecordsTable from './components/dashboard/SlaRecordsTable';
 import VisualShowcase from './components/dashboard/VisualShowcase';
 import UptimeTrendChart from './components/dashboard/UptimeTrendChart';
 import ServiceHealthMatrix from './components/dashboard/ServiceHealthMatrix';
@@ -31,6 +32,7 @@ export default function App() {
   // Filters & State
   const [timeRange, setTimeRange] = useState('24h');
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState('all');
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState(COMPANY_INFO.lastUpdated);
@@ -131,8 +133,21 @@ export default function App() {
           {/* Conditional Views based on Sidebar Navigation */}
           {activeTab === 'overview' && (
             <>
-              {/* 4 KPI Cards */}
-              <KpiStatsGrid />
+              {/* 4 SLA Statistics Cards (Total SLA, Active SLA, Breached SLA, Completed SLA with Progress Indicators) */}
+              <KpiStatsGrid 
+                selectedStatus={selectedStatusFilter} 
+                onSelectStatus={setSelectedStatusFilter} 
+              />
+
+              {/* SLA Data Table with Search, Filter, Date Range, Status Badges, Progress Indicators, Empty & Loading States */}
+              <SlaRecordsTable 
+                externalSearch={searchTerm} 
+                externalStatus={selectedStatusFilter} 
+                onStatusChange={setSelectedStatusFilter} 
+              />
+
+              {/* Real-time SLA Performance & Latency Trend Chart */}
+              <UptimeTrendChart />
 
               {/* SRE Error Budget & Burn Rate Monitor */}
               <ErrorBudgetCard />
@@ -142,9 +157,6 @@ export default function App() {
 
               {/* 90-Day SLA Availability Calendar Heatmap */}
               <UptimeCalendarHeatmap />
-
-              {/* Real-time Uptime & Latency Graph */}
-              <UptimeTrendChart />
 
               {/* Microservices Matrix */}
               <ServiceHealthMatrix searchTerm={searchTerm} />
@@ -163,9 +175,28 @@ export default function App() {
             </>
           )}
 
+          {activeTab === 'records' && (
+            <>
+              <KpiStatsGrid 
+                selectedStatus={selectedStatusFilter} 
+                onSelectStatus={setSelectedStatusFilter} 
+              />
+              <SlaRecordsTable 
+                externalSearch={searchTerm} 
+                externalStatus={selectedStatusFilter} 
+                onStatusChange={setSelectedStatusFilter} 
+              />
+              <UptimeTrendChart />
+              <SlaTiersCard />
+            </>
+          )}
+
           {activeTab === 'error-budgets' && (
             <>
-              <KpiStatsGrid />
+              <KpiStatsGrid 
+                selectedStatus={selectedStatusFilter} 
+                onSelectStatus={setSelectedStatusFilter} 
+              />
               <ErrorBudgetCard />
               <SlaTiersCard />
             </>

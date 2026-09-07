@@ -25,6 +25,7 @@ export default function Sidebar({
 }) {
   const navItems = [
     { id: 'overview', label: 'SLA Command Center', icon: LayoutDashboard },
+    { id: 'records', label: 'SLA Data Table & Records', icon: FileText, badge: '1,248', badgeType: 'count' },
     { id: 'error-budgets', label: 'Error Budget & Burn Rate', icon: Gauge, badge: 'SRE Live', badgeType: 'warning' },
     { id: 'penalties', label: 'Credit & Penalty Simulator', icon: Calculator, badge: '$0 Breach', badgeType: 'count' },
     { id: 'heatmap', label: '90-Day Uptime Calendar', icon: Calendar, badge: '90 Days', badgeType: 'count' },
