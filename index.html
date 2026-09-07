@@ -3206,6 +3206,9 @@
       if (!appState.currentUser) {
         appContainer.innerHTML = renderLogin();
       } else {
+        document.body.style.overflow = 'auto';
+        document.documentElement.classList.remove('modal-open');
+        document.body.classList.remove('modal-open');
         appContainer.innerHTML = renderDashboard();
       }
     }
