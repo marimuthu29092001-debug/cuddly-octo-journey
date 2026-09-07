@@ -19,6 +19,32 @@ import { COMPANY_INFO } from './data/slaData';
 import { ShieldCheck, Activity, Sparkles, Clock, RefreshCw, Gauge, Calculator, Calendar } from 'lucide-react';
 import './App.css';
 
+const TAB_TITLES = {
+  overview: 'SLA Command Center',
+  records: 'SLA Data Table & Records',
+  'error-budgets': 'Error Budget & Burn Rate',
+  penalties: 'Credit & Penalty Simulator',
+  heatmap: '90-Day Uptime Calendar',
+  services: 'Microservices & Nodes',
+  tiers: 'SLA Contracts & Tiers',
+  incidents: 'Incident & Breach Log',
+  latency: 'Global Edge Latency',
+  visuals: 'Infrastructure Showcase'
+};
+
+const TAB_SUBTITLES = {
+  overview: 'Stackly SLA Telemetry Engine • Real-time telemetry, monitored service agreements, and system health.',
+  records: 'Monitored service-level agreements, attainment progress indicators, and contractual status.',
+  'error-budgets': 'SRE Error Budget depletion telemetry, burn rates, and allowable downtime tracking.',
+  penalties: 'Contractual service credit calculator and penalty liability simulator.',
+  heatmap: 'Daily uptime attainment record over the last 90 days.',
+  services: 'Per-service SLA commitments, response times, throughput, and error rates.',
+  tiers: 'Legally binding service credits, uptime commitments, and contractual downtime budgets.',
+  incidents: 'Active incident response telemetry, MTTR countdown timers, and mitigation runbooks.',
+  latency: 'Sub-millisecond packet latency monitoring across 340+ global edge Points of Presence.',
+  visuals: 'Visual audit of multi-region cloud redundancy, NOC command center, and low-latency edge hubs.'
+};
+
 export default function App() {
   // Theme state - default 'orange' (Cyber Orange Magma theme requested by user)
   const [theme, setTheme] = useState('orange');
@@ -115,43 +141,71 @@ export default function App() {
           setMobileSidebarOpen={setMobileSidebarOpen}
           theme={theme}
           setTheme={setTheme}
+          activeTab={activeTab}
         />
 
         {/* Dynamic Body Content */}
         <main className="content-body">
           {/* Welcome Hero / Status Header */}
-          <div className="dashboard-hero-bar">
-            <div className="hero-welcome-text">
-              <h2>
-                Welcome back, {currentUser.name}
-              </h2>
-              <p>
-                Stackly SLA Telemetry Engine &bull; Environment: <strong>{COMPANY_INFO.environment}</strong> &bull; Node Cluster Health: <strong>100%</strong>
-              </p>
-            </div>
-
-            <div className="hero-quick-tags">
-              <div className="quick-metric-chip">
-                <Clock size={13} color="var(--brand-primary)" />
-                <span>Last Probe: <strong>{lastRefreshed}</strong></span>
+          {activeTab === 'overview' ? (
+            <div className="dashboard-hero-bar">
+              <div className="hero-welcome-text">
+                <h2>
+                  Welcome back, {currentUser.name}
+                </h2>
+                <p>
+                  Stackly SLA Telemetry Engine &bull; Environment: <strong>{COMPANY_INFO.environment}</strong> &bull; Node Cluster Health: <strong>100%</strong>
+                </p>
               </div>
 
-              <div className="quick-metric-chip">
-                <Activity size={13} color="var(--status-healthy)" />
-                <span>Global Uptime: <strong>{COMPANY_INFO.complianceScore}</strong></span>
+              <div className="hero-quick-tags">
+                <div className="quick-metric-chip">
+                  <Clock size={13} color="var(--brand-primary)" />
+                  <span>Last Probe: <strong>{lastRefreshed}</strong></span>
+                </div>
+
+                <div className="quick-metric-chip">
+                  <Activity size={13} color="var(--status-healthy)" />
+                  <span>Global Uptime: <strong>{COMPANY_INFO.complianceScore}</strong></span>
+                </div>
+
+                <button 
+                  className="btn-secondary" 
+                  onClick={handleManualRefresh}
+                  style={{ padding: '0.35rem 0.65rem', fontSize: '0.75rem' }}
+                  title="Fetch live heartbeat telemetry"
+                >
+                  <RefreshCw size={13} className={isRefreshing ? 'spin-anim' : ''} />
+                  <span>Sync</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="dashboard-hero-bar">
+              <div className="hero-welcome-text">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.2rem' }}>
+                  <h2 style={{ margin: 0 }}>{TAB_TITLES[activeTab] || 'Dashboard'}</h2>
+                  <span className="status-pill healthy" style={{ fontSize: '0.72rem' }}>Live Telemetry</span>
+                </div>
+                <p style={{ margin: 0 }}>{TAB_SUBTITLES[activeTab] || 'Stackly SLA Telemetry Engine'}</p>
               </div>
 
-              <button 
-                className="btn-secondary" 
-                onClick={handleManualRefresh}
-                style={{ padding: '0.35rem 0.65rem', fontSize: '0.75rem' }}
-                title="Fetch live heartbeat telemetry"
-              >
-                <RefreshCw size={13} className={isRefreshing ? 'spin-anim' : ''} />
-                <span>Sync</span>
-              </button>
+              <div className="hero-quick-tags">
+                <button 
+                  type="button" 
+                  className="btn-secondary" 
+                  onClick={() => { setActiveTab('overview'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  style={{ padding: '0.35rem 0.65rem', fontSize: '0.75rem' }}
+                >
+                  ← Back to Overview
+                </button>
+                <div className="quick-metric-chip">
+                  <Activity size={13} color="var(--status-healthy)" />
+                  <span>Global SLA: <strong>{COMPANY_INFO.complianceScore}</strong></span>
+                </div>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Conditional Views based on Sidebar Navigation */}
           {activeTab === 'overview' && (
@@ -266,6 +320,7 @@ export default function App() {
             <>
               <RegionalLatencyMap />
               <UptimeTrendChart />
+              <KpiStatsGrid />
             </>
           )}
 

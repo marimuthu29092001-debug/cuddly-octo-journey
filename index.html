@@ -2167,6 +2167,33 @@
       `;
     }
 
+    const TAB_TITLES = {
+      overview: 'SLA Command Center',
+      visuals: '5 SLA Visuals Showcase',
+      services: 'Microservices & Health Matrix',
+      tiers: 'SLA Contracts & Tiers',
+      incidents: 'Incidents & Breach Log',
+      latency: 'Global Edge Latency'
+    };
+
+    const TAB_ICONS = {
+      overview: '📊',
+      visuals: '🖼️',
+      services: '🖥️',
+      tiers: '📜',
+      incidents: '⚠️',
+      latency: '🌐'
+    };
+
+    const TAB_SUBTITLES = {
+      overview: 'Stackly SLA Telemetry Engine • Real-time telemetry, monitored service agreements, and system health.',
+      visuals: 'Multi-region cloud redundancy, 24/7 NOC command center, low-latency edge routing, and automated compliance shields.',
+      services: 'Per-service SLA commitments, response times, throughput, error rates, and cluster health across 48 microservices.',
+      tiers: 'Legally binding service credits, uptime commitments, and contractual downtime budgets across tiers.',
+      incidents: 'Active incident response telemetry, MTTR countdown timers, and automated mitigation runbooks.',
+      latency: 'Sub-millisecond packet latency monitoring across 340+ global edge Points of Presence with active synthetic probes.'
+    };
+
     function renderDashboard() {
       const u = appState.currentUser;
       const hero = SLA_SHOWCASE_IMAGES[appState.selectedImageIdx];
@@ -2208,7 +2235,7 @@
                   <li>
                     <button 
                       type="button" 
-                      onclick="setState({ activeTab: '${item.id}', sidebarOpen: false })"
+                      onclick="setState({ activeTab: '${item.id}', sidebarOpen: false }); window.scrollTo({ top: 0, behavior: 'smooth' });"
                       style="width: 100%; display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.875rem; border-radius: 10px; font-size: 0.875rem; font-weight: 600; border: 1px solid ${appState.activeTab === item.id ? 'var(--brand-border)' : 'transparent'}; background: ${appState.activeTab === item.id ? 'var(--brand-light)' : 'transparent'}; color: ${appState.activeTab === item.id ? 'var(--brand-primary)' : 'var(--text-secondary)'}; cursor: pointer; transition: all 0.15s ease;"
                     >
                       <span>${item.icon}</span>
@@ -2252,11 +2279,20 @@
                   ☰
                 </button>
 
-                <h1 style="font-family: var(--font-heading); font-size: 1.65rem; font-weight: 700; color: var(--text-primary); margin: 0; line-height: 1;">Dashboard</h1>
+                <h1 style="font-family: var(--font-heading); font-size: 1.65rem; font-weight: 700; color: var(--text-primary); margin: 0; line-height: 1;">
+                  ${TAB_TITLES[appState.activeTab] || 'SLA Command Center'}
+                </h1>
 
                 <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--status-healthy-bg); border: 1px solid var(--status-healthy-border); padding: 0.3rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; color: var(--status-healthy);" class="hide-mobile">
                   <span class="status-indicator-dot pulse" style="color: var(--status-healthy);"></span>
-                  <span>99.98% Compliant (All SLA Targets Met)</span>
+                  <span>
+                    ${appState.activeTab === 'latency' ? '340+ Edge PoPs • 22ms Avg Latency' :
+                      appState.activeTab === 'incidents' ? '1 Warning • 0 Active SLA Breaches' :
+                      appState.activeTab === 'services' ? '48 Monitored Services • 99.98% Health' :
+                      appState.activeTab === 'tiers' ? '100% Contract Adherence' :
+                      appState.activeTab === 'visuals' ? '5 Enterprise Facilities Audited' :
+                      '99.98% Compliant (All SLA Targets Met)'}
+                  </span>
                 </div>
               </div>
 
@@ -2370,656 +2406,625 @@
                 </div>
               ` : ''}
 
-              <!-- Welcome Hero Bar -->
-              <div style="background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 16px; padding: 1.25rem 1.75rem; margin-bottom: 1.75rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; box-shadow: var(--shadow-sm);">
-                <div>
-                  <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary);">
-                    Welcome back, ${u.name}
-                  </h2>
-                  <p style="font-size: 0.84rem; color: var(--text-muted); margin-top: 0.2rem;">
-                    Stackly SLA Telemetry Engine &bull; Environment: <strong style="color: var(--text-secondary);">Production Cluster (Global)</strong> &bull; System Status: <strong style="color: var(--status-healthy);">Optimal</strong>
-                  </p>
-                </div>
-
-                <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
-                  <div style="background: var(--bg-subtle); border: 1px solid var(--border-light); padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.75rem; color: var(--text-secondary);">
-                    ⏱️ MTTR: <strong style="color: var(--text-primary);">14m 20s</strong>
-                  </div>
-                  <div style="background: var(--status-healthy-bg); border: 1px solid var(--status-healthy-border); padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.75rem; color: var(--status-healthy); font-weight: 700;">
-                    🛡️ Global SLA: 99.982%
-                  </div>
-                </div>
-              </div>
-
-              <!-- 4 SLA Statistics Cards (Total SLA, Active SLA, Breached SLA, Completed SLA with Progress Indicators) -->
-              <div class="grid-4" style="margin-bottom: 1.75rem;">
-                ${KPI_METRICS.map(kpi => {
-                  const isSelected = (appState.slaStatusFilter || 'all') === (kpi.key === 'total' ? 'all' : kpi.key);
-                  return `
-                    <div class="sla-card" 
-                         onclick="setState({ slaStatusFilter: '${kpi.key === 'total' ? 'all' : kpi.key}' })"
-                         style="border-left: 4px solid ${kpi.color}; background: var(--bg-surface); border-top: 1px solid var(--border-light); border-right: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); cursor: pointer; transition: all 0.2s; box-shadow: ${isSelected ? '0 0 0 2px ' + kpi.color + ', 0 8px 24px ' + kpi.color + '25' : 'var(--shadow-sm)'}; transform: ${isSelected ? 'translateY(-2px)' : 'none'};">
-                      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
-                        <div style="display: flex; align-items: center; gap: 0.45rem;">
-                          <span style="width: 8px; height: 8px; border-radius: 50%; background: ${kpi.color}; box-shadow: 0 0 8px ${kpi.color};"></span>
-                          <span style="font-size: 0.8125rem; font-weight: 700; color: var(--text-secondary);">${kpi.label}</span>
-                        </div>
-                        <div style="width: 32px; height: 32px; border-radius: 8px; background: ${kpi.bg}; border: 1px solid ${kpi.border}; display: flex; align-items: center; justify-content: center; font-size: 1rem;">
-                          ${kpi.icon}
-                        </div>
-                      </div>
-
-                      <div style="display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.25rem;">
-                        <span style="font-size: 1.875rem; font-weight: 800; color: var(--text-primary); font-family: var(--font-sans); letter-spacing: -0.02em;">
-                          ${kpi.value}
-                        </span>
-                        <span style="font-size: 0.72rem; font-weight: 700; padding: 0.12rem 0.5rem; border-radius: 9999px; background: ${kpi.bg}; color: ${kpi.color}; border: 1px solid ${kpi.border};">
-                          ${kpi.status}
-                        </span>
-                      </div>
-
-                      <div style="font-size: 0.78125rem; color: var(--text-muted); margin-bottom: 0.75rem;">${kpi.sub}</div>
-
-                      <!-- Embedded Progress Indicator -->
-                      <div style="margin-bottom: 0.75rem;">
-                        <div style="display: flex; justify-content: space-between; font-size: 0.7rem; margin-bottom: 0.25rem;">
-                          <span style="color: var(--text-muted);">Progress</span>
-                          <span style="color: ${kpi.color}; font-weight: 700; font-family: var(--font-mono);">${kpi.progressText}</span>
-                        </div>
-                        <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.08); border-radius: 9999px; overflow: hidden;">
-                          <div style="width: ${Math.min(100, Math.max(6, kpi.progress))}%; height: 100%; background: ${kpi.color}; border-radius: 9999px;"></div>
-                        </div>
-                      </div>
-
-                      <div style="padding-top: 0.65rem; border-top: 1px solid var(--border-light); font-size: 0.75rem; color: ${kpi.color}; font-weight: 600; display: flex; justify-content: space-between; align-items: center;">
-                        <span>${kpi.change}</span>
-                        <span style="font-size: 0.6875rem; color: var(--text-muted);">${isSelected ? 'Filtered' : 'Click to filter'} ↗</span>
-                      </div>
-                    </div>
-                  `;
-                }).join('')}
-              </div>
-
-              <!-- =========================================================================
-                   SLA DATA TABLE & RECORDS COMPONENT
-                   ========================================================================= -->
               ${(() => {
-                const sTerm = (appState.slaSearchTerm !== undefined ? appState.slaSearchTerm : (appState.searchTerm || '')).toLowerCase();
-                const sFilter = appState.slaStatusFilter || 'all';
-                const tFilter = appState.slaTierFilter || 'all';
-                const dRange = appState.slaDateRange || '30d';
-
-                const matchedRecords = SLA_RECORDS.filter(r => {
-                  const mSearch = !sTerm || 
-                    r.name.toLowerCase().includes(sTerm) || 
-                    r.id.toLowerCase().includes(sTerm) || 
-                    r.client.toLowerCase().includes(sTerm) ||
-                    r.region.toLowerCase().includes(sTerm);
-                  const mStatus = sFilter === 'all' || r.status.toLowerCase() === sFilter.toLowerCase();
-                  const mTier = tFilter === 'all' || r.tier.toLowerCase().includes(tFilter.toLowerCase());
-                  return mSearch && mStatus && mTier;
-                });
-
-                const allCount = SLA_RECORDS.length;
-                const actCount = SLA_RECORDS.filter(r => r.status === 'Active').length;
-                const brkCount = SLA_RECORDS.filter(r => r.status === 'Breached').length;
-                const cmpCount = SLA_RECORDS.filter(r => r.status === 'Completed').length;
-
-                return `
-                  <div class="sla-card" style="margin-bottom: 1.75rem; background: var(--bg-surface); border: 1px solid var(--border-light);">
-                    <!-- Header with Title and Date Range Filter -->
-                    <div class="sla-card-header" style="flex-wrap: wrap; gap: 1rem; align-items: flex-start;">
-                      <div>
-                        <div class="sla-card-title">
-                          <span style="color: var(--text-primary); font-weight: 800;">📋 SLA Data Table & Active Records</span>
-                          <span class="status-pill neutral" style="margin-left: 0.5rem;">
-                            ${matchedRecords.length} of ${allCount} Agreements
-                          </span>
-                        </div>
-                        <div class="sla-card-subtitle" style="color: var(--text-muted);">
-                          Monitored service-level agreements, attainment progress indicators, breach liabilities, and contractual status.
-                        </div>
+                // Section Banner for non-overview tabs
+                const renderTabBanner = () => `
+                  <div style="background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 16px; padding: 1.25rem 1.75rem; margin-bottom: 1.75rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; box-shadow: var(--shadow-sm);">
+                    <div>
+                      <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.25rem;">
+                        <span style="font-size: 1.35rem;">${TAB_ICONS[appState.activeTab] || '📊'}</span>
+                        <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary); margin: 0;">
+                          ${TAB_TITLES[appState.activeTab] || 'SLA Command Center'}
+                        </h2>
+                        <span class="status-pill healthy" style="font-size: 0.72rem;">Live Telemetry</span>
                       </div>
-
-                      <!-- Date Range Filter -->
-                      <div style="display: flex; align-items: center; gap: 0.35rem; background: var(--bg-subtle); padding: 0.25rem 0.5rem; border-radius: 10px; border: 1px solid var(--border-light);">
-                        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; margin-right: 0.25rem;">📅 Date Range:</span>
-                        ${['24h', '7d', '30d', '90d', 'all'].map(r => `
-                          <button 
-                            type="button" 
-                            class="role-chip ${dRange === r ? 'active' : ''}" 
-                            onclick="setState({ slaTableLoading: true, slaDateRange: '${r}' }); setTimeout(() => setState({ slaTableLoading: false }), 320);"
-                            style="padding: 0.2rem 0.55rem; font-size: 0.72rem;"
-                          >
-                            ${r === '24h' ? '24h' : r === '7d' ? '7 Days' : r === '30d' ? '30 Days' : r === '90d' ? '90 Days' : 'All Time'}
-                          </button>
-                        `).join('')}
-                        <button 
-                          type="button" 
-                          class="btn-secondary" 
-                          onclick="setState({ slaTableLoading: true }); setTimeout(() => setState({ slaTableLoading: false }), 400);" 
-                          style="padding: 0.2rem 0.55rem; font-size: 0.72rem; margin-left: 0.25rem;"
-                        >
-                          🔄 Sync
-                        </button>
-                      </div>
+                      <p style="font-size: 0.84rem; color: var(--text-muted); margin: 0;">
+                        ${TAB_SUBTITLES[appState.activeTab] || ''}
+                      </p>
                     </div>
 
-                    <!-- Search & Filter Controls Bar -->
-                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.875rem; padding: 0.875rem 1rem; background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: 12px; margin-bottom: 1.25rem;">
-                      <!-- Search Input -->
-                      <div style="display: flex; align-items: center; gap: 0.5rem; background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 8px; padding: 0.35rem 0.75rem; flex: 1 1 240px; max-width: 360px;">
-                        <span style="color: var(--text-muted); font-size: 0.85rem;">🔍</span>
-                        <input 
-                          type="text" 
-                          placeholder="Search agreement, client, SLA ID..." 
-                          value="${appState.slaSearchTerm !== undefined ? appState.slaSearchTerm : (appState.searchTerm || '')}"
-                          oninput="setState({ slaSearchTerm: this.value })"
-                          style="background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 0.8125rem; width: 100%; font-family: inherit;"
-                        />
-                        ${(appState.slaSearchTerm || appState.searchTerm) ? `
-                          <button type="button" onclick="setState({ slaSearchTerm: '', searchTerm: '' })" style="background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 0;">✕</button>
-                        ` : ''}
-                      </div>
-
-                      <!-- Status Filter Pills -->
-                      <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
-                        <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Status:</span>
-                        <button type="button" class="role-chip ${sFilter === 'all' ? 'active' : ''}" onclick="setState({ slaStatusFilter: 'all' })" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">
-                          All (${allCount})
-                        </button>
-                        <button type="button" class="role-chip ${sFilter === 'active' ? 'active' : ''}" onclick="setState({ slaStatusFilter: 'active' })" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; color: ${sFilter === 'active' ? '#fff' : '#10b981'};">
-                          Active (${actCount})
-                        </button>
-                        <button type="button" class="role-chip ${sFilter === 'breached' ? 'active' : ''}" onclick="setState({ slaStatusFilter: 'breached' })" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; color: ${sFilter === 'breached' ? '#fff' : '#ef4444'};">
-                          Breached (${brkCount})
-                        </button>
-                        <button type="button" class="role-chip ${sFilter === 'completed' ? 'active' : ''}" onclick="setState({ slaStatusFilter: 'completed' })" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; color: ${sFilter === 'completed' ? '#fff' : '#8b5cf6'};">
-                          Completed (${cmpCount})
-                        </button>
-                      </div>
-
-                      <!-- Tier Filter Dropdown -->
-                      <div style="display: flex; align-items: center; gap: 0.4rem;">
-                        <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Tier:</span>
-                        <select onchange="setState({ slaTierFilter: this.value })" style="background: var(--bg-surface); border: 1px solid var(--border-light); color: var(--text-primary); border-radius: 8px; padding: 0.35rem 0.65rem; font-size: 0.75rem; font-weight: 600; outline: none; cursor: pointer;">
-                          <option value="all" ${tFilter === 'all' ? 'selected' : ''}>All Tiers</option>
-                          <option value="Platinum" ${tFilter === 'Platinum' ? 'selected' : ''}>Platinum Enterprise</option>
-                          <option value="Gold" ${tFilter === 'Gold' ? 'selected' : ''}>Gold Business</option>
-                          <option value="Silver" ${tFilter === 'Silver' ? 'selected' : ''}>Silver Growth</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <!-- Loading State Skeleton -->
-                    ${appState.slaTableLoading ? `
-                      <div style="padding: 2.5rem 1rem; text-align: center;">
-                        <div style="display: inline-flex; align-items: center; gap: 0.65rem; margin-bottom: 1.25rem; font-size: 0.875rem; font-weight: 600; color: var(--text-secondary);">
-                          <span style="display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,107,0,0.3); border-top-color: #ff6b00; border-radius: 50%; animation: spin 0.7s linear infinite;"></span>
-                          <span>Loading SLA telemetry & records...</span>
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                          ${[1, 2, 3, 4].map(() => `
-                            <div style="height: 42px; border-radius: 8px; background: rgba(255,255,255,0.04); animation: pulse 1.2s infinite;"></div>
-                          `).join('')}
-                        </div>
-                      </div>
-                    ` : matchedRecords.length === 0 ? `
-                      <!-- Empty State Component -->
-                      <div style="padding: 3rem 1.5rem; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.02); border-radius: 12px; border: 1px dashed var(--border-light); margin: 0.5rem 0;">
-                        <div style="width: 52px; height: 52px; border-radius: 50%; background: rgba(255, 107, 0, 0.1); border: 1px solid rgba(255, 107, 0, 0.3); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #ff6b00; margin-bottom: 0.875rem;">
-                          🔍
-                        </div>
-                        <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.35rem;">
-                          No SLA Records Found
-                        </h3>
-                        <p style="font-size: 0.84rem; color: var(--text-muted); max-width: 420px; line-height: 1.5; margin-bottom: 1.25rem;">
-                          ${sTerm ? `No SLA agreements matched your search query "${sTerm}".` : `No agreements found under the "${sFilter}" status filter.`}
-                          Try adjusting your search criteria or reset filters.
-                        </p>
-                        <button type="button" class="btn-primary" onclick="setState({ slaSearchTerm: '', searchTerm: '', slaStatusFilter: 'all', slaTierFilter: 'all' })" style="padding: 0.45rem 1rem; font-size: 0.8125rem;">
-                          🔄 Reset All Filters
-                        </button>
-                      </div>
-                    ` : `
-                      <!-- Responsive SLA Data Table -->
-                      <div style="overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; overscroll-behavior-x: contain;">
-                        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.8125rem; min-width: 860px;">
-                          <thead>
-                            <tr style="border-bottom: 1px solid var(--border-light); color: var(--text-muted); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
-                              <th style="padding: 0.75rem 1rem;">SLA ID</th>
-                              <th style="padding: 0.75rem 0.75rem;">Agreement & Client</th>
-                              <th style="padding: 0.75rem 0.75rem;">Tier</th>
-                              <th style="padding: 0.75rem 0.75rem;">Target SLA</th>
-                              <th style="padding: 0.75rem 0.75rem;">Current SLA</th>
-                              <th style="padding: 0.75rem 0.75rem; width: 150px;">Progress Indicator</th>
-                              <th style="padding: 0.75rem 0.75rem;">Status Indicator</th>
-                              <th style="padding: 0.75rem 0.75rem;">Period</th>
-                              <th style="padding: 0.75rem 0.75rem;">Penalty Liability</th>
-                              <th style="padding: 0.75rem 1rem; textAlign: right;">Action</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            ${matchedRecords.map(rec => {
-                              const isBreached = rec.status === 'Breached';
-                              const isCompleted = rec.status === 'Completed';
-
-                              return `
-                                <tr style="border-bottom: 1px solid var(--border-subtle); transition: background-color 0.15s ease;"
-                                    onmouseenter="this.style.backgroundColor='var(--bg-hover)'"
-                                    onmouseleave="this.style.backgroundColor='transparent'">
-                                  <td style="padding: 0.875rem 1rem;">
-                                    <span style="font-family: var(--font-mono); font-weight: 700; color: var(--brand-primary); font-size: 0.75rem; background: rgba(255, 107, 0, 0.08); padding: 0.2rem 0.45rem; border-radius: 6px; border: 1px solid rgba(255, 107, 0, 0.25);">
-                                      ${rec.id}
-                                    </span>
-                                  </td>
-                                  <td style="padding: 0.875rem 0.75rem;">
-                                    <div style="font-weight: 700; color: var(--text-primary); line-height: 1.25;">
-                                      ${rec.name}
-                                    </div>
-                                    <div style="font-size: 0.71875rem; color: var(--text-muted); margin-top: 0.15rem;">
-                                      ${rec.client} &bull; <span style="color: var(--text-secondary);">${rec.region}</span>
-                                    </div>
-                                  </td>
-                                  <td style="padding: 0.875rem 0.75rem;">
-                                    <span style="font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 6px; background: ${rec.tier.includes('Platinum') ? 'rgba(99, 102, 241, 0.15)' : rec.tier.includes('Gold') ? 'rgba(245, 158, 11, 0.15)' : 'rgba(148, 163, 184, 0.15)'}; color: ${rec.tier.includes('Platinum') ? '#818cf8' : rec.tier.includes('Gold') ? '#fbbf24' : '#cbd5e1'};">
-                                      ${rec.tier}
-                                    </span>
-                                  </td>
-                                  <td style="padding: 0.875rem 0.75rem;">
-                                    <span style="font-family: var(--font-mono); font-weight: 700; color: var(--text-secondary);">
-                                      ${rec.targetSla}%
-                                    </span>
-                                  </td>
-                                  <td style="padding: 0.875rem 0.75rem;">
-                                    <span style="font-family: var(--font-mono); font-weight: 800; font-size: 0.875rem; color: ${isBreached ? '#ef4444' : isCompleted ? '#8b5cf6' : '#10b981'};">
-                                      ${rec.currentSla}%
-                                    </span>
-                                  </td>
-
-                                  <!-- Progress Indicator -->
-                                  <td style="padding: 0.875rem 0.75rem;">
-                                    <div style="display: flex; justify-content: space-between; font-size: 0.6875rem; margin-bottom: 0.2rem;">
-                                      <span style="color: var(--text-muted);">Target</span>
-                                      <span style="font-weight: 700; font-family: var(--font-mono); color: ${isBreached ? '#ef4444' : '#10b981'};">${rec.progress}%</span>
-                                    </div>
-                                    <div style="width: 100%; height: 5px; background: rgba(255,255,255,0.08); border-radius: 9999px; overflow: hidden;">
-                                      <div style="width: ${Math.min(100, Math.max(6, rec.progress))}%; height: 100%; background: ${isBreached ? '#ef4444' : isCompleted ? '#8b5cf6' : '#10b981'}; border-radius: 9999px;"></div>
-                                    </div>
-                                  </td>
-
-                                  <!-- Status Indicator Badge -->
-                                  <td style="padding: 0.875rem 0.75rem;">
-                                    <span style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.15rem 0.55rem; border-radius: 9999px; font-size: 0.72rem; font-weight: 700; background: ${isBreached ? 'rgba(239, 68, 68, 0.15)' : isCompleted ? 'rgba(139, 92, 246, 0.15)' : 'rgba(16, 185, 129, 0.15)'}; color: ${isBreached ? '#ef4444' : isCompleted ? '#8b5cf6' : '#10b981'}; border: 1px solid ${isBreached ? 'rgba(239,68,68,0.35)' : isCompleted ? 'rgba(139,92,246,0.35)' : 'rgba(16,185,129,0.35)'};">
-                                      <span style="width: 6px; height: 6px; border-radius: 50%; background: ${isBreached ? '#ef4444' : isCompleted ? '#8b5cf6' : '#10b981'};"></span>
-                                      ${rec.status}
-                                    </span>
-                                  </td>
-
-                                  <td style="padding: 0.875rem 0.75rem; font-size: 0.75rem; color: var(--text-secondary);">
-                                    ${rec.dateRange}
-                                  </td>
-                                  <td style="padding: 0.875rem 0.75rem; font-size: 0.75rem; font-weight: 600; color: ${isBreached ? '#ef4444' : 'var(--text-muted)'};">
-                                    ${rec.penalty}
-                                  </td>
-                                  <td style="padding: 0.875rem 1rem; text-align: right;">
-                                    <button type="button" class="btn-secondary" onclick="showToast('SLA Details: ' + '${rec.id} • ' + '${rec.name}');" style="padding: 0.2rem 0.5rem; font-size: 0.72rem;">
-                                      View
-                                    </button>
-                                  </td>
-                                </tr>
-                              `;
-                            }).join('')}
-                          </tbody>
-                        </table>
-                      </div>
-                    `}
-
-                    <!-- Footer Table Bar -->
-                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border-light); font-size: 0.75rem; color: var(--text-muted);">
-                      <div>
-                        Displaying <strong>${matchedRecords.length}</strong> records &bull; Active Date Window: <strong>${dRange === '24h' ? 'Last 24 Hours' : dRange === '7d' ? 'Last 7 Days' : dRange === '30d' ? 'September 2026' : 'Fiscal Q3'}</strong>
-                      </div>
-                      <div style="display: flex; align-items: center; gap: 0.875rem;">
-                        <span>🟢 Active: <strong>${actCount}</strong></span>
-                        <span>🔴 Breached: <strong>${brkCount}</strong></span>
-                        <span>🟣 Completed: <strong>${cmpCount}</strong></span>
+                    <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                      <button 
+                        type="button" 
+                        class="btn-secondary"
+                        onclick="setState({ activeTab: 'overview' }); window.scrollTo({ top: 0, behavior: 'smooth' });"
+                        style="padding: 0.35rem 0.75rem; font-size: 0.75rem;"
+                      >
+                        ← Back to Command Center
+                      </button>
+                      <div style="background: var(--status-healthy-bg); border: 1px solid var(--status-healthy-border); padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.75rem; color: var(--status-healthy); font-weight: 700;">
+                        🛡️ Global SLA: 99.982%
                       </div>
                     </div>
                   </div>
                 `;
-              })()}
 
-              <!-- 5 SLA Visuals Showcase Component -->
-              ${(appState.activeTab === 'overview' || appState.activeTab === 'visuals') ? `
-                <div class="sla-card" style="margin-bottom: 1.75rem; background: var(--bg-surface); border: 1px solid var(--border-light);">
-                  <div class="sla-card-header">
+                // Welcome Hero Bar
+                const renderWelcomeHero = () => `
+                  <div style="background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 16px; padding: 1.25rem 1.75rem; margin-bottom: 1.75rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; box-shadow: var(--shadow-sm);">
                     <div>
-                      <div class="sla-card-title">
-                        <span style="color: var(--text-primary);">🏆 Stackly SLA Infrastructure & Reliability Pillars</span>
-                        <span class="status-pill healthy" style="margin-left: 0.5rem;">5 Facilities</span>
-                      </div>
-                      <div class="sla-card-subtitle" style="color: var(--text-muted);">
-                        Multi-region cloud redundancy, 24/7 NOC command center, low-latency edge routing, and automated compliance shields.
-                      </div>
-                    </div>
-                    <button class="btn-secondary" onclick="setState({ zoomImage: SLA_SHOWCASE_IMAGES[${appState.selectedImageIdx}] })" style="padding: 0.4rem 0.75rem; font-size: 0.75rem;">
-                      🔍 Full Zoom
-                    </button>
-                  </div>
-
-                  <!-- Featured Hero Box -->
-                  <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.5rem; background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: 16px; padding: 1.25rem; margin-bottom: 1.25rem;">
-                    <div 
-                      style="position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 16/9; background: var(--border-light); cursor: pointer;"
-                      onclick="setState({ zoomImage: SLA_SHOWCASE_IMAGES[${appState.selectedImageIdx}] })"
-                    >
-                      <img src="${hero.img}" alt="${hero.title}" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="this.src='https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&auto=format&fit=crop&q=80'" />
-                      <div style="position: absolute; top: 0.75rem; left: 0.75rem; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); padding: 0.3rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; color: #ffffff;">
-                        ${hero.tag}
-                      </div>
-                      <div style="position: absolute; bottom: 0.75rem; right: 0.75rem; background: rgba(0,0,0,0.85); color: white; padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.75rem; font-weight: 700; font-family: var(--font-mono);">
-                        ${hero.metric}
-                      </div>
-                    </div>
-
-                    <div style="display: flex; flex-direction: column; gap: 0.875rem;">
-                      <div>
-                        <span style="font-size: 0.75rem; font-weight: 700; color: var(--brand-primary); text-transform: uppercase; letter-spacing: 0.05em;">
-                          ${hero.cat}
-                        </span>
-                        <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); margin-top: 0.25rem;">
-                          ${hero.title}
-                        </h3>
-                      </div>
-                      <p style="font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6;">
-                        ${hero.desc}
+                      <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary);">
+                        Welcome back, ${u.name}
+                      </h2>
+                      <p style="font-size: 0.84rem; color: var(--text-muted); margin-top: 0.2rem;">
+                        Stackly SLA Telemetry Engine &bull; Environment: <strong style="color: var(--text-secondary);">Production Cluster (Global)</strong> &bull; System Status: <strong style="color: var(--status-healthy);">Optimal</strong>
                       </p>
-                      <div style="background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 10px; padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                          <div style="font-size: 0.6875rem; color: var(--text-muted);">Verified SLA Uptime</div>
-                          <div style="font-size: 1.15rem; font-weight: 800; color: var(--status-healthy); font-family: var(--font-mono);">
-                            ${hero.metric}
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                      <div style="background: var(--bg-subtle); border: 1px solid var(--border-light); padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.75rem; color: var(--text-secondary);">
+                        ⏱️ MTTR: <strong style="color: var(--text-primary);">14m 20s</strong>
+                      </div>
+                      <div style="background: var(--status-healthy-bg); border: 1px solid var(--status-healthy-border); padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.75rem; color: var(--status-healthy); font-weight: 700;">
+                        🛡️ Global SLA: 99.982%
+                      </div>
+                    </div>
+                  </div>
+                `;
+
+                // 4 SLA Statistics Cards
+                const renderKpiCards = () => `
+                  <div class="grid-4" style="margin-bottom: 1.75rem;">
+                    ${KPI_METRICS.map(kpi => {
+                      const isSelected = (appState.slaStatusFilter || 'all') === (kpi.key === 'total' ? 'all' : kpi.key);
+                      return `
+                        <div class="sla-card" 
+                             onclick="setState({ slaStatusFilter: '${kpi.key === 'total' ? 'all' : kpi.key}' })"
+                             style="border-left: 4px solid ${kpi.color}; background: var(--bg-surface); border-top: 1px solid var(--border-light); border-right: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); cursor: pointer; transition: all 0.2s; box-shadow: ${isSelected ? '0 0 0 2px ' + kpi.color + ', 0 8px 24px ' + kpi.color + '25' : 'var(--shadow-sm)'}; transform: ${isSelected ? 'translateY(-2px)' : 'none'};">
+                          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                            <div style="display: flex; align-items: center; gap: 0.45rem;">
+                              <span style="width: 8px; height: 8px; border-radius: 50%; background: ${kpi.color}; box-shadow: 0 0 8px ${kpi.color};"></span>
+                              <span style="font-size: 0.8125rem; font-weight: 700; color: var(--text-secondary);">${kpi.label}</span>
+                            </div>
+                            <div style="width: 32px; height: 32px; border-radius: 8px; background: ${kpi.bg}; border: 1px solid ${kpi.border}; display: flex; align-items: center; justify-content: center; font-size: 1rem;">
+                              ${kpi.icon}
+                            </div>
+                          </div>
+
+                          <div style="display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.25rem;">
+                            <span style="font-size: 1.875rem; font-weight: 800; color: var(--text-primary); font-family: var(--font-sans); letter-spacing: -0.02em;">
+                              ${kpi.value}
+                            </span>
+                            <span style="font-size: 0.72rem; font-weight: 700; padding: 0.12rem 0.5rem; border-radius: 9999px; background: ${kpi.bg}; color: ${kpi.color}; border: 1px solid ${kpi.border};">
+                              ${kpi.status}
+                            </span>
+                          </div>
+
+                          <div style="font-size: 0.78125rem; color: var(--text-muted); margin-bottom: 0.75rem;">${kpi.sub}</div>
+
+                          <!-- Embedded Progress Indicator -->
+                          <div style="margin-bottom: 0.75rem;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; margin-bottom: 0.25rem;">
+                              <span style="color: var(--text-muted);">Progress</span>
+                              <span style="color: ${kpi.color}; font-weight: 700; font-family: var(--font-mono);">${kpi.progressText}</span>
+                            </div>
+                            <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.08); border-radius: 9999px; overflow: hidden;">
+                              <div style="width: ${Math.min(100, Math.max(6, kpi.progress))}%; height: 100%; background: ${kpi.color}; border-radius: 9999px;"></div>
+                            </div>
+                          </div>
+
+                          <div style="padding-top: 0.65rem; border-top: 1px solid var(--border-light); font-size: 0.75rem; color: ${kpi.color}; font-weight: 600; display: flex; justify-content: space-between; align-items: center;">
+                            <span>${kpi.change}</span>
+                            <span style="font-size: 0.6875rem; color: var(--text-muted);">${isSelected ? 'Filtered' : 'Click to filter'} ↗</span>
                           </div>
                         </div>
-                        <span class="status-pill healthy">🛡️ Audited 2026</span>
-                      </div>
-                    </div>
+                      `;
+                    }).join('')}
                   </div>
+                `;
 
-                  <!-- 5 Thumbnails -->
-                  <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.875rem;">
-                    ${SLA_SHOWCASE_IMAGES.map((imgItem, idx) => `
-                      <div
-                        onclick="setState({ selectedImageIdx: ${idx} })"
-                        style="cursor: pointer; border: ${appState.selectedImageIdx === idx ? '2px solid var(--brand-primary)' : '1px solid var(--border-light)'}; border-radius: 12px; padding: 0.375rem; background: var(--bg-surface); box-shadow: ${appState.selectedImageIdx === idx ? '0 4px 12px rgba(255,107,0,0.25)' : 'none'}; transition: all 0.15s ease;"
-                      >
-                        <div style="border-radius: 8px; overflow: hidden; aspect-ratio: 16/10; margin-bottom: 0.5rem;">
-                          <img src="${imgItem.img}" alt="${imgItem.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&auto=format&fit=crop&q=80'" />
+                // SLA Data Table & Records Component
+                const renderSlaTable = () => {
+                  const sTerm = (appState.slaSearchTerm !== undefined ? appState.slaSearchTerm : (appState.searchTerm || '')).toLowerCase();
+                  const sFilter = appState.slaStatusFilter || 'all';
+                  const tFilter = appState.slaTierFilter || 'all';
+                  const dRange = appState.slaDateRange || '30d';
+
+                  const matchedRecords = SLA_RECORDS.filter(r => {
+                    const mSearch = !sTerm || 
+                      r.name.toLowerCase().includes(sTerm) || 
+                      r.id.toLowerCase().includes(sTerm) || 
+                      r.client.toLowerCase().includes(sTerm) ||
+                      r.region.toLowerCase().includes(sTerm);
+                    const mStatus = sFilter === 'all' || r.status.toLowerCase() === sFilter.toLowerCase();
+                    const mTier = tFilter === 'all' || r.tier.toLowerCase().includes(tFilter.toLowerCase());
+                    return mSearch && mStatus && mTier;
+                  });
+
+                  const allCount = SLA_RECORDS.length;
+                  const actCount = SLA_RECORDS.filter(r => r.status === 'Active').length;
+                  const brkCount = SLA_RECORDS.filter(r => r.status === 'Breached').length;
+                  const cmpCount = SLA_RECORDS.filter(r => r.status === 'Completed').length;
+
+                  return `
+                    <div class="sla-card" style="margin-bottom: 1.75rem; background: var(--bg-surface); border: 1px solid var(--border-light);">
+                      <!-- Header with Title and Date Range Filter -->
+                      <div class="sla-card-header" style="flex-wrap: wrap; gap: 1rem; align-items: flex-start;">
+                        <div>
+                          <div class="sla-card-title">
+                            <span style="color: var(--text-primary); font-weight: 800;">📋 SLA Data Table & Active Records</span>
+                            <span class="status-pill neutral" style="margin-left: 0.5rem;">
+                              ${matchedRecords.length} of ${allCount} Agreements
+                            </span>
+                          </div>
+                          <div class="sla-card-subtitle" style="color: var(--text-muted);">
+                            Monitored service-level agreements, attainment progress indicators, breach liabilities, and contractual status.
+                          </div>
                         </div>
-                        <div style="font-size: 0.75rem; font-weight: ${appState.selectedImageIdx === idx ? '700' : '600'}; color: ${appState.selectedImageIdx === idx ? 'var(--brand-primary)' : 'var(--text-secondary)'}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                          ${imgItem.tag}
-                        </div>
-                        <div style="font-size: 0.6875rem; color: var(--text-muted); font-family: var(--font-mono);">
-                          ${imgItem.metric}
-                        </div>
-                      </div>
-                    `).join('')}
-                  </div>
-                </div>
-              ` : ''}
 
-              <!-- Uptime Trend Chart -->
-              ${(appState.activeTab === 'overview' || appState.activeTab === 'latency') ? `
-                <div class="sla-card" style="margin-bottom: 1.75rem; background: var(--bg-surface); border: 1px solid var(--border-light);">
-                  <div class="sla-card-header">
-                    <div>
-                      <div class="sla-card-title">
-                        <span style="color: var(--text-primary);">📈 Real-time SLA Performance Trend (24h Window)</span>
-                        <span class="status-pill healthy" style="margin-left: 0.5rem;">Target: 99.950%</span>
-                      </div>
-                      <div class="sla-card-subtitle" style="color: var(--text-muted);">
-                        Continuous synthetic probes across all 24 ingress gateways. Current: 99.982%
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- SVG Chart -->
-                  <div style="width: 100%; overflow-x: auto;">
-                    <svg viewBox="0 0 700 180" style="width: 100%; height: auto; min-width: 500px; display: block;">
-                      <defs>
-                        <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stop-color="#ff6b00" stop-opacity="0.3" />
-                          <stop offset="100%" stop-color="#ff6b00" stop-opacity="0.0" />
-                        </linearGradient>
-                      </defs>
-                      <line x1="40" y1="30" x2="660" y2="30" stroke="var(--border-light)" stroke-dasharray="3 3" />
-                      <line x1="40" y1="80" x2="660" y2="80" stroke="var(--border-light)" stroke-dasharray="3 3" />
-                      <line x1="40" y1="130" x2="660" y2="130" stroke="var(--border-light)" />
-                      
-                      <!-- SLA Baseline Line (99.95%) -->
-                      <line x1="40" y1="110" x2="660" y2="110" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4 4" />
-                      <text x="650" y="105" text-anchor="end" fill="#dc2626" font-size="10" font-weight="700">Contractual SLA Minimum (99.950%)</text>
-
-                      <!-- Curve & Area -->
-                      <path d="M 40,40 L 95,45 L 150,55 L 205,50 L 260,65 L 315,95 L 370,75 L 425,60 L 480,50 L 535,45 L 590,48 L 645,52 L 645,130 L 40,130 Z" fill="url(#chartGrad)" />
-                      <path d="M 40,40 L 95,45 L 150,55 L 205,50 L 260,65 L 315,95 L 370,75 L 425,60 L 480,50 L 535,45 L 590,48 L 645,52" fill="none" stroke="#ff6b00" stroke-width="3" stroke-linecap="round" />
-
-                      <!-- Points -->
-                      ${[
-                        { x: 40, y: 40, t: '00:00' }, { x: 95, y: 45, t: '02:00' }, { x: 150, y: 55, t: '04:00' },
-                        { x: 205, y: 50, t: '06:00' }, { x: 260, y: 65, t: '08:00' }, { x: 315, y: 95, t: '10:00' },
-                        { x: 370, y: 75, t: '12:00' }, { x: 425, y: 60, t: '14:00' }, { x: 480, y: 50, t: '16:00' },
-                        { x: 535, y: 45, t: '18:00' }, { x: 590, y: 48, t: '20:00' }, { x: 645, y: 52, t: 'Now' }
-                      ].map(p => `
-                        <circle cx="${p.x}" cy="${p.y}" r="4" fill="var(--bg-surface)" stroke="#ff6b00" stroke-width="2"></circle>
-                        <text x="${p.x}" y="150" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-weight="600">${p.t}</text>
-                      `).join('')}
-                    </svg>
-                  </div>
-
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-light); font-size: 0.75rem; color: var(--text-muted);">
-                    <div style="display: flex; gap: 1rem;">
-                      <span>Measured Uptime: <strong style="color: var(--text-primary);">99.982%</strong></span>
-                      <span>SLA Cap: <strong style="color: #ef4444;">99.950%</strong></span>
-                      <span>⚡ Avg Latency: <strong style="color: var(--text-primary);">22ms</strong></span>
-                    </div>
-                    <span style="color: var(--status-healthy); font-weight: 600;">✅ Zero SLA Breach Periods</span>
-                  </div>
-                </div>
-              ` : ''}
-
-              <!-- Microservices Matrix -->
-              ${(appState.activeTab === 'overview' || appState.activeTab === 'services') ? `
-                <div class="sla-card" style="margin-bottom: 1.75rem; background: var(--bg-surface); border: 1px solid var(--border-light);">
-                  <div class="sla-card-header">
-                    <div>
-                      <div class="sla-card-title">
-                        <span style="color: var(--text-primary);">🖥️ Service-Level Performance & Uptime Matrix</span>
-                        <span class="status-pill neutral" style="margin-left: 0.5rem;">${filteredServices.length} Monitored</span>
-                      </div>
-                      <div class="sla-card-subtitle" style="color: var(--text-muted);">
-                        Per-service SLA commitments, response times, throughput, and error rates.
-                      </div>
-                    </div>
-                    <div>
-                      <input 
-                        type="text" 
-                        placeholder="Search services..." 
-                        value="${appState.searchTerm}" 
-                        oninput="setState({ searchTerm: this.value })"
-                        style="padding: 0.45rem 0.85rem; border: 1px solid var(--border-light); border-radius: 8px; font-size: 0.8125rem; background: var(--bg-subtle); color: var(--text-primary); outline: none;"
-                      />
-                    </div>
-                  </div>
-
-                  <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.8125rem;">
-                      <thead>
-                        <tr style="border-bottom: 2px solid var(--border-light); color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase;">
-                          <th style="padding: 0.75rem 1rem;">Microservice</th>
-                          <th style="padding: 0.75rem 0.75rem;">SLA Tier</th>
-                          <th style="padding: 0.75rem 0.75rem;">Uptime</th>
-                          <th style="padding: 0.75rem 0.75rem;">Latency</th>
-                          <th style="padding: 0.75rem 0.75rem;">Throughput</th>
-                          <th style="padding: 0.75rem 0.75rem;">Error Rate</th>
-                          <th style="padding: 0.75rem 1rem; text-align: right;">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        ${filteredServices.map(srv => {
-                          const isDegraded = srv.status === 'Degraded';
-                          return `
-                            <tr style="border-bottom: 1px solid var(--border-light);">
-                              <td style="padding: 0.875rem 1rem;">
-                                <div style="font-weight: 700; color: var(--text-primary);">${srv.name}</div>
-                                <div style="font-size: 0.72rem; color: var(--text-muted);">${srv.type}</div>
-                              </td>
-                              <td style="padding: 0.875rem 0.75rem;">
-                                <span style="font-size: 0.72rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 4px; background: ${srv.tier.includes('Platinum') ? 'rgba(255, 107, 0, 0.12)' : 'rgba(245, 158, 11, 0.12)'}; color: ${srv.tier.includes('Platinum') ? 'var(--brand-primary)' : 'var(--status-warning)'}; border: 1px solid var(--border-light);">
-                                  ${srv.tier}
-                                </span>
-                              </td>
-                              <td style="padding: 0.875rem 0.75rem; font-weight: 800; font-family: var(--font-mono); color: ${isDegraded ? 'var(--status-warning)' : 'var(--status-healthy)'};">
-                                ${srv.uptime}
-                              </td>
-                              <td style="padding: 0.875rem 0.75rem; font-family: var(--font-mono); color: var(--text-primary);">${srv.latency}</td>
-                              <td style="padding: 0.875rem 0.75rem; font-family: var(--font-mono); color: var(--text-secondary);">${srv.req}</td>
-                              <td style="padding: 0.875rem 0.75rem; font-family: var(--font-mono); color: ${isDegraded ? 'var(--status-critical)' : 'var(--status-healthy)'};">${srv.err}</td>
-                              <td style="padding: 0.875rem 1rem; text-align: right;">
-                                <span class="status-pill ${isDegraded ? 'warning' : 'healthy'}">
-                                  ${srv.status}
-                                </span>
-                              </td>
-                            </tr>
-                          `;
-                        }).join('')}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              ` : ''}
-
-              <!-- SLA Tiers Cards -->
-              ${(appState.activeTab === 'overview' || appState.activeTab === 'tiers') ? `
-                <div class="sla-card" style="margin-bottom: 1.75rem; background: var(--bg-surface); border: 1px solid var(--border-light);">
-                  <div class="sla-card-header">
-                    <div>
-                      <div class="sla-card-title">
-                        <span style="color: var(--text-primary);">📜 SLA Contract Tiers & Downtime Budget</span>
-                        <span class="status-pill healthy" style="margin-left: 0.5rem;">100% SLA Adherence</span>
-                      </div>
-                      <div class="sla-card-subtitle" style="color: var(--text-muted);">
-                        Legally binding service credits and contractual downtime budgets across all client tiers.
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="grid-4">
-                    ${SLA_TIERS.map(t => `
-                      <div style="background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 12px; padding: 1.125rem;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                          <span style="font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 9999px; background: var(--bg-subtle); color: var(--text-primary); border: 1px solid var(--border-light);">
-                            ${t.tier}
-                          </span>
-                          <span style="font-size: 0.7rem; color: var(--text-muted);">${t.clients} clients</span>
-                        </div>
-                        <div style="font-size: 1.4rem; font-weight: 800; color: var(--text-primary); font-family: var(--font-mono); margin-bottom: 0.25rem;">
-                          ${t.current} <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">/ ${t.target}</span>
-                        </div>
-                        <div style="background: var(--bg-subtle); border: 1px solid var(--border-light); padding: 0.5rem; border-radius: 6px; font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
-                          ${t.downtime}
-                        </div>
-                        <div style="font-size: 0.7rem; color: var(--status-healthy); font-weight: 600;">
-                          Clause: ${t.refund}
+                        <!-- Date Range Filter -->
+                        <div style="display: flex; align-items: center; gap: 0.35rem; background: var(--bg-subtle); padding: 0.25rem 0.5rem; border-radius: 10px; border: 1px solid var(--border-light);">
+                          <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; margin-right: 0.25rem;">📅 Date Range:</span>
+                          ${['24h', '7d', '30d', '90d', 'all'].map(r => `
+                            <button 
+                              type="button" 
+                              class="role-chip ${dRange === r ? 'active' : ''}" 
+                              onclick="setState({ slaTableLoading: true, slaDateRange: '${r}' }); setTimeout(() => setState({ slaTableLoading: false }), 320);"
+                              style="padding: 0.2rem 0.55rem; font-size: 0.72rem;"
+                            >
+                              ${r === '24h' ? '24h' : r === '7d' ? '7 Days' : r === '30d' ? '30 Days' : r === '90d' ? '90 Days' : 'All Time'}
+                            </button>
+                          `).join('')}
+                          <button 
+                            type="button" 
+                            class="btn-secondary" 
+                            onclick="setState({ slaTableLoading: true }); setTimeout(() => setState({ slaTableLoading: false }), 400);" 
+                            style="padding: 0.2rem 0.55rem; font-size: 0.72rem; margin-left: 0.25rem;"
+                          >
+                            🔄 Sync
+                          </button>
                         </div>
                       </div>
-                    `).join('')}
-                  </div>
-                </div>
-              ` : ''}
 
-              <!-- Incidents & Breaches -->
-              ${(appState.activeTab === 'overview' || appState.activeTab === 'incidents') ? `
-                <div class="sla-card" style="margin-bottom: 1.75rem; background: var(--bg-surface); border: 1px solid var(--border-light);">
-                  <div class="sla-card-header">
-                    <div>
-                      <div class="sla-card-title">
-                        <span style="color: var(--text-primary);">⚠️ Active Incidents & SLA Breach Countdown</span>
-                        <span class="status-pill warning" style="margin-left: 0.5rem;">1 Warning</span>
-                      </div>
-                      <div class="sla-card-subtitle" style="color: var(--text-muted);">
-                        Real-time incident response telemetry and MTTR breach countdown timers.
-                      </div>
-                    </div>
-                  </div>
+                      <!-- Search & Filter Controls Bar -->
+                      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.875rem; padding: 0.875rem 1rem; background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: 12px; margin-bottom: 1.25rem;">
+                        <!-- Search Input -->
+                        <div style="display: flex; align-items: center; gap: 0.5rem; background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 8px; padding: 0.35rem 0.75rem; flex: 1 1 240px; max-width: 360px;">
+                          <span style="color: var(--text-muted); font-size: 0.85rem;">🔍</span>
+                          <input 
+                            type="text" 
+                            placeholder="Search agreement, client, SLA ID..." 
+                            value="${appState.slaSearchTerm !== undefined ? appState.slaSearchTerm : (appState.searchTerm || '')}"
+                            oninput="setState({ slaSearchTerm: this.value })"
+                            style="background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 0.8125rem; width: 100%; font-family: inherit;"
+                          />
+                          ${(appState.slaSearchTerm || appState.searchTerm) ? `
+                            <button type="button" onclick="setState({ slaSearchTerm: '', searchTerm: '' })" style="background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 0;">✕</button>
+                          ` : ''}
+                        </div>
 
-                  <div style="border: 1px solid var(--status-warning-border); border-radius: 12px; padding: 1.25rem; background: var(--status-warning-bg); margin-bottom: 1rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
-                      <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <span style="font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 4px; background: var(--bg-surface); color: var(--status-warning); border: 1px solid var(--status-warning-border);">
-                          P2 - High
-                        </span>
-                        <strong style="color: var(--text-primary);">INC-4821: WebSocket Connection Pool Saturation in AP-South-1</strong>
+                        <!-- Status Filter Pills -->
+                        <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+                          <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Status:</span>
+                          <button type="button" class="role-chip ${sFilter === 'all' ? 'active' : ''}" onclick="setState({ slaStatusFilter: 'all' })" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">
+                            All (${allCount})
+                          </button>
+                          <button type="button" class="role-chip ${sFilter === 'active' ? 'active' : ''}" onclick="setState({ slaStatusFilter: 'active' })" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; color: ${sFilter === 'active' ? '#fff' : '#10b981'};">
+                            Active (${actCount})
+                          </button>
+                          <button type="button" class="role-chip ${sFilter === 'breached' ? 'active' : ''}" onclick="setState({ slaStatusFilter: 'breached' })" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; color: ${sFilter === 'breached' ? '#fff' : '#ef4444'};">
+                            Breached (${brkCount})
+                          </button>
+                          <button type="button" class="role-chip ${sFilter === 'completed' ? 'active' : ''}" onclick="setState({ slaStatusFilter: 'completed' })" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; color: ${sFilter === 'completed' ? '#fff' : '#8b5cf6'};">
+                            Completed (${cmpCount})
+                          </button>
+                        </div>
+
+                        <!-- Tier Filter Dropdown -->
+                        <div style="display: flex; align-items: center; gap: 0.4rem;">
+                          <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Tier:</span>
+                          <select onchange="setState({ slaTierFilter: this.value })" style="background: var(--bg-surface); border: 1px solid var(--border-light); color: var(--text-primary); border-radius: 8px; padding: 0.35rem 0.65rem; font-size: 0.75rem; font-weight: 600; outline: none; cursor: pointer;">
+                            <option value="all" ${tFilter === 'all' ? 'selected' : ''}>All Tiers</option>
+                            <option value="Platinum" ${tFilter === 'Platinum' ? 'selected' : ''}>Platinum Enterprise</option>
+                            <option value="Gold" ${tFilter === 'Gold' ? 'selected' : ''}>Gold Business</option>
+                            <option value="Silver" ${tFilter === 'Silver' ? 'selected' : ''}>Silver Growth</option>
+                          </select>
+                        </div>
                       </div>
-                      <div style="font-size: 0.75rem; font-weight: 700; color: var(--status-warning); background: var(--bg-surface); padding: 0.25rem 0.625rem; border-radius: 6px; border: 1px solid var(--status-warning-border);">
-                        ⏱️ Time to SLA Breach: 26 mins
-                      </div>
+
+                      <!-- Records Data Table -->
+                      ${appState.slaTableLoading ? `
+                        <div style="padding: 3rem 1rem; text-align: center;">
+                          <div class="status-indicator-dot pulse" style="color: var(--brand-primary); margin: 0 auto 0.75rem auto; transform: scale(1.5);"></div>
+                          <div style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Refreshing SLA Telemetry & Attainment Records...</div>
+                        </div>
+                      ` : matchedRecords.length === 0 ? `
+                        <div style="padding: 3rem 1.5rem; text-align: center; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px dashed var(--border-light);">
+                          <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>
+                          <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.35rem;">No SLA Records Found</h3>
+                          <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 1rem;">No service-level agreements matched your current search and filter settings.</p>
+                          <button type="button" class="btn-primary" onclick="setState({ slaSearchTerm: '', searchTerm: '', slaStatusFilter: 'all', slaTierFilter: 'all' })" style="padding: 0.45rem 1rem; font-size: 0.8125rem;">
+                            Reset All Filters
+                          </button>
+                        </div>
+                      ` : `
+                        <div style="overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; overscroll-behavior-x: contain;">
+                          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.8125rem; min-width: 860px;">
+                            <thead>
+                              <tr style="border-bottom: 1px solid var(--border-light); color: var(--text-muted); font-size: 0.72rem; font-weight: 700; text-transform: uppercase;">
+                                <th style="padding: 0.75rem 1rem;">SLA ID</th>
+                                <th style="padding: 0.75rem 0.75rem;">Agreement & Client</th>
+                                <th style="padding: 0.75rem 0.75rem;">Tier</th>
+                                <th style="padding: 0.75rem 0.75rem;">Target</th>
+                                <th style="padding: 0.75rem 0.75rem;">Current</th>
+                                <th style="padding: 0.75rem 0.75rem; width: 150px;">Progress Indicator</th>
+                                <th style="padding: 0.75rem 0.75rem;">Status Indicator</th>
+                                <th style="padding: 0.75rem 0.75rem;">Period</th>
+                                <th style="padding: 0.75rem 0.75rem;">Penalty</th>
+                                <th style="padding: 0.75rem 1rem; text-align: right;">Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              ${matchedRecords.map(rec => {
+                                const isBreached = rec.status === 'Breached';
+                                const isCompleted = rec.status === 'Completed';
+                                const statusColor = isBreached ? '#ef4444' : isCompleted ? '#8b5cf6' : '#10b981';
+                                const statusBg = isBreached ? 'rgba(239, 68, 68, 0.12)' : isCompleted ? 'rgba(139, 92, 246, 0.12)' : 'rgba(16, 185, 129, 0.12)';
+
+                                return `
+                                  <tr style="border-bottom: 1px solid var(--border-subtle); transition: background 0.15s ease;">
+                                    <td style="padding: 0.875rem 1rem; font-family: var(--font-mono); font-weight: 700; color: var(--brand-primary);">${rec.id}</td>
+                                    <td style="padding: 0.875rem 0.75rem;">
+                                      <div style="font-weight: 700; color: var(--text-primary); line-height: 1.2;">${rec.name}</div>
+                                      <div style="font-size: 0.71875rem; color: var(--text-muted); margin-top: 0.15rem;">${rec.client} &bull; ${rec.region}</div>
+                                    </td>
+                                    <td style="padding: 0.875rem 0.75rem;">
+                                      <span style="font-size: 0.72rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 6px; background: ${rec.tier.includes('Platinum') ? 'rgba(255, 107, 0, 0.12)' : 'var(--bg-subtle)'}; color: ${rec.tier.includes('Platinum') ? 'var(--brand-primary)' : 'var(--text-secondary)'}; border: 1px solid var(--border-light);">
+                                        ${rec.tier}
+                                      </span>
+                                    </td>
+                                    <td style="padding: 0.875rem 0.75rem; font-family: var(--font-mono); font-weight: 600; color: var(--text-secondary);">${rec.targetSla}%</td>
+                                    <td style="padding: 0.875rem 0.75rem; font-family: var(--font-mono); font-weight: 800; color: ${statusColor};">${rec.currentSla}%</td>
+                                    <td style="padding: 0.875rem 0.75rem;">
+                                      <div style="display: flex; justify-content: space-between; font-size: 0.6875rem; color: var(--text-muted); margin-bottom: 0.2rem;">
+                                        <span>Attainment</span>
+                                        <span style="font-weight: 700; color: ${statusColor}; font-family: var(--font-mono);">${rec.progress}%</span>
+                                      </div>
+                                      <div style="width: 100%; height: 5px; background: rgba(255,255,255,0.08); border-radius: 9999px; overflow: hidden;">
+                                        <div style="width: ${Math.min(100, Math.max(6, rec.progress))}%; height: 100%; background: ${statusColor}; border-radius: 9999px;"></div>
+                                      </div>
+                                    </td>
+                                    <td style="padding: 0.875rem 0.75rem;">
+                                      <span style="font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.55rem; border-radius: 9999px; background: ${statusBg}; color: ${statusColor}; border: 1px solid ${statusColor}30; display: inline-flex; align-items: center; gap: 0.35rem;">
+                                        <span style="width: 6px; height: 6px; border-radius: 50%; background: ${statusColor};"></span>
+                                        <span>${rec.status}</span>
+                                      </span>
+                                    </td>
+                                    <td style="padding: 0.875rem 0.75rem; font-size: 0.75rem; color: var(--text-muted);">${rec.dateRange}</td>
+                                    <td style="padding: 0.875rem 0.75rem; font-size: 0.75rem; font-weight: 700; color: ${isBreached ? '#ef4444' : 'var(--status-healthy)'};">${rec.penalty}</td>
+                                    <td style="padding: 0.875rem 1rem; text-align: right;">
+                                      <button 
+                                        type="button" 
+                                        class="btn-secondary" 
+                                        onclick="setState({ selectedSlaRecord: ${JSON.stringify(rec).replace(/"/g, '&quot;')} })" 
+                                        style="padding: 0.25rem 0.6rem; font-size: 0.72rem;"
+                                      >
+                                        View
+                                      </button>
+                                    </td>
+                                  </tr>
+                                `;
+                              }).join('')}
+                            </tbody>
+                          </table>
+                        </div>
+                      `}
                     </div>
-                    <p style="font-size: 0.8125rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
-                      Service: Real-time Notification & WebSockets &bull; Started: 34 mins ago &bull; Lead: Sarah Chen (Principal SRE)
-                    </p>
-                    <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
-                      <button 
-                        class="btn-primary" 
-                        onclick="showToast('Automated SRE mitigation runbook executed! Auto-scaled 8 additional socket workers in Mumbai.')"
-                        style="padding: 0.4rem 0.75rem; font-size: 0.75rem;"
-                      >
-                        ⚡ Execute Mitigation Script
+                  `;
+                };
+
+                // 5 SLA Visuals Showcase Component
+                const renderVisualsShowcase = () => `
+                  <div class="sla-card" style="margin-bottom: 1.75rem; background: var(--bg-surface); border: 1px solid var(--border-light);">
+                    <div class="sla-card-header">
+                      <div>
+                        <div class="sla-card-title">
+                          <span style="color: var(--text-primary);">🏆 Stackly SLA Infrastructure & Reliability Pillars</span>
+                          <span class="status-pill healthy" style="margin-left: 0.5rem;">5 Facilities</span>
+                        </div>
+                        <div class="sla-card-subtitle" style="color: var(--text-muted);">
+                          Multi-region cloud redundancy, 24/7 NOC command center, low-latency edge routing, and automated compliance shields.
+                        </div>
+                      </div>
+                      <button class="btn-secondary" onclick="setState({ zoomImage: SLA_SHOWCASE_IMAGES[${appState.selectedImageIdx}] })" style="padding: 0.4rem 0.75rem; font-size: 0.75rem;">
+                        🔍 Full Zoom
                       </button>
                     </div>
-                  </div>
-                </div>
-              ` : ''}
 
-              <!-- Regional Edge Latency -->
-              ${(appState.activeTab === 'overview' || appState.activeTab === 'latency') ? `
-                <div class="sla-card" style="margin-bottom: 1.75rem; background: var(--bg-surface); border: 1px solid var(--border-light);">
-                  <div class="sla-card-header">
-                    <div>
-                      <div class="sla-card-title">
-                        <span style="color: var(--text-primary);">🌐 Global Edge Nodes & Regional SLA Latency</span>
-                        <span class="status-pill healthy" style="margin-left: 0.5rem;">340+ Edge PoPs</span>
+                    <!-- Featured Hero Box -->
+                    <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.5rem; background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: 16px; padding: 1.25rem; margin-bottom: 1.25rem;">
+                      <div 
+                        style="position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 16/9; background: var(--border-light); cursor: pointer;"
+                        onclick="setState({ zoomImage: SLA_SHOWCASE_IMAGES[${appState.selectedImageIdx}] })"
+                      >
+                        <img src="${hero.img}" alt="${hero.title}" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="this.src='https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&auto=format&fit=crop&q=80'" />
+                        <div style="position: absolute; top: 0.75rem; left: 0.75rem; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); padding: 0.3rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; color: #ffffff;">
+                          ${hero.tag}
+                        </div>
+                        <div style="position: absolute; bottom: 0.75rem; right: 0.75rem; background: rgba(0,0,0,0.85); color: white; padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.75rem; font-weight: 700; font-family: var(--font-mono);">
+                          ${hero.metric}
+                        </div>
                       </div>
-                      <div class="sla-card-subtitle" style="color: var(--text-muted);">
-                        Sub-millisecond packet latency monitoring across five continental edge hubs.
+
+                      <div style="display: flex; flex-direction: column; gap: 0.875rem;">
+                        <div>
+                          <span style="font-size: 0.75rem; font-weight: 700; color: var(--brand-primary); text-transform: uppercase; letter-spacing: 0.05em;">
+                            ${hero.cat}
+                          </span>
+                          <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); margin-top: 0.25rem;">
+                            ${hero.title}
+                          </h3>
+                        </div>
+                        <p style="font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6;">
+                          ${hero.desc}
+                        </p>
+                        <div style="background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 10px; padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center;">
+                          <div>
+                            <div style="font-size: 0.6875rem; color: var(--text-muted);">Verified SLA Uptime</div>
+                            <div style="font-size: 1.15rem; font-weight: 800; color: var(--status-healthy); font-family: var(--font-mono);">
+                              ${hero.metric}
+                            </div>
+                          </div>
+                          <span class="status-pill healthy">🛡️ Audited 2026</span>
+                        </div>
                       </div>
                     </div>
-                    <button class="btn-secondary" onclick="showToast('Global edge probe completed: 340 PoPs verified. 100% routes operational.')" style="padding: 0.4rem 0.75rem; font-size: 0.75rem;">
-                      📡 Probe Edge PoPs
-                    </button>
-                  </div>
 
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
-                    ${[
-                      { reg: "North America (Virginia/Oregon)", uptime: "99.994%", ping: "14ms", nodes: 96, status: "Optimal" },
-                      { reg: "Europe (Frankfurt/London)", uptime: "99.988%", ping: "18ms", nodes: 74, status: "Optimal" },
-                      { reg: "Asia-Pacific (Tokyo/Mumbai)", uptime: "99.952%", ping: "46ms", nodes: 68, status: "Investigating" },
-                      { reg: "South America (São Paulo)", uptime: "99.980%", ping: "64ms", nodes: 26, status: "Optimal" }
-                    ].map(r => `
-                      <div style="background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 12px; padding: 1rem;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                          <strong style="font-size: 0.84rem; color: var(--text-primary);">${r.reg}</strong>
-                          <span class="status-pill ${r.status === 'Optimal' ? 'healthy' : 'warning'}" style="font-size: 0.6875rem;">${r.status}</span>
+                    <!-- 5 Thumbnails -->
+                    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.875rem;">
+                      ${SLA_SHOWCASE_IMAGES.map((imgItem, idx) => `
+                        <div
+                          onclick="setState({ selectedImageIdx: ${idx} })"
+                          style="cursor: pointer; border: ${appState.selectedImageIdx === idx ? '2px solid var(--brand-primary)' : '1px solid var(--border-light)'}; border-radius: 12px; padding: 0.375rem; background: var(--bg-surface); box-shadow: ${appState.selectedImageIdx === idx ? '0 4px 12px rgba(255,107,0,0.25)' : 'none'}; transition: all 0.15s ease;"
+                        >
+                          <div style="border-radius: 8px; overflow: hidden; aspect-ratio: 16/10; margin-bottom: 0.5rem;">
+                            <img src="${imgItem.img}" alt="${imgItem.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&auto=format&fit=crop&q=80'" />
+                          </div>
+                          <div style="font-size: 0.75rem; font-weight: ${appState.selectedImageIdx === idx ? '700' : '600'}; color: ${appState.selectedImageIdx === idx ? 'var(--brand-primary)' : 'var(--text-secondary)'}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            ${imgItem.tag}
+                          </div>
+                          <div style="font-size: 0.6875rem; color: var(--text-muted); font-family: var(--font-mono);">
+                            ${imgItem.metric}
+                          </div>
                         </div>
-                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
-                          <span>Uptime: <strong style="color: var(--status-healthy); font-family: var(--font-mono);">${r.uptime}</strong></span>
-                          <span>Ping: <strong style="color: var(--text-primary); font-family: var(--font-mono);">${r.ping}</strong></span>
+                      `).join('')}
+                    </div>
+                  </div>
+                `;
+
+                // Uptime Trend Chart Component
+                const renderTrendChart = () => `
+                  <div class="sla-card" style="margin-bottom: 1.75rem; background: var(--bg-surface); border: 1px solid var(--border-light);">
+                    <div class="sla-card-header">
+                      <div>
+                        <div class="sla-card-title">
+                          <span style="color: var(--text-primary);">📈 Real-time SLA Performance Trend (24h Window)</span>
+                          <span class="status-pill healthy" style="margin-left: 0.5rem;">Target: 99.950%</span>
+                        </div>
+                        <div class="sla-card-subtitle" style="color: var(--text-muted);">
+                          Continuous synthetic probes across all 24 ingress gateways. Current: 99.982%
                         </div>
                       </div>
-                    `).join('')}
+                    </div>
+
+                    <!-- SVG Chart -->
+                    <div style="width: 100%; overflow-x: auto;">
+                      <svg viewBox="0 0 700 180" style="width: 100%; height: auto; min-width: 500px; display: block;">
+                        <defs>
+                          <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#ff6b00" stop-opacity="0.3" />
+                            <stop offset="100%" stop-color="#ff6b00" stop-opacity="0.0" />
+                          </linearGradient>
+                        </defs>
+                        <line x1="40" y1="30" x2="660" y2="30" stroke="var(--border-light)" stroke-dasharray="3 3" />
+                        <line x1="40" y1="80" x2="660" y2="80" stroke="var(--border-light)" stroke-dasharray="3 3" />
+                        <line x1="40" y1="130" x2="660" y2="130" stroke="var(--border-light)" />
+                        
+                        <!-- SLA Baseline Line (99.95%) -->
+                        <line x1="40" y1="110" x2="660" y2="110" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4 4" />
+                        <text x="650" y="105" text-anchor="end" fill="#dc2626" font-size="10" font-weight="700">Contractual SLA Minimum (99.950%)</text>
+
+                        <!-- Curve & Area -->
+                        <path d="M 40,40 L 95,45 L 150,55 L 205,50 L 260,65 L 315,95 L 370,75 L 425,60 L 480,50 L 535,45 L 590,48 L 645,52 L 645,130 L 40,130 Z" fill="url(#chartGrad)" />
+                        <path d="M 40,40 L 95,45 L 150,55 L 205,50 L 260,65 L 315,95 L 370,75 L 425,60 L 480,50 L 535,45 L 590,48 L 645,52" fill="none" stroke="#ff6b00" stroke-width="3" stroke-linecap="round" />
+
+                        <!-- Points -->
+                        ${[
+                          { x: 40, y: 40, t: '00:00' }, { x: 95, y: 45, t: '02:00' }, { x: 150, y: 55, t: '04:00' },
+                          { x: 205, y: 50, t: '06:00' }, { x: 260, y: 65, t: '08:00' }, { x: 315, y: 95, t: '10:00' },
+                          { x: 370, y: 75, t: '12:00' }, { x: 425, y: 60, t: '14:00' }, { x: 480, y: 50, t: '16:00' },
+                          { x: 535, y: 45, t: '18:00' }, { x: 590, y: 48, t: '20:00' }, { x: 645, y: 52, t: 'Now' }
+                        ].map(p => `
+                          <circle cx="${p.x}" cy="${p.y}" r="4" fill="var(--bg-surface)" stroke="#ff6b00" stroke-width="2"></circle>
+                          <text x="${p.x}" y="150" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-weight="600">${p.t}</text>
+                        `).join('')}
+                      </svg>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-light); font-size: 0.75rem; color: var(--text-muted);">
+                      <div style="display: flex; gap: 1rem;">
+                        <span>Measured Uptime: <strong style="color: var(--text-primary);">99.982%</strong></span>
+                        <span>SLA Cap: <strong style="#ef4444">99.950%</strong></span>
+                        <span>⚡ Avg Latency: <strong style="color: var(--text-primary);">22ms</strong></span>
+                      </div>
+                      <span style="color: var(--status-healthy); font-weight: 600;">✅ Zero SLA Breach Periods</span>
+                    </div>
                   </div>
-                </div>
+                `;
+
+                // Microservices Matrix Component
+                const renderMicroservices = () => `
+                  <div class="sla-card" style="margin-bottom: 1.75rem; background: var(--bg-surface); border: 1px solid var(--border-light);">
+                    <div class="sla-card-header">
+                      <div>
+                        <div class="sla-card-title">
+                          <span style="color: var(--text-primary);">🖥️ Service-Level Performance & Uptime Matrix</span>
+                          <span class="status-pill neutral" style="margin-left: 0.5rem;">${filteredServices.length} Monitored</span>
+                        </div>
+                        <div class="sla-card-subtitle" style="color: var(--text-muted);">
+                          Per-service SLA commitments, response times, throughput, and error rates.
+                        </div>
+                      </div>
+                      <div>
+                        <input 
+                          type="text" 
+                          placeholder="Search services..." 
+                          value="${appState.searchTerm}" 
+                          oninput="setState({ searchTerm: this.value })"
+                          style="padding: 0.45rem 0.85rem; border: 1px solid var(--border-light); border-radius: 8px; font-size: 0.8125rem; background: var(--bg-subtle); color: var(--text-primary); outline: none;"
+                        />
+                      </div>
+                    </div>
+
+                    <div style="overflow-x: auto;">
+                      <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.8125rem;">
+                        <thead>
+                          <tr style="border-bottom: 2px solid var(--border-light); color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase;">
+                            <th style="padding: 0.75rem 1rem;">Microservice</th>
+                            <th style="padding: 0.75rem 0.75rem;">SLA Tier</th>
+                            <th style="padding: 0.75rem 0.75rem;">Uptime</th>
+                            <th style="padding: 0.75rem 0.75rem;">Latency</th>
+                            <th style="padding: 0.75rem 0.75rem;">Throughput</th>
+                            <th style="padding: 0.75rem 0.75rem;">Error Rate</th>
+                            <th style="padding: 0.75rem 1rem; text-align: right;">Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          ${filteredServices.map(srv => {
+                            const isDegraded = srv.status === 'Degraded';
+                            return `
+                              <tr style="border-bottom: 1px solid var(--border-light);">
+                                <td style="padding: 0.875rem 1rem;">
+                                  <div style="font-weight: 700; color: var(--text-primary);">${srv.name}</div>
+                                  <div style="font-size: 0.72rem; color: var(--text-muted);">${srv.type}</div>
+                                </td>
+                                <td style="padding: 0.875rem 0.75rem;">
+                                  <span style="font-size: 0.72rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 4px; background: ${srv.tier.includes('Platinum') ? 'rgba(255, 107, 0, 0.12)' : 'rgba(245, 158, 11, 0.12)'}; color: ${srv.tier.includes('Platinum') ? 'var(--brand-primary)' : 'var(--status-warning)'}; border: 1px solid var(--border-light);">
+                                    ${srv.tier}
+                                  </span>
+                                </td>
+                                <td style="padding: 0.875rem 0.75rem; font-weight: 800; font-family: var(--font-mono); color: ${isDegraded ? 'var(--status-warning)' : 'var(--status-healthy)'};">
+                                  ${srv.uptime}
+                                </td>
+                                <td style="padding: 0.875rem 0.75rem; font-family: var(--font-mono); color: var(--text-primary);">${srv.latency}</td>
+                                <td style="padding: 0.875rem 0.75rem; font-family: var(--font-mono); color: var(--text-secondary);">${srv.req}</td>
+                                <td style="padding: 0.875rem 0.75rem; font-family: var(--font-mono); color: ${isDegraded ? 'var(--status-critical)' : 'var(--status-healthy)'};">${srv.err}</td>
+                                <td style="padding: 0.875rem 1rem; text-align: right;">
+                                  <span class="status-pill ${isDegraded ? 'warning' : 'healthy'}">
+                                    ${srv.status}
+                                  </span>
+                                </td>
+                              </tr>
+                            `;
+                          }).join('')}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                `;
+
+                // SLA Tiers Cards Component
+                const renderSlaTiers = () => `
+                  <div class="sla-card" style="margin-bottom: 1.75rem; background: var(--bg-surface); border: 1px solid var(--border-light);">
+                    <div class="sla-card-header">
+                      <div>
+                        <div class="sla-card-title">
+                          <span style="color: var(--text-primary);">📜 SLA Contract Tiers & Downtime Budget</span>
+                          <span class="status-pill healthy" style="margin-left: 0.5rem;">100% SLA Adherence</span>
+                        </div>
+                        <div class="sla-card-subtitle" style="color: var(--text-muted);">
+                          Legally binding service credits and contractual downtime budgets across all client tiers.
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="grid-4">
+                      ${SLA_TIERS.map(t => `
+                        <div style="background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: 12px; padding: 1.125rem;">
+                          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 9999px; background: var(--bg-surface); color: var(--text-primary); border: 1px solid var(--border-light);">
+                              ${t.tier}
+                            </span>
+                            <span style="font-size: 0.7rem; color: var(--text-muted);">${t.clients} clients</span>
+                          </div>
+                          <div style="fontSize: 1.4rem; font-weight: 800; color: var(--text-primary); font-family: var(--font-mono); margin-bottom: 0.25rem;">
+                            ${t.current} <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">/ ${t.target}</span>
+                          </div>
+                          <div style="background: var(--bg-surface); border: 1px solid var(--border-light); padding: 0.5rem; border-radius: 6px; font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                            ${t.downtime}
+                          </div>
+                          <div style="font-size: 0.7rem; color: var(--status-healthy); font-weight: 600;">
+                            Clause: ${t.refund}
+                          </div>
+                        </div>
+                      `).join('')}
+                    </div>
+                  </div>
+                `;
+
+                // Incidents Component
+                const renderIncidents = () => `
+                  <div class="sla-card" style="margin-bottom: 1.75rem; background: var(--bg-surface); border: 1px solid var(--border-light);">
+                    <div class="sla-card-header">
+                      <div>
+                        <div class="sla-card-title">
+                          <span style="color: var(--text-primary);">⚠️ Active Incidents & SLA Breach Countdown</span>
+                          <span class="status-pill warning" style="margin-left: 0.5rem;">1 Warning</span>
+                        </div>
+                        <div class="sla-card-subtitle" style="color: var(--text-muted);">
+                          Real-time incident response telemetry and MTTR breach countdown timers.
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style="border: 1px solid var(--status-warning-border); border-radius: 12px; padding: 1.25rem; background: var(--status-warning-bg); margin-bottom: 1rem;">
+                      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                          <span style="font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 4px; background: var(--bg-surface); color: var(--status-warning); border: 1px solid var(--status-warning-border);">
+                            P2 - High
+                          </span>
+                          <strong style="color: var(--text-primary);">INC-4821: WebSocket Connection Pool Saturation in AP-South-1</strong>
+                        </div>
+                        <div style="font-size: 0.75rem; font-weight: 700; color: var(--status-warning); background: var(--bg-surface); padding: 0.25rem 0.625rem; border-radius: 6px; border: 1px solid var(--status-warning-border);">
+                          ⏱️ Time to SLA Breach: 26 mins
+                        </div>
+                      </div>
+                      <p style="font-size: 0.8125rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+                        Service: Real-time Notification & WebSockets &bull; Started: 34 mins ago &bull; Lead: Sarah Chen (Principal SRE)
+                      </p>
+                      <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+                        <button 
+                          class="btn-primary" 
+                          onclick="showToast('Automated SRE mitigation runbook executed! Auto-scaled 8 additional socket workers in Mumbai.')"
+                          style="padding: 0.4rem 0.75rem; font-size: 0.75rem;"
+                        >
+                          ⚡ Execute Mitigation Script
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                `;
+
+                // Regional Latency & Global Edge Nodes Component
+                const renderLatency = () => `
+                  <div class="sla-card" style="margin-bottom: 1.75rem; background: var(--bg-surface); border: 1px solid var(--border-light);">
+                    <div class="sla-card-header">
+                      <div>
+                        <div class="sla-card-title">
+                          <span style="color: var(--text-primary);">🌐 Global Edge Nodes & Regional SLA Latency</span>
+                          <span class="status-pill healthy" style="margin-left: 0.5rem;">340+ Edge PoPs</span>
+                        </div>
+                        <div class="sla-card-subtitle" style="color: var(--text-muted);">
+                          Sub-millisecond packet latency monitoring across five continental edge hubs with live health probes.
+                        </div>
+                      </div>
+                      <button class="btn-secondary" onclick="showToast('Global edge probe completed: 340 PoPs verified. 100% routes operational. Avg latency: 22ms.')" style="padding: 0.4rem 0.75rem; font-size: 0.75rem;">
+                        📡 Probe Edge PoPs
+                      </button>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+                      ${[
               ` : ''}
             </main>
 

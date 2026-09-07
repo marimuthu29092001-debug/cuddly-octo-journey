@@ -18,6 +18,19 @@ import {
 import { COMPANY_INFO, ACTIVE_INCIDENTS } from '../../data/slaData';
 import './Navbar.css';
 
+const TAB_TITLES = {
+  overview: 'SLA Command Center',
+  records: 'SLA Data Table & Records',
+  'error-budgets': 'Error Budget & Burn Rate',
+  penalties: 'Credit & Penalty Simulator',
+  heatmap: '90-Day Uptime Calendar',
+  services: 'Microservices & Nodes',
+  tiers: 'SLA Contracts & Tiers',
+  incidents: 'Incident & Breach Log',
+  latency: 'Global Edge Latency',
+  visuals: 'Infrastructure Showcase'
+};
+
 export default function Navbar({ 
   currentUser, 
   onLogout, 
@@ -29,7 +42,8 @@ export default function Navbar({
   mobileSidebarOpen,
   setMobileSidebarOpen,
   theme,
-  setTheme
+  setTheme,
+  activeTab = 'overview'
 }) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -46,11 +60,18 @@ export default function Navbar({
           {mobileSidebarOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
 
-        <h1 className="navbar-page-title">Dashboard</h1>
+        <h1 className="navbar-page-title">{TAB_TITLES[activeTab] || 'Dashboard'}</h1>
 
         <div className="navbar-status-indicator hide-on-tablet">
           <span className="status-indicator-dot pulse"></span>
-          <span>99.98% Compliant (All SLA Targets Met)</span>
+          <span>
+            {activeTab === 'latency' ? '340+ Edge PoPs • 22ms Avg Latency' :
+             activeTab === 'incidents' ? '1 Warning • 0 Active SLA Breaches' :
+             activeTab === 'services' ? '10 Core Services Monitored' :
+             activeTab === 'tiers' ? '100% Contract Adherence' :
+             activeTab === 'visuals' ? '5 Enterprise Facilities Audited' :
+             '99.98% Compliant (All SLA Targets Met)'}
+          </span>
         </div>
       </div>
 

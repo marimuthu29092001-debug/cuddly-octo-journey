@@ -41,6 +41,7 @@ export default function Sidebar({
     if (mobileSidebarOpen) {
       setMobileSidebarOpen(false);
     }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
