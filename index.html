@@ -137,7 +137,9 @@
       max-width: 100vw;
       overflow-x: hidden;
       position: relative;
+      overscroll-behavior: none;
       overscroll-behavior-x: none;
+      overscroll-behavior-y: none;
       -webkit-text-size-adjust: 100%;
     }
 
@@ -149,6 +151,9 @@
       -webkit-font-smoothing: antialiased;
       min-height: 100vh;
       overflow-x: hidden;
+      overscroll-behavior: none;
+      overscroll-behavior-x: none;
+      overscroll-behavior-y: none;
     }
 
     /* Prevent background scroll (backscrole) when modal / mobile sidebar is open */
@@ -159,6 +164,8 @@
       max-height: 100vh !important;
       touch-action: none !important;
       -webkit-overflow-scrolling: auto !important;
+      position: fixed !important;
+      width: 100% !important;
     }
 
     /* Buttons */
@@ -851,7 +858,7 @@
       overflow-y: auto;
       overscroll-behavior: contain;
       -webkit-overflow-scrolling: touch;
-      touch-action: pan-y;
+      touch-action: none;
     }
     .auth-modal-card {
       position: relative;
@@ -981,7 +988,7 @@
       overflow-y: auto;
       overscroll-behavior: contain;
       -webkit-overflow-scrolling: touch;
-      touch-action: pan-y;
+      touch-action: none;
     }
     .modal-box {
       max-width: 800px;
@@ -1258,6 +1265,7 @@
         appState.profileModalOpen || 
         appState.settingsModalOpen || 
         appState.zoomImage ||
+        appState.selectedRecord ||
         (appState.sidebarOpen && window.innerWidth <= 1024)
       );
 
@@ -1941,49 +1949,49 @@
               <button 
                 type="button" 
                 class="nav-link ${(appState.landingSection || 'slo') === 'slo' ? 'active' : ''}" 
-                onclick="setState({ landingSection: 'slo' }); document.getElementById('landingTelemetrySection')?.scrollIntoView({ behavior: 'smooth', block: 'center' });"
+                onclick="setState({ landingSection: 'slo' });"
               >
                 SLO Health
               </button>
               <button 
                 type="button" 
                 class="nav-link ${appState.landingSection === 'error-budget' ? 'active' : ''}" 
-                onclick="setState({ landingSection: 'error-budget' }); document.getElementById('landingTelemetrySection')?.scrollIntoView({ behavior: 'smooth', block: 'center' });"
+                onclick="setState({ landingSection: 'error-budget' });"
               >
                 Error Budgets
               </button>
               <button 
                 type="button" 
                 class="nav-link ${appState.landingSection === 'penalties' ? 'active' : ''}" 
-                onclick="setState({ landingSection: 'penalties' }); document.getElementById('landingTelemetrySection')?.scrollIntoView({ behavior: 'smooth', block: 'center' });"
+                onclick="setState({ landingSection: 'penalties' });"
               >
                 Penalty Simulator
               </button>
               <button 
                 type="button" 
                 class="nav-link ${appState.landingSection === 'heatmap' ? 'active' : ''}" 
-                onclick="setState({ landingSection: 'heatmap' }); document.getElementById('landingTelemetrySection')?.scrollIntoView({ behavior: 'smooth', block: 'center' });"
+                onclick="setState({ landingSection: 'heatmap' });"
               >
                 90D Heatmap
               </button>
               <button 
                 type="button" 
                 class="nav-link ${appState.landingSection === 'incidents' ? 'active' : ''}" 
-                onclick="setState({ landingSection: 'incidents' }); document.getElementById('landingTelemetrySection')?.scrollIntoView({ behavior: 'smooth', block: 'center' });"
+                onclick="setState({ landingSection: 'incidents' });"
               >
                 Incidents
               </button>
               <button 
                 type="button" 
                 class="nav-link ${appState.landingSection === 'edge' ? 'active' : ''}" 
-                onclick="setState({ landingSection: 'edge' }); document.getElementById('landingTelemetrySection')?.scrollIntoView({ behavior: 'smooth', block: 'center' });"
+                onclick="setState({ landingSection: 'edge' });"
               >
                 Global Edge
               </button>
               <button 
                 type="button" 
                 class="nav-link ${appState.landingSection === 'contracts' ? 'active' : ''}" 
-                onclick="setState({ landingSection: 'contracts' }); document.getElementById('landingTelemetrySection')?.scrollIntoView({ behavior: 'smooth', block: 'center' });"
+                onclick="setState({ landingSection: 'contracts' });"
               >
                 Contracts
               </button>
@@ -2034,7 +2042,7 @@
               <button 
                 type="button" 
                 class="btn-hero-glass"
-                onclick="setState({ landingSection: 'penalties' }); document.getElementById('landingTelemetrySection')?.scrollIntoView({ behavior: 'smooth', block: 'center' });"
+                onclick="setState({ landingSection: 'penalties' });"
               >
                 Simulate SLA Penalties
               </button>
@@ -2581,7 +2589,7 @@
                       </div>
                     ` : `
                       <!-- Responsive SLA Data Table -->
-                      <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                      <div style="overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; overscroll-behavior-x: contain;">
                         <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.8125rem; min-width: 860px;">
                           <thead>
                             <tr style="border-bottom: 1px solid var(--border-light); color: var(--text-muted); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">

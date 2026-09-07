@@ -315,13 +315,16 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
+      overscroll-behavior: none;
+      overscroll-behavior-y: none;
       background-color: #070d18;
       color: #ffffff;
       font-family: var(--font-sans);
     }
     .bg-slideshow-container {
-      position: absolute;
+      position: fixed;
       inset: 0;
       z-index: 1;
       overflow: hidden;
@@ -629,6 +632,8 @@
       align-items: center;
       justify-content: center;
       padding: 1.5rem;
+      overscroll-behavior: contain;
+      touch-action: none;
     }
     .auth-modal-card {
       position: relative;
@@ -640,6 +645,8 @@
       padding: 2.25rem 2rem;
       box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.75), 0 0 30px rgba(0, 198, 167, 0.1);
       backdrop-filter: blur(24px);
+      overscroll-behavior: contain;
+      touch-action: auto;
     }
     .login-input {
       width: 100%;
@@ -930,6 +937,21 @@
         }, 5000);
         return () => clearInterval(timer);
       }, [isPaused]);
+
+      // Lock body scroll when login modal is open to prevent background scrolling (backscrole)
+      useEffect(() => {
+        if (modalOpen) {
+          document.documentElement.classList.add('modal-open');
+          document.body.classList.add('modal-open');
+        } else {
+          document.documentElement.classList.remove('modal-open');
+          document.body.classList.remove('modal-open');
+        }
+        return () => {
+          document.documentElement.classList.remove('modal-open');
+          document.body.classList.remove('modal-open');
+        };
+      }, [modalOpen]);
 
       const handleRoleClick = (u) => {
         setRole(u.role);
@@ -1385,7 +1407,12 @@
 
           {/* Frosted Glass Login Modal */}
           {modalOpen && (
-            <div className="auth-modal-backdrop" onClick={() => setModalOpen(false)}>
+            <div 
+              className="auth-modal-backdrop" 
+              onClick={() => setModalOpen(false)}
+              onTouchMove={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
+              onWheel={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
+            >
               <div className="auth-modal-card" onClick={e => e.stopPropagation()}>
                 <button 
                   onClick={() => setModalOpen(false)}
@@ -1520,6 +1547,30 @@
         localStorage.setItem('stackly_theme', theme);
       }, [theme]);
 
+      // Lock body scroll when any modal or drawer is open to prevent background scrolling (backscrole)
+      useEffect(() => {
+        const isAnyModalOpen = Boolean(
+          reportModal || 
+          profileModal || 
+          settingsModal || 
+          imgModal || 
+          selectedRecord || 
+          (sidebarOpen && window.innerWidth <= 1024)
+        );
+
+        if (isAnyModalOpen) {
+          document.documentElement.classList.add('modal-open');
+          document.body.classList.add('modal-open');
+        } else {
+          document.documentElement.classList.remove('modal-open');
+          document.body.classList.remove('modal-open');
+        }
+        return () => {
+          document.documentElement.classList.remove('modal-open');
+          document.body.classList.remove('modal-open');
+        };
+      }, [reportModal, profileModal, settingsModal, imgModal, selectedRecord, sidebarOpen]);
+
       const activeHeroImg = SLA_SHOWCASE_IMAGES[selectedImg];
 
       const filteredServices = SERVICES.filter(s => 
@@ -1532,8 +1583,10 @@
           {/* Mobile backdrop */}
           {sidebarOpen && (
             <div 
-              style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.4)', zIndex: 25 }}
+              style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.4)', zIndex: 25, overscrollBehavior: 'contain', touchAction: 'none' }}
               onClick={() => setSidebarOpen(false)}
+              onTouchMove={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
+              onWheel={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
             />
           )}
 
@@ -1921,7 +1974,7 @@
                         <button type="button" className="btn-primary" onClick={() => { setSlaSearch(''); setSlaStatusFilter('all'); }} style={{ padding: '0.45rem 1rem', fontSize: '0.8125rem' }}>Reset Filters</button>
                       </div>
                     ) : (
-                      <div style={{ overflowX: 'auto' }}>
+                      <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain', overscrollBehaviorX: 'contain' }}>
                         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.8125rem', minWidth: '860px' }}>
                           <thead>
                             <tr style={{ borderBottom: '1px solid var(--border-light)', color: 'var(--text-muted)', fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase' }}>
@@ -2387,11 +2440,13 @@
           {/* Full Image Zoom Modal */}
           {imgModal && (
             <div 
-              style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.75)', backdropFilter: 'blur(8px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}
+              style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.75)', backdropFilter: 'blur(8px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', overscrollBehavior: 'contain', touchAction: 'none' }}
               onClick={() => setImgModal(null)}
+              onTouchMove={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
+              onWheel={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
             >
               <div 
-                style={{ maxWidth: '900px', width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '20px', overflow: 'hidden', boxShadow: 'var(--shadow-xl)' }}
+                style={{ maxWidth: '900px', width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '20px', overflow: 'hidden', boxShadow: 'var(--shadow-xl)', overscrollBehavior: 'contain', touchAction: 'auto' }}
                 onClick={e => e.stopPropagation()}
               >
                 <img src={imgModal.img} alt={imgModal.title} style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover' }} />
@@ -2412,11 +2467,13 @@
           {/* Report Modal */}
           {reportModal && (
             <div 
-              style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.7)', backdropFilter: 'blur(8px)', zIndex: 110, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}
+              style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.7)', backdropFilter: 'blur(8px)', zIndex: 110, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', overscrollBehavior: 'contain', touchAction: 'none' }}
               onClick={() => setReportModal(false)}
+              onTouchMove={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
+              onWheel={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
             >
               <div 
-                style={{ maxWidth: '680px', width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '20px', padding: '2rem', boxShadow: 'var(--shadow-xl)' }}
+                style={{ maxWidth: '680px', width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '20px', padding: '2rem', boxShadow: 'var(--shadow-xl)', overscrollBehavior: 'contain', touchAction: 'auto', maxHeight: '90vh', overflowY: 'auto' }}
                 onClick={e => e.stopPropagation()}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-light)', paddingBottom: '1rem', marginBottom: '1.25rem' }}>
@@ -2456,11 +2513,13 @@
           {/* My Profile Modal */}
           {profileModal && (
             <div 
-              style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.7)', backdropFilter: 'blur(8px)', zIndex: 110, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}
+              style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.7)', backdropFilter: 'blur(8px)', zIndex: 110, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', overscrollBehavior: 'contain', touchAction: 'none' }}
               onClick={() => setProfileModal(false)}
+              onTouchMove={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
+              onWheel={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
             >
               <div 
-                style={{ maxWidth: '600px', width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '20px', padding: '2rem', boxShadow: 'var(--shadow-xl)' }}
+                style={{ maxWidth: '600px', width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '20px', padding: '2rem', boxShadow: 'var(--shadow-xl)', overscrollBehavior: 'contain', touchAction: 'auto' }}
                 onClick={e => e.stopPropagation()}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid var(--border-light)', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
@@ -2509,11 +2568,13 @@
           {/* SLA Record Details Modal */}
           {selectedRecord && (
             <div 
-              style={{ position: 'fixed', inset: 0, background: 'rgba(5, 10, 20, 0.75)', backdropFilter: 'blur(10px)', zIndex: 120, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}
+              style={{ position: 'fixed', inset: 0, background: 'rgba(5, 10, 20, 0.75)', backdropFilter: 'blur(10px)', zIndex: 120, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', overscrollBehavior: 'contain', touchAction: 'none' }}
               onClick={() => setSelectedRecord(null)}
+              onTouchMove={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
+              onWheel={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
             >
               <div 
-                style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '16px', maxWidth: '600px', width: '100%', padding: '1.75rem', boxShadow: '0 25px 60px rgba(0,0,0,0.6)' }}
+                style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '16px', maxWidth: '600px', width: '100%', padding: '1.75rem', boxShadow: '0 25px 60px rgba(0,0,0,0.6)', overscrollBehavior: 'contain', touchAction: 'auto' }}
                 onClick={e => e.stopPropagation()}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
@@ -2545,11 +2606,13 @@
           {/* Settings Modal */}
           {settingsModal && (
             <div 
-              style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.7)', backdropFilter: 'blur(8px)', zIndex: 110, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}
+              style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.7)', backdropFilter: 'blur(8px)', zIndex: 110, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', overscrollBehavior: 'contain', touchAction: 'none' }}
               onClick={() => setSettingsModal(false)}
+              onTouchMove={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
+              onWheel={(e) => { if (e.target === e.currentTarget) e.preventDefault(); }}
             >
               <div 
-                style={{ maxWidth: '600px', width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '20px', padding: '2rem', boxShadow: 'var(--shadow-xl)' }}
+                style={{ maxWidth: '600px', width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-light)', borderRadius: '20px', padding: '2rem', boxShadow: 'var(--shadow-xl)', overscrollBehavior: 'contain', touchAction: 'auto' }}
                 onClick={e => e.stopPropagation()}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-light)', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
@@ -2618,6 +2681,16 @@
       }
       return <SlaDashboard currentUser={user} onLogout={() => setUser(null)} />;
     }
+
+    // Global Touchmove scroll-bleed interceptor to completely prevent background scrolling (backscrole)
+    document.addEventListener('touchmove', function(e) {
+      if (document.body.classList.contains('modal-open')) {
+        const scrollable = e.target.closest('.auth-modal-card, [style*="overflowY"], [style*="overflow-y"]');
+        if (!scrollable) {
+          e.preventDefault();
+        }
+      }
+    }, { passive: false });
 
     ReactDOM.createRoot(document.getElementById('root')).render(<App />);
   </script>
